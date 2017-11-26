@@ -15,10 +15,10 @@ THIS SOFTWARE IS PROVIDED BY AUDI AG AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR
 **********************************************************************
 * $Author:: spiesra $  $Date:: 2017-05-12 09:34:53#$ $Rev:: 63109   $
 **********************************************************************/
-#ifndef _testFilter_H_
-#define _testFilter_H_
+#ifndef _ULTRASONICLOGIC_H_
+#define _ULTRASONICLOGIC_H_
 
-#define OID_ADTF_TEMPLATE_FILTER "adtf.example.testFilter"
+#define OID_ADTF_TEMPLATE_FILTER "adtf.example.ultrasonicLogic"
 
 
 /*! @defgroup TemplateFilter
@@ -63,25 +63,31 @@ THIS SOFTWARE IS PROVIDED BY AUDI AG AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR
 /*!
 * This is a example filter for the AADC
 */
-class ctestFilter : public adtf::cFilter
+class cUltrasonicLogic : public adtf::cFilter
 {
     /*! set the filter ID and the version */
-    ADTF_FILTER(OID_ADTF_TEMPLATE_FILTER, "testFilter TestH", adtf::OBJCAT_DataFilter);
+    ADTF_FILTER(OID_ADTF_TEMPLATE_FILTER, "UltrasonicLogic", adtf::OBJCAT_DataFilter);
+private:
+    float _processNoise;
+
+    float _mean;
+    float _value;
+
 
 protected:
-    /*! the input pin for template data */
-    cInputPin    m_oInputPin;
-    /*! the output pin for template data */
-    cOutputPin    m_oOutputPin;
+    cInputPin m_oInputPin;
+    cInputPin m_oRequestPin;
+    cOutputPin m_oOutputPin;
+
 
 public:
     /*! default constructor for template class
            \param __info   [in] This is the name of the filter instance.
     */
-    ctestFilter(const tChar* __info);
+    cUltrasonicLogic(const tChar* __info);
 
     /*! default destructor */
-    virtual ~ctestFilter();
+    virtual ~cUltrasonicLogic();
 
 protected:
     /*! Implements the default cFilter state machine call. It will be
@@ -126,7 +132,7 @@ protected:
 };
 
 //*************************************************************************************************
-#endif // _testFilter_H_
+#endif // _ULTRASONICLOGIC_H_
 
 /*!
 *@}

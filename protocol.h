@@ -10,7 +10,11 @@
 #define valueToMessage(m) ((void*)(uint64_t)m)
 #define messageToValue(v) ((uint64_t)v)
 
+#define MEDIA_TYPE_Kalman_1D     0x00000000
+#define MEDIA_SUBTYPE_Kalman_1D  0x00000000
 
+#define MEDIA_TYPE_ULTRASONICSTRUCT     0x00000000
+#define MEDIA_SUBTYPE_ULTRASONICSTRUCT  0x00000000
 
 
 

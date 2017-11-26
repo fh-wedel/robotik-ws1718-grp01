@@ -1,1 +1,3 @@
-add_subdirectory(Kalman_1D)
+add_subdirectory(KalmanFilter)
+add_subdirectory(MedianFilter)
+add_subdirectory(UltrasonicLogic)
