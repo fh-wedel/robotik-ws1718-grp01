@@ -67,6 +67,15 @@ class c_motorcontrol : public adtf::cFilter
     /*! set the filter ID and the version */
     ADTF_FILTER(OID_ADTF_TEMPLATE_FILTER, "Motorcontol", adtf::OBJCAT_DataFilter);
 
+
+#define G 9.80665
+#define ACC_Z_NORMAL 9.75
+#define ACC_Z_DELTA_NEG 0.02
+#define ACC_Z_DELTA_POS 0.01
+
+
+#define ACC_Y_NORMAL -0.85
+#define ACC_X_NORMAL 0.13
 protected:
     /*! the input pin for template data */
     cInputPin    m_oInputPin_speed;
@@ -131,7 +140,14 @@ protected:
     *   You need to synchronize this call by your own. Have a look to adtf_util::__synchronized , adtf_util::__synchronized_obj .
     */
     tResult OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample);
+
+    tResult TransmitFloatValue(cOutputPin* oPin, tFloat32 value, tUInt32 timestamp);
+
+private:
+    cObjectPtr<IMediaTypeDescription> m_pDescriptionFloat;
+
 };
+
 
 //*************************************************************************************************
 #endif // _TEMPLATE_FILTER_H_

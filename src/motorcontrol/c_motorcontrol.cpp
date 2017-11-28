@@ -22,6 +22,7 @@ THIS SOFTWARE IS PROVIDED BY AUDI AG AND CONTRIBUTORS �AS IS� AND ANY EXPRES
 /// Create filter shell
 ADTF_FILTER_PLUGIN("Motorcontrol", OID_ADTF_TEMPLATE_FILTER, c_motorcontrol);
 
+cCriticalSection m_critSecTransmitControl;
 
 c_motorcontrol::c_motorcontrol(const tChar* __info):cFilter(__info)
 {
@@ -32,6 +33,8 @@ c_motorcontrol::~c_motorcontrol()
 {
 
 }
+
+
 
 tResult c_motorcontrol::Init(tInitStage eStage, __exception)
 {
@@ -65,10 +68,17 @@ tResult c_motorcontrol::Init(tInitStage eStage, __exception)
         cObjectPtr<IMediaType> pOutputType;
         RETURN_IF_FAILED(AllocMediaType(&pOutputType, MEDIA_TYPE_TEMPLATE, MEDIA_SUBTYPE_TEMPLATE, __exception_ptr));
 
+        cObjectPtr<IMediaDescriptionManager> pDescManager;
+        RETURN_IF_FAILED(_runtime->GetObject(OID_ADTF_MEDIA_DESCRIPTION_MANAGER,IID_ADTF_MEDIA_DESCRIPTION_MANAGER,(tVoid**)&pDescManager,__exception_ptr));
+        tChar const * strDescSignalValue = pDescManager->GetMediaDescription("tSignalValue");
+        RETURN_IF_POINTER_NULL(strDescSignalValue);
+        cObjectPtr<IMediaType> pTypeSignalValue = new cMediaType(0, 0, 0, "tSignalValue", strDescSignalValue, IMediaDescription::MDF_DDL_DEFAULT_VERSION);
+        RETURN_IF_FAILED(pTypeSignalValue->GetInterface(IID_ADTF_MEDIA_TYPE_DESCRIPTION, (tVoid**)&m_pDescriptionFloat));
+
         // create and register the output pin
-        RETURN_IF_FAILED(m_oOutputPin_speed.Create("speed_out", pOutputType, this));
+        RETURN_IF_FAILED(m_oOutputPin_speed.Create("speed_out", pOutputType,static_cast<IPinEventSink*> (this)));
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin_speed));
-        RETURN_IF_FAILED(m_oOutputPin_angle.Create("angle_out", pOutputType, this));
+        RETURN_IF_FAILED(m_oOutputPin_angle.Create("angle_out", pOutputType, static_cast<IPinEventSink*> (this)));
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin_angle));
     }
     else if (eStage == StageNormal)
@@ -108,6 +118,14 @@ tResult c_motorcontrol::Shutdown(tInitStage eStage, __exception)
     return cFilter::Shutdown(eStage, __exception_ptr);
 }
 
+tFloat32 sum_z = 0;
+tInt32 samples = 0;
+tFloat32 delta_z_neg = 0;
+tFloat32 delta_z_pos = 0;
+
+uint32_t unter = 0;
+uint32_t ober = 0;
+
 tResult c_motorcontrol::OnPinEvent(IPin* pSource,
                                     tInt nEventCode,
                                     tInt nParam1,
@@ -119,40 +137,233 @@ tResult c_motorcontrol::OnPinEvent(IPin* pSource,
     {
         // so we received a media sample, so this pointer better be valid.
         RETURN_IF_POINTER_NULL(pMediaSample);
-
         // by comparing it to our member pin variable we can find out which pin received
         // the sample
-        if (pSource == &m_oInputPin_speed)
+        if (pSource == &m_oInputPin_acceleration)
         {
-            // this will store the value for our new sample
-            tTemplateData fNewValue;
+            TransmitFloatValue(&m_oOutputPin_speed,10,0);
 
-            // now lets access the data in the sample,
-            // the Lock method gives you access to the buffer of the sample.
-            // we use a scoped sample lock to ensure that the lock is released in all circumstances.
+            tInerMeasUnitData* pSampleData = NULL;
+            if (IS_OK(pMediaSample->Lock((const tVoid**)&pSampleData))) {
 
-            {
-                // this will aquire the read lock on the sample and declare and initialize a pointer to the data
-                __sample_read_lock(pMediaSample, tTemplateData, pData);
-                // now we can access the sample data through the pointer
-                fNewValue = *pData + 1.0;
-                // the read lock on the sample will be released when leaving this scope
+                tFloat32 acc_x = pSampleData->f32A_x*G;
+                acc_x++;
+                tFloat32 acc_y = pSampleData->f32A_y*G;
+                acc_y++;
+                tFloat32 acc_z = pSampleData->f32A_z*G;
+                //printf("%f===%f===%f\n", acc_x,acc_y,acc_z);
+                if(samples<300) {
+                    sum_z += acc_z;
+                    samples++;
+                    tFloat32 delta = ACC_Z_NORMAL - acc_z;
+                    if(delta > 0)
+                        delta_z_pos += delta;
+                    else
+                        delta_z_neg += delta;
+
+
+
+                    /*printf("\nsum:%f",sum_z/samples);
+                    printf("\ndelta neg:%f",delta_z_neg/samples);
+                    printf("\ndelta pos:%f",delta_z_pos/samples);*/
+                }
+
+
+                if ((acc_z > ACC_Z_NORMAL + ACC_Z_DELTA_POS)){
+                    /*printf("\nAlarm");
+                    printf("o:%d",++ober);*/
+                    printf("\n%f", (acc_z - ACC_Z_NORMAL + ACC_Z_DELTA_POS));
+
+                }
+                if (acc_z < ACC_Z_NORMAL - ACC_Z_DELTA_NEG){
+                    /*printf("\nAlarm");
+                    printf("u:%d",++unter);*/
+                    printf("\n%f", (acc_z - ACC_Z_NORMAL - ACC_Z_DELTA_NEG));
+                }
+                //value = pSampleData->tFrontLeft.f32Value;
+                //printf("\n");
+
+                pMediaSample->Unlock(pSampleData);
             }
 
-            // now we need a new media sample to forward the data.
-            cObjectPtr<IMediaSample> pNewSample;
-            if (IS_OK(AllocMediaSample(&pNewSample)))
-            {
-                // now set its data
-                // we reuse the timestamp from the incoming media sample. Please see the api documentation
-                // (ADTF Extreme Programmers -> The ADTF Streamtime) for further reference on how sample times are handled in ADTF
-                pNewSample->Update(pMediaSample->GetTime(), &fNewValue, sizeof(tTemplateData), 0);
 
-                // and now we can transmit it
-                m_oOutputPin_speed.Transmit(pNewSample);
+
+            /*for (int i = 0; i < 100; ++i) {
+                TransmitFloatValue(&m_oOutputPin_speed,i,0);
             }
+            for (int i = 100; i > 0; --i) {
+                TransmitFloatValue(&m_oOutputPin_speed,i,0);
+            }*/
+
         }
     }
 
     RETURN_NOERROR;
 }
+
+
+tResult c_motorcontrol::TransmitFloatValue(cOutputPin* oPin, tFloat32 value, tUInt32 timestamp)
+{
+    //use mutex
+    __synchronized_obj(m_critSecTransmitControl);
+
+    cObjectPtr<IMediaSample> pMediaSample;
+    AllocMediaSample((tVoid**)&pMediaSample);
+
+    cObjectPtr<IMediaSerializer> pSerializer;
+    m_pDescriptionFloat->GetMediaSampleName();
+    m_pDescriptionFloat->GetMediaSampleSerializer(&pSerializer);
+    pMediaSample->AllocBuffer(pSerializer->GetDeserializedSize());
+
+    static bool hasID = false;
+    static tBufferID szIDValueOutput;
+    static tBufferID szIDArduinoTimestampOutput;
+
+    {
+        __adtf_sample_write_lock_mediadescription(m_pDescriptionFloat, pMediaSample, pCoderOutput);
+
+        if(!hasID)
+        {
+            pCoderOutput->GetID("f32Value", szIDValueOutput);
+            pCoderOutput->GetID("ui32ArduinoTimestamp", szIDArduinoTimestampOutput);
+            hasID = tTrue;
+        }
+
+        pCoderOutput->Set(szIDValueOutput, (tVoid*)&value);
+        pCoderOutput->Set(szIDArduinoTimestampOutput, (tVoid*)&timestamp);
+    }
+
+    pMediaSample->SetTime(_clock->GetStreamTime());
+
+    oPin->Transmit(pMediaSample);
+
+    RETURN_NOERROR;
+}
+
+/*tResult cArduinoCommunication::ProcessActuatorValue(IMediaSample* pMediaSample, tUInt8 ui8ChID)
+{
+    tFloat32 f32value = 0;
+
+    static bool hasID_SteerServo = false;
+    static tBufferID szIDF32Value_SteerServo;
+
+    static bool hasID_SpeedContr = false;
+    static tBufferID szIDF32Value_SpeedContr;
+
+
+    switch (ui8ChID)
+    {
+        case ID_ARD_ACT_STEER_SERVO:
+        {
+            __adtf_sample_read_lock_mediadescription(m_pDescriptionSteeringSignalInput, pMediaSample, pCoderInput);
+
+            if (!hasID_SteerServo)
+            {
+                pCoderInput->GetID("f32Value", szIDF32Value_SteerServo);
+                hasID_SteerServo = true;
+            }
+
+            pCoderInput->Get(szIDF32Value_SteerServo, (tVoid*)&f32value);
+
+        }
+            for (size_t i = 0; i < m_valid_ids.size(); i++)
+            {
+                if (m_com[i].get_id() == ARDUINO_CENTER_ACTUATORS)
+                {
+                    m_com[i].send_steering(f32value);
+                    break;
+                }
+            }
+
+            break;
+        case ID_ARD_ACT_SPEED_CONTR:
+        {
+            __adtf_sample_read_lock_mediadescription(m_pDescriptionAccelerateSignalInput, pMediaSample, pCoderInput);
+
+            if (!hasID_SpeedContr)
+            {
+                pCoderInput->GetID("f32Value", szIDF32Value_SpeedContr);
+                hasID_SpeedContr = true;
+            }
+
+            pCoderInput->Get(szIDF32Value_SpeedContr, (tVoid*)&f32value);
+
+        }
+            for (size_t i = 0; i < m_valid_ids.size(); i++)
+            {
+                if (m_com[i].get_id() == ARDUINO_CENTER_ACTUATORS)
+                {
+                    m_com[i].send_speed(f32value);
+                    break;
+                }
+            }
+
+            break;
+    }
+
+
+    RETURN_NOERROR;
+}
+
+
+
+ void arduino_com_client::send_steering(float angle)
+{
+    // remap angle
+    angle = angle > 100.f ? 100.f : angle;
+    angle = angle < -100.f ? -100.f : angle;
+    angle += 100.f;
+    angle *= 0.9f;
+
+    tArduinoHeader header;
+    header.ui8ID = ID_ARD_ACT_STEER_SERVO;
+    header.ui8DataLength = sizeof(tServoData);
+    header.ui32Timestamp = 0;
+
+    tServoData data;
+    data.ui8Angle = (uint8_t)angle;
+
+    std::vector<uint8_t> stuffed_frame = _pack_and_stuff_data(header, data);
+
+    boost::lock_guard<boost::mutex> lock(_serial_mutex);
+    size_t written = _port.write(stuffed_frame.data(), int(stuffed_frame.size()));
+    if (written == stuffed_frame.size())
+    {
+        _logger.log_out_frame(0, stuffed_frame);
+    }
+    else
+    {
+        _logger.log_out_frame(ERROR_FRAME_NOT_WRITTEN, stuffed_frame);
+    }
+}
+
+void arduino_com_client::send_speed(float speed)
+{
+    // remap speed
+    speed = speed > 100.f ? 100.f : speed;
+    speed = speed < -100.f ? -100.f : speed;
+    speed += 100.f;
+    speed *= 0.9f;
+
+    tArduinoHeader header;
+    header.ui8ID = ID_ARD_ACT_SPEED_CONTR;
+    header.ui8DataLength = sizeof(tServoData);
+    header.ui32Timestamp = 0;
+
+    tServoData data;
+    data.ui8Angle = (uint8_t)speed;
+
+    std::vector<uint8_t> stuffed_frame = _pack_and_stuff_data(header, data);
+
+    boost::lock_guard<boost::mutex> lock(_serial_mutex);
+    size_t written = _port.write(stuffed_frame.data(), int(stuffed_frame.size()));
+    if (written == stuffed_frame.size())
+    {
+        _logger.log_out_frame(0, stuffed_frame);
+    }
+    else
+    {
+        _logger.log_out_frame(ERROR_FRAME_NOT_WRITTEN, stuffed_frame);
+    }
+}
+ */
