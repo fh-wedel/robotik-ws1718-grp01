@@ -74,6 +74,7 @@ tResult c_motorcontrol::Init(tInitStage eStage, __exception)
         RETURN_IF_POINTER_NULL(strDescSignalValue);
         cObjectPtr<IMediaType> pTypeSignalValue = new cMediaType(0, 0, 0, "tSignalValue", strDescSignalValue, IMediaDescription::MDF_DDL_DEFAULT_VERSION);
         RETURN_IF_FAILED(pTypeSignalValue->GetInterface(IID_ADTF_MEDIA_TYPE_DESCRIPTION, (tVoid**)&m_pDescriptionFloat));
+		    RETURN_IF_FAILED(pTypeSignalValue->GetInterface(IID_ADTF_MEDIA_TYPE_DESCRIPTION, (tVoid**)&m_pDescriptionAccelerateSignalInput));
 
         // create and register the output pin
         RETURN_IF_FAILED(m_oOutputPin_speed.Create("speed_out", pOutputType,static_cast<IPinEventSink*> (this)));
@@ -123,6 +124,8 @@ tInt32 samples = 0;
 tFloat32 delta_z_neg = 0;
 tFloat32 delta_z_pos = 0;
 
+int test_motor = 0;
+
 uint32_t unter = 0;
 uint32_t ober = 0;
 
@@ -139,9 +142,32 @@ tResult c_motorcontrol::OnPinEvent(IPin* pSource,
         RETURN_IF_POINTER_NULL(pMediaSample);
         // by comparing it to our member pin variable we can find out which pin received
         // the sample
+        
+        if (pSource == &m_oInputPin_speed){
+			    tFloat32 f32value = 0;
+
+			
+			static bool hasID_SpeedContr = false;
+			static tBufferID szIDF32Value_SpeedContr;
+
+			 __adtf_sample_read_lock_mediadescription(m_pDescriptionAccelerateSignalInput, pMediaSample, pCoderInput);
+
+        if (!hasID_SpeedContr)
+        {
+            pCoderInput->GetID("f32Value", szIDF32Value_SpeedContr);
+            hasID_SpeedContr = true;
+        }
+
+        pCoderInput->Get(szIDF32Value_SpeedContr, (tVoid*)&f32value);
+
+		printf("%f\n",f32value);
+		
+		}
+        
         if (pSource == &m_oInputPin_acceleration)
         {
-            TransmitFloatValue(&m_oOutputPin_speed,10,0);
+			
+            TransmitFloatValue(&m_oOutputPin_speed,100.0,0);
 
             tInerMeasUnitData* pSampleData = NULL;
             if (IS_OK(pMediaSample->Lock((const tVoid**)&pSampleData))) {

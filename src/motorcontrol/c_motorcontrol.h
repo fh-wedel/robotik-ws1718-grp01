@@ -18,7 +18,7 @@ THIS SOFTWARE IS PROVIDED BY AUDI AG AND CONTRIBUTORS �AS IS� AND ANY EXPRES
 #ifndef _TEMPLATE_FILTER_H_
 #define _TEMPLATE_FILTER_H_
 
-#define OID_ADTF_TEMPLATE_FILTER "adtf.example.template_filter"
+#define OID_ADTF_TEMPLATE_FILTER "adtf.example.motorcontrol"
 
 
 /*! @defgroup TemplateFilter
@@ -145,6 +145,10 @@ protected:
 
 private:
     cObjectPtr<IMediaTypeDescription> m_pDescriptionFloat;
+
+
+	    /*! media desctiption for reading accelerate input data */
+    cObjectPtr<IMediaTypeDescription> m_pDescriptionAccelerateSignalInput;
 
 };
 
