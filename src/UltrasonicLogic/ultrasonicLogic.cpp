@@ -12,10 +12,7 @@ ADTF_FILTER_PLUGIN("UltrasonicLogic", OID_ADTF_TEMPLATE_FILTER, cUltrasonicLogic
 
 
 cUltrasonicLogic::cUltrasonicLogic(const tChar *__info) {
-    SetPropertyInt("processNoise", 0);
-    SetPropertyStr("processNoise" NSSUBPROP_DESCRIPTION, "Prozessrauschen");
-    SetPropertyInt("processNoise" NSSUBPROP_MIN, 0);
-    SetPropertyInt("processNoise" NSSUBPROP_MAX, 1000);
+
 }
 
 cUltrasonicLogic::~cUltrasonicLogic() {
@@ -26,28 +23,28 @@ tResult cUltrasonicLogic::Init(tInitStage eStage, __exception) {
     // never miss calling the parent implementation!!
     RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
 
-    //_processNoise = (unsigned int)GetPropertyInt("processNoise");
+
 
     // in StageFirst you can create and register your static pins.
     if (eStage == StageFirst) {
-        // get a media type for the input pin
+
         cObjectPtr<IMediaType> pInputType;
-        RETURN_IF_FAILED(AllocMediaType(&pInputType, MEDIA_TYPE_Kalman_1D, MEDIA_SUBTYPE_Kalman_1D, __exception_ptr));
-
-        // create and register the input pin
-        RETURN_IF_FAILED(m_oInputPin.Create("values", pInputType, this));
+        RETURN_IF_FAILED(AllocMediaType(&pInputType, MEDIA_TYPE_ULTRASONICSTRUCT, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
+        RETURN_IF_FAILED(m_oInputPin.Create("ultrasonicStruct", pInputType, this));
         RETURN_IF_FAILED(RegisterPin(&m_oInputPin));
-
         RETURN_IF_FAILED(m_oRequestPin.Create("request", pInputType, this));
         RETURN_IF_FAILED(RegisterPin(&m_oRequestPin));
 
-        // get a media type for the output pin
-        cObjectPtr<IMediaType> pOutputType;
-        RETURN_IF_FAILED(AllocMediaType(&pOutputType, MEDIA_TYPE_Kalman_1D, MEDIA_SUBTYPE_Kalman_1D, __exception_ptr));
 
-        // create and register the output pin
-        RETURN_IF_FAILED(m_oOutputPin.Create("filteredValue", pOutputType, this));
+        cObjectPtr<IMediaType> pOutputTypeUltrasonicStruct;
+        RETURN_IF_FAILED(AllocMediaType(&pOutputTypeUltrasonicStruct, MEDIA_TYPE_ULTRASONICSTRUCT, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
+        RETURN_IF_FAILED(m_oOutputPin.Create("outputDUMMY", pOutputTypeUltrasonicStruct, this));
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin));
+
+        cObjectPtr<IMediaType> pOutputTypeFlag;
+        RETURN_IF_FAILED(AllocMediaType(&pOutputTypeFlag, MEDIA_TYPE_REQUEST, MEDIA_SUBTYPE_REQUEST, __exception_ptr));
+        RETURN_IF_FAILED(m_oEmergencyFlagPin.Create("EmergencyFlag", pOutputTypeFlag, this));
+        RETURN_IF_FAILED(RegisterPin(&m_oEmergencyFlagPin));
     }
 
     RETURN_NOERROR;

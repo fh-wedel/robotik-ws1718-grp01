@@ -6,8 +6,7 @@
 /*
 * MedianFilter zum Filtern der Ultraschallsensoren.
 */
-class cMedianFilter : public adtf::cFilter
-{
+class cMedianFilter : public adtf::cFilter {
     /*! set the filter ID and the version */
     ADTF_FILTER(OID_ADTF_MEDIAN_FILTER, "medianFilter", adtf::OBJCAT_DataFilter);
 
@@ -25,8 +24,8 @@ private:
     vector<tFloat32> _list_FrontCenterRight;
 
 protected:
-    cInputPin    m_oInputPin;
-    cOutputPin    m_oOutputPin;
+    cInputPin m_oInputPin;
+    cOutputPin m_oOutputPin;
 
 public:
     cMedianFilter(const tChar* __info);
@@ -44,6 +43,3 @@ protected:
 //*************************************************************************************************
 #endif // _medianFilter_H_
 
-/*!
-*@}
-*/

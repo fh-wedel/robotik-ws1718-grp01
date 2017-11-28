@@ -68,17 +68,19 @@ class cKalmanFilter : public adtf::cFilter
     /*! set the filter ID and the version */
     ADTF_FILTER(OID_ADTF_TEMPLATE_FILTER, "KalmanFilter", adtf::OBJCAT_DataFilter);
 private:
-    float _processNoise;
+    float _sigma_mess;
+    float _sigma_move;
 
-    float _mean;
-    float _value;
+    float _sig;
+    float _mu;
 
+    void update(tFloat32 newVal);
+    void predict(tFloat32 newVal);
 
 protected:
     cInputPin m_oInputPin;
     cInputPin m_oRequestPin;
     cOutputPin m_oOutputPin;
-
 
 public:
     /*! default constructor for template class
@@ -88,6 +90,8 @@ public:
 
     /*! default destructor */
     virtual ~cKalmanFilter();
+
+
 
 protected:
     /*! Implements the default cFilter state machine call. It will be
