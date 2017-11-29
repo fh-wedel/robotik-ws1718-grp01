@@ -1,2 +1,3 @@
+add_library(Protocol protocol.h) #nur fuer die IDE wichtig...
 
 add_subdirectory(src)
