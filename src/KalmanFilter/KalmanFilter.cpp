@@ -1,5 +1,4 @@
 
-#include <math.h>
 #include "stdafx.h"
 #include "KalmanFilter.h"
 #include <aadc_structs.h>
@@ -38,12 +37,6 @@ tResult cKalmanFilter::Init(tInitStage eStage, __exception) {
         RETURN_IF_FAILED(AllocMediaType(&pInputTypeUltrasonnicStruct, MEDIA_TYPE_ULTRASONICSTRUCT, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
         RETURN_IF_FAILED(m_oInputPin.Create("ultrasonicStruct", pInputTypeUltrasonnicStruct, this));
         RETURN_IF_FAILED(RegisterPin(&m_oInputPin));
-
-        cObjectPtr<IMediaType> pInputTypeRequest;
-        RETURN_IF_FAILED(AllocMediaType(&pInputTypeRequest, MEDIA_TYPE_REQUEST, MEDIA_SUBTYPE_REQUEST, __exception_ptr));
-        RETURN_IF_FAILED(m_oRequestPin.Create("request", pInputTypeRequest, this));
-        RETURN_IF_FAILED(RegisterPin(&m_oRequestPin));
-
 
         cObjectPtr<IMediaType> pOutputTypeUltrasonnicStruct;
         RETURN_IF_FAILED(AllocMediaType(&pOutputTypeUltrasonnicStruct, MEDIA_TYPE_ULTRASONICSTRUCT, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
@@ -106,11 +99,11 @@ tResult cKalmanFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, 
                 }
                  */
 
-
+                MotorControl m = {};
+                LineDetectionDiff l = 5;
+                sendData<LineDetectionDiff>(m_oOutputPin, &l);
+                sendData<MotorControl>(m_oOutputPin, &m);
             }
-        } else if (pSource == &m_oRequestPin) {
-            //Schaetzung
-
         }
 
     }

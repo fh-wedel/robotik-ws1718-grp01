@@ -32,19 +32,11 @@ tResult cUltrasonicLogic::Init(tInitStage eStage, __exception) {
         RETURN_IF_FAILED(AllocMediaType(&pInputType, MEDIA_TYPE_ULTRASONICSTRUCT, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
         RETURN_IF_FAILED(m_oInputPin.Create("ultrasonicStruct", pInputType, this));
         RETURN_IF_FAILED(RegisterPin(&m_oInputPin));
-        RETURN_IF_FAILED(m_oRequestPin.Create("request", pInputType, this));
-        RETURN_IF_FAILED(RegisterPin(&m_oRequestPin));
-
 
         cObjectPtr<IMediaType> pOutputTypeUltrasonicStruct;
         RETURN_IF_FAILED(AllocMediaType(&pOutputTypeUltrasonicStruct, MEDIA_TYPE_ULTRASONICSTRUCT, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
         RETURN_IF_FAILED(m_oOutputPin.Create("outputDUMMY", pOutputTypeUltrasonicStruct, this));
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin));
-
-        cObjectPtr<IMediaType> pOutputTypeFlag;
-        RETURN_IF_FAILED(AllocMediaType(&pOutputTypeFlag, MEDIA_TYPE_REQUEST, MEDIA_SUBTYPE_REQUEST, __exception_ptr));
-        RETURN_IF_FAILED(m_oEmergencyFlagPin.Create("EmergencyFlag", pOutputTypeFlag, this));
-        RETURN_IF_FAILED(RegisterPin(&m_oEmergencyFlagPin));
     }
 
     RETURN_NOERROR;
@@ -78,9 +70,6 @@ tResult cUltrasonicLogic::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam
 
 
             }
-        } else if (pSource == &m_oRequestPin) {
-            //Schaetzung
-
         }
 
     }

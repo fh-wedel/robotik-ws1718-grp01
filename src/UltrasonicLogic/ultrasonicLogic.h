@@ -19,7 +19,6 @@ private:
 
 protected:
     cInputPin m_oInputPin;
-    cInputPin m_oRequestPin;
     cOutputPin m_oOutputPin;
     cOutputPin m_oEmergencyFlagPin;
 
