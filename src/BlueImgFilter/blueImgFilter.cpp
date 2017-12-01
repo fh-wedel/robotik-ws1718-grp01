@@ -56,8 +56,11 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
 
         if (pSource == &m_oInputPin) {
-            cv::Mat image(200,200,CV_8UC3,cv::Scalar(0,0,100));
-            cv::imshow("Fenstername ImgShow", image);
+            Mat image = receiveData<Mat>(pMediaSample);
+            Mat filteredImage;
+
+            // cv::Mat image(200,200,CV_8UC3,cv::Scalar(0,0,100));
+           // cv::imshow("Fenstername ImgShow", image);
 
             //image = receiveData<cv::Mat>(pMediaSample);
             //cv::imshow("Fenstername", mtrx);
