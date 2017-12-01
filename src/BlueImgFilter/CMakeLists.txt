@@ -1,5 +1,7 @@
 # add the include directory of the filter
 include_directories(../include)
+INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIR})
+
 # declare our filter
 set(FILTER_NAME BlueImgFilter)
 

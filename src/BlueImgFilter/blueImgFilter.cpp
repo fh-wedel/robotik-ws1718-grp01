@@ -1,10 +1,16 @@
+#include <iostream>
+#include <stdio.h>
 
+//#include <opencv2/core/mat.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include "stdafx.h"
 #include "blueImgFilter.h"
-#include <aadc_structs.h>
-#include "../../protocol.h"
 
+#include "../../protocol.h"
+//#include <opencv2/core/mat.hpp>
+
+cv::Mat dgfhgjhjk();
 
 ADTF_FILTER_PLUGIN("blueImgFilter", OID_ADTF_BLUEIMG_FILTER, cBlueImgFilter);
 
@@ -48,7 +54,18 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         RETURN_IF_POINTER_NULL(pMediaSample);
 
+
         if (pSource == &m_oInputPin) {
+            cv::Mat image(200,200,CV_8UC3,cv::Scalar(0,0,100));
+            cv::imshow("Fenstername ImgShow", image);
+
+            //image = receiveData<cv::Mat>(pMediaSample);
+            //cv::imshow("Fenstername", mtrx);
+
+
+
+            cout << "Daten empfangen." << endl;
+
         }
     }
     RETURN_NOERROR;
