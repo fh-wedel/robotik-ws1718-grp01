@@ -90,45 +90,30 @@ tResult cMedianFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, 
 
         if (pSource == &m_oInputPin) {
 
-            tUltrasonicStruct* rData = NULL;
-            if (IS_OK(pMediaSample->Lock((const tVoid**)&rData))) {
+            UltrasonicStruct receivedUltrasonicStruct = receiveData<UltrasonicStruct>(pMediaSample);
+            rotateListInsertNewVal(&_list_FrontCenter, receivedUltrasonicStruct.tFrontCenter.f32Value);
+            rotateListInsertNewVal(&_list_FrontCenterLeft, receivedUltrasonicStruct.tFrontCenterLeft.f32Value);
+            rotateListInsertNewVal(&_list_FrontLeft, receivedUltrasonicStruct.tFrontLeft.f32Value);
+            rotateListInsertNewVal(&_list_SideLeft, receivedUltrasonicStruct.tSideLeft.f32Value);
+            rotateListInsertNewVal(&_list_RearLeft, receivedUltrasonicStruct.tRearLeft.f32Value);
+            rotateListInsertNewVal(&_list_RearCenter, receivedUltrasonicStruct.tRearCenter.f32Value);
+            rotateListInsertNewVal(&_list_RearRight, receivedUltrasonicStruct.tRearRight.f32Value);
+            rotateListInsertNewVal(&_list_SideRight, receivedUltrasonicStruct.tSideRight.f32Value);
+            rotateListInsertNewVal(&_list_FrontRight, receivedUltrasonicStruct.tFrontRight.f32Value);
+            rotateListInsertNewVal(&_list_FrontCenterRight, receivedUltrasonicStruct.tFrontCenterRight.f32Value);
 
-                //einfuegen der neuen Werte in die jeweilige Liste
-                rotateListInsertNewVal(&_list_FrontCenter, rData->tFrontCenter.f32Value);
-                rotateListInsertNewVal(&_list_FrontCenterLeft, rData->tFrontCenterLeft.f32Value);
-                rotateListInsertNewVal(&_list_FrontLeft, rData->tFrontLeft.f32Value);
-                rotateListInsertNewVal(&_list_SideLeft, rData->tSideLeft.f32Value);
-                rotateListInsertNewVal(&_list_RearLeft, rData->tRearLeft.f32Value);
-                rotateListInsertNewVal(&_list_RearCenter, rData->tRearCenter.f32Value);
-                rotateListInsertNewVal(&_list_RearRight, rData->tRearRight.f32Value);
-                rotateListInsertNewVal(&_list_SideRight, rData->tSideRight.f32Value);
-                rotateListInsertNewVal(&_list_FrontRight, rData->tFrontRight.f32Value);
-                rotateListInsertNewVal(&_list_FrontCenterRight, rData->tFrontCenterRight.f32Value);
-
-                pMediaSample->Unlock(rData);
-
-                //Erzeugen des neuen gefilterten UltrasonicStructs
-                tUltrasonicStruct filteredUltrasonicStruct;
-                filteredUltrasonicStruct.tFrontCenter.f32Value = sortCopyMedian(_list_FrontCenter);
-                filteredUltrasonicStruct.tFrontCenterLeft.f32Value = sortCopyMedian(_list_FrontCenterLeft);
-                filteredUltrasonicStruct.tFrontLeft.f32Value = sortCopyMedian(_list_FrontLeft);
-                filteredUltrasonicStruct.tSideLeft.f32Value = sortCopyMedian(_list_SideLeft);
-                filteredUltrasonicStruct.tRearLeft.f32Value = sortCopyMedian(_list_RearLeft);
-                filteredUltrasonicStruct.tRearCenter.f32Value = sortCopyMedian(_list_RearCenter);
-                filteredUltrasonicStruct.tRearRight.f32Value = sortCopyMedian(_list_RearRight);
-                filteredUltrasonicStruct.tSideRight.f32Value = sortCopyMedian(_list_SideRight);
-                filteredUltrasonicStruct.tFrontRight.f32Value = sortCopyMedian(_list_FrontRight);
-                filteredUltrasonicStruct.tFrontCenterRight.f32Value = sortCopyMedian(_list_FrontCenterRight);
-
-
-                //Senden des neuen gefilterten UltrasonicStructs
-                cObjectPtr<IMediaSample> pNewSample;
-                if (IS_OK(AllocMediaSample(&pNewSample)))
-                {
-                    pNewSample->Update(pMediaSample->GetTime(), &filteredUltrasonicStruct, sizeof(filteredUltrasonicStruct), 0);
-                    m_oOutputPin.Transmit(pNewSample);
-                }
-            }
+            UltrasonicStruct filteredUltrasonicStruct;
+            filteredUltrasonicStruct.tFrontCenter.f32Value = sortCopyMedian(_list_FrontCenter);
+            filteredUltrasonicStruct.tFrontCenterLeft.f32Value = sortCopyMedian(_list_FrontCenterLeft);
+            filteredUltrasonicStruct.tFrontLeft.f32Value = sortCopyMedian(_list_FrontLeft);
+            filteredUltrasonicStruct.tSideLeft.f32Value = sortCopyMedian(_list_SideLeft);
+            filteredUltrasonicStruct.tRearLeft.f32Value = sortCopyMedian(_list_RearLeft);
+            filteredUltrasonicStruct.tRearCenter.f32Value = sortCopyMedian(_list_RearCenter);
+            filteredUltrasonicStruct.tRearRight.f32Value = sortCopyMedian(_list_RearRight);
+            filteredUltrasonicStruct.tSideRight.f32Value = sortCopyMedian(_list_SideRight);
+            filteredUltrasonicStruct.tFrontRight.f32Value = sortCopyMedian(_list_FrontRight);
+            filteredUltrasonicStruct.tFrontCenterRight.f32Value = sortCopyMedian(_list_FrontCenterRight);
+            sendData<UltrasonicStruct>(m_oOutputPin, &filteredUltrasonicStruct);
         }
     }
     RETURN_NOERROR;

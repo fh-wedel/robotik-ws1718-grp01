@@ -1,22 +1,19 @@
 # add the include directory of the filter
 include_directories(../include)
+# declare our filter
+set(FILTER_NAME TestBildFilter)
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIR})
 
-
-
-# declare our filter
-set(FILTER_NAME KalmanFilter)
-
 adtf_add_filter(${FILTER_NAME}
     stdafx.h
-        KalmanFilter.h
-        KalmanFilter.cpp
+        cTestBildFilter.h
+        cTestBildFilter.cpp
 )
 
 target_link_libraries(${FILTER_NAME} ${OpenCV_LIBS})
 
-adtf_set_folder(${FILTER_NAME} kalmanFilter)
+adtf_set_folder(${FILTER_NAME} TestBildFilter)
 
 # Specify where it should be installed to
 adtf_install_plugin(${FILTER_NAME} ${CMAKE_INSTALL_BINARY})

@@ -3,8 +3,10 @@
 #include "KalmanFilter.h"
 #include <aadc_structs.h>
 #include "../../protocol.h"
+#include "ADTF_OpenCV_helper.h"
 
 #include <iostream>
+#include <opencv2/core/mat.hpp>
 
 
 ADTF_FILTER_PLUGIN("KalmanFilter", OID_ADTF_TEMPLATE_FILTER, cKalmanFilter);
@@ -15,6 +17,7 @@ cKalmanFilter::cKalmanFilter(const tChar* __info):cFilter(__info) {
     SetPropertyStr("processNoise" NSSUBPROP_DESCRIPTION, "Prozessrauschen");
     SetPropertyInt("processNoise" NSSUBPROP_MIN, 0);
     SetPropertyInt("processNoise" NSSUBPROP_MAX, 1000);
+
 }
 
 cKalmanFilter::~cKalmanFilter() {
@@ -34,12 +37,13 @@ tResult cKalmanFilter::Init(tInitStage eStage, __exception) {
     if (eStage == StageFirst) {
 
         cObjectPtr<IMediaType> pInputTypeUltrasonnicStruct;
-        RETURN_IF_FAILED(AllocMediaType(&pInputTypeUltrasonnicStruct, MEDIA_TYPE_ULTRASONICSTRUCT, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
+
+        RETURN_IF_FAILED(AllocMediaType(&pInputTypeUltrasonnicStruct, MEDIA_TYPE_USER, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
         RETURN_IF_FAILED(m_oInputPin.Create("ultrasonicStruct", pInputTypeUltrasonnicStruct, this));
         RETURN_IF_FAILED(RegisterPin(&m_oInputPin));
 
         cObjectPtr<IMediaType> pOutputTypeUltrasonnicStruct;
-        RETURN_IF_FAILED(AllocMediaType(&pOutputTypeUltrasonnicStruct, MEDIA_TYPE_ULTRASONICSTRUCT, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
+        RETURN_IF_FAILED(AllocMediaType(&pOutputTypeUltrasonnicStruct, MEDIA_TYPE_USER, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
         RETURN_IF_FAILED(m_oOutputPin.Create("filteredUltrasonicStruct", pOutputTypeUltrasonnicStruct, this));
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin));
     }

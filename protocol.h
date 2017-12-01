@@ -11,18 +11,17 @@
 #include <sdk/mediaallochelper.h>
 #include <sdk/filter.h>
 
+#define MEDIA_TYPE_ULTRASONICSTRUCT     MEDIA_HANDLE_UNKNOWN
+#define MEDIA_SUBTYPE_ULTRASONICSTRUCT  MEDIA_HANDLE_UNKNOWN
 
-#define MEDIA_TYPE_ULTRASONICSTRUCT     0
-#define MEDIA_SUBTYPE_ULTRASONICSTRUCT  0
+#define MEDIA_TYPE_FLAG                 MEDIA_TYPE_USER
+#define MEDIA_SUBTYPE_FLAG              0
 
-#define MEDIA_TYPE_FLAG                 1
-#define MEDIA_SUBTYPE_FLAG              1
+#define MEDIA_TYPE_MOTORCONTROL         MEDIA_TYPE_USER
+#define MEDIA_SUBTYPE_MOTORCONTROL      1
 
-#define MEDIA_TYPE_MOTORCONTROL         2
-#define MEDIA_SUBTYPE_MOTORCONTROL      2
-
-#define MEDIA_TYPE_LINEDETECTIONDIFF    3
-#define MEDIA_SUBTYPE_LINEDETECTIONDIFF 4
+#define MEDIA_TYPE_LINEDETECTION        MEDIA_TYPE_USER
+#define MEDIA_SUBTYPE_LINEDETECTIONDIFF 2
 
 
 typedef struct {
@@ -34,7 +33,7 @@ typedef uint64_t Flag;
 typedef int64_t LineDetectionDiff;
 typedef tUltrasonicStruct UltrasonicStruct;
 
-template <typename T> bool sendData(adtf::cOutputPin &outPin, T* data) {
+template <typename T> bool sendData(adtf::cPin &outPin, T* data) {
     cObjectPtr<adtf::IMediaSample> pNewSample;
     if (IS_OK(adtf::cMediaAllocHelper::AllocMediaSample(&pNewSample)))
     {
