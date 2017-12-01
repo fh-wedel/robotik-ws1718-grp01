@@ -50,10 +50,17 @@ template <typename T> bool sendData(adtf::cPin &outPin, T* data) {
     return false;
 }
 
-template <> bool sendData<cv::Mat>(adtf::cPin &outPin, cv::Mat* data) {
+bool sendData(adtf::cVideoPin &outPin, cv::Mat* data) {
     cObjectPtr<adtf::IMediaSample> pNewSample;
+    static tBitmapFormat sOutputFormat;
     if (IS_OK(adtf::cMediaAllocHelper::AllocMediaSample(&pNewSample)))
     {
+
+        Mat2BmpFormat(*data, sOutputFormat);
+
+
+        outPin.SetFormat(&sOutputFormat, NULL);
+
         //Update Kopiert die Daten (laut Doku)
         pNewSample->Update(0, data->data, VIDEO_SIZE_X * VIDEO_SIZE_Y, 0);
         outPin.Transmit(pNewSample);
