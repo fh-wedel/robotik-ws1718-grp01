@@ -19,21 +19,17 @@ tResult cTestBildFilter::Init(tInitStage eStage, __exception) {
 
     if (eStage == StageFirst) {
 
-        // get a media type for the input pin
-        cObjectPtr<IMediaType> pInputType;
-        RETURN_IF_FAILED(AllocMediaType(&pInputType, MEDIA_TYPE_VIDEO, MEDIA_SUBTYPE_VIDEO_UNCOMPRESSED, __exception_ptr));
+        cObjectPtr<IMediaDescriptionManager> pDescManager;
+        RETURN_IF_FAILED(_runtime->GetObject(OID_ADTF_MEDIA_DESCRIPTION_MANAGER, IID_ADTF_MEDIA_DESCRIPTION_MANAGER, (tVoid**)&pDescManager, __exception_ptr));
 
-        // create and register the input pin
-        RETURN_IF_FAILED(m_oInputPin.Create("video_in", pInputType, this));
-        RETURN_IF_FAILED(RegisterPin(&m_oInputPin));
+        // Video Input
+        RETURN_IF_FAILED(m_oVideoInputPin.Create("Video_Input", IPin::PD_Input, static_cast<IPinEventSink*>(this)));
+        RETURN_IF_FAILED(RegisterPin(&m_oVideoInputPin));
 
-        // get a media type for the output pin
-        cObjectPtr<IMediaType> pOutputType;
-        RETURN_IF_FAILED(AllocMediaType(&pOutputType, MEDIA_TYPE_VIDEO, MEDIA_SUBTYPE_VIDEO_UNCOMPRESSED, __exception_ptr));
 
-        // create and register the output pin
-        RETURN_IF_FAILED(m_oOutputPin.Create("video_out", pOutputType, this));
-        RETURN_IF_FAILED(RegisterPin(&m_oOutputPin));
+        // Video Output
+        RETURN_IF_FAILED(m_oVideoOutputPin.Create("Video_Output", IPin::PD_Output, static_cast<IPinEventSink*>(this)));
+        RETURN_IF_FAILED(RegisterPin(&m_oVideoOutputPin));
     }
 
     RETURN_NOERROR;
@@ -48,10 +44,24 @@ tResult cTestBildFilter::Shutdown(tInitStage eStage, __exception) {
 tResult cTestBildFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample) {
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         RETURN_IF_POINTER_NULL(pMediaSample);
-        if (pSource == &m_oInputPin) {
+        if (pSource == &m_oVideoInputPin) {
             cout << "daten <--" << endl;
-            _saveImage = receiveData<Mat>(pMediaSample);
-            sendData<Mat>(m_oOutputPin, &_saveImage);
+
+            Mat saveImage;
+            saveImage = receiveData<Mat>(pMediaSample);
+
+            sendData<Mat>(m_oVideoOutputPin, &saveImage);
+            //newImage.Create(m_oVideoOutputPin.GetFormat(), NULL, saveImage.data);
+
+
+            //sendData<cImage>(m_oVideoOutputPin, &newImage);
+            /*cImage newImage;
+
+            RETURN_IF_FAILED(pMediaSample->Update(_clock->GetStreamTime(), newImage.GetBitmap(), newImage.GetSize(), IMediaSample::MSF_None));
+            //transmitting
+            RETURN_IF_FAILED(m_oVideoOutputPin.Transmit(pMediaSample));
+
+            saveImage.release();*/
         }
     }
     RETURN_NOERROR;

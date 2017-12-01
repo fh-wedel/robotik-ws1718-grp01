@@ -24,6 +24,11 @@
 #define MEDIA_SUBTYPE_LINEDETECTIONDIFF 2
 
 
+#define VIDEO_SIZE_X                    640
+#define VIDEO_SIZE_Y                    480
+
+
+
 typedef struct {
     float angle;
     float speed;
@@ -37,8 +42,23 @@ template <typename T> bool sendData(adtf::cPin &outPin, T* data) {
     cObjectPtr<adtf::IMediaSample> pNewSample;
     if (IS_OK(adtf::cMediaAllocHelper::AllocMediaSample(&pNewSample)))
     {
+        //Update Kopiert die Daten (laut Doku)
         pNewSample->Update(0, data, sizeof(T), 0);
         outPin.Transmit(pNewSample);
+        return true;
+    }
+    return false;
+}
+
+template <> bool sendData<cv::Mat>(adtf::cPin &outPin, cv::Mat* data) {
+    cObjectPtr<adtf::IMediaSample> pNewSample;
+    if (IS_OK(adtf::cMediaAllocHelper::AllocMediaSample(&pNewSample)))
+    {
+        //Update Kopiert die Daten (laut Doku)
+        pNewSample->Update(0, data->data, VIDEO_SIZE_X * VIDEO_SIZE_Y, 0);
+        outPin.Transmit(pNewSample);
+        //Bei Speicherleck doch wichtig!
+        //data->release();
         return true;
     }
     return false;
@@ -53,6 +73,17 @@ template <typename T> T receiveData(adtf::IMediaSample* pSample) {
     }
     return rDataCopy;
 }
+
+template <> cv::Mat receiveData<cv::Mat>(adtf::IMediaSample* pSample) {
+    const void* rData;
+    cv::Mat rDataCopy(cv::Size(VIDEO_SIZE_X, VIDEO_SIZE_Y), CV_8UC3);
+    if (IS_OK(pSample->Lock((const tVoid**)&rData))) {
+        memcpy(rDataCopy.data, rData, VIDEO_SIZE_X * VIDEO_SIZE_Y);
+        pSample->Unlock(rData);
+    }
+    return rDataCopy;
+}
+
 
 
 #endif //PROJECT_PROTOCOL_H

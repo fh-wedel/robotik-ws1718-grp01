@@ -10,18 +10,14 @@
 
 #define OID_ADTF_TESTBILDFILTER "adtf.example.testBildFilter"
 
-/*
-* MedianFilter zum Filtern der Ultraschallsensoren.
-*/
 class cTestBildFilter : public adtf::cFilter {
     ADTF_FILTER(OID_ADTF_TESTBILDFILTER, "testBildFilter", adtf::OBJCAT_DataFilter);
 
 private:
-    Mat _saveImage;
 
 protected:
-    cInputPin m_oInputPin;
-    cOutputPin m_oOutputPin;
+    cVideoPin m_oVideoInputPin;
+    cVideoPin m_oVideoOutputPin;
 
 public:
     cTestBildFilter(const tChar* __info);
