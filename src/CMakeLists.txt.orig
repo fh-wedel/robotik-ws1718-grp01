@@ -1,5 +1,9 @@
+<<<<<<< HEAD
+
+add_subdirectory(BlueImgFilter)
+=======
 #add_subdirectory(KalmanFilter)
 add_subdirectory(MedianFilter)
 #add_subdirectory(UltrasonicLogic)
 add_subdirectory(TestBildFilter)
-add_subdirectory(BlueImgFilter)
+>>>>>>> kalman
