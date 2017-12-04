@@ -39,13 +39,13 @@ typedef uint64_t Flag;
 typedef int64_t LineDetectionDiff;
 typedef tUltrasonicStruct UltrasonicStruct;
 
-template <typename T> bool sendData(adtf::cPin &outPin, T* data) {
+template <typename T> bool sendData(adtf::cPin *outPin, T* data) {
     cObjectPtr<adtf::IMediaSample> pNewSample;
     if (IS_OK(adtf::cMediaAllocHelper::AllocMediaSample(&pNewSample)))
     {
         //Update Kopiert die Daten (laut Doku)
         pNewSample->Update(0, data, sizeof(T), 0);
-        outPin.Transmit(pNewSample);
+        outPin->Transmit(pNewSample);
         return true;
     }
     return false;
