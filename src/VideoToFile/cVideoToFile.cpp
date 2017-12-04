@@ -37,8 +37,6 @@ tResult cVideoToFile::Shutdown(tInitStage eStage, __exception) {
 
 tResult cVideoToFile::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample) {
 
-    Mat m = receiveData(&m_oVideoInputPin, pMediaSample);
-
     RETURN_IF_POINTER_NULL(pMediaSample);
     RETURN_IF_POINTER_NULL(pSource);
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
@@ -48,11 +46,16 @@ tResult cVideoToFile::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, t
                 RETURN_IF_FAILED(UpdateInputImageFormat(m_oVideoInputPin.GetFormat()));
             }
 
+            Mat m = receiveData(&m_oVideoInputPin, pMediaSample);
+
             ProcessVideo(pMediaSample);
 
             if (!m_videoWriter.isOpened()) {
                 cout << "size: width= " << m_sInputFormat.nWidth << " ,height= " << m_sInputFormat.nHeight << endl;
-                m_videoWriter.open(GetPropertyStr("filename"), CV_FOURCC('M', 'J', 'P', 'G'), 10, Size(m_sInputFormat.nWidth, m_sInputFormat.nHeight));
+                if (m_sInputFormat.nWidth > 0 && m_sInputFormat.nHeight > 0) {
+                    m_videoWriter.open(GetPropertyStr("filename"), CV_FOURCC('M', 'J', 'P', 'G'), 10,
+                                       Size(m_sInputFormat.nWidth, m_sInputFormat.nHeight));
+                }
             }
             m_videoWriter.write(m_inputImage);
 

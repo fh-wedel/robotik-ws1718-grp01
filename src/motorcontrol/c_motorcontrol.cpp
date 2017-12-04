@@ -144,29 +144,29 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
                 if (cur_speed < new_speed)
                     for (int i = (int) cur_speed; i < (int) new_speed; i++) {
                         float i_float = (float) i;
-                        sendData<float>(m_oOutputPin_speed, &i_float);
+                        sendData<float>(&m_oOutputPin_speed, &i_float);
                     }
                 else
                     for (int i = (int) cur_speed; i > (int) new_speed; i--) {
                         float i_float = (float) i;
-                        sendData<float>(m_oOutputPin_speed, &i_float);
+                        sendData<float>(&m_oOutputPin_speed, &i_float);
                     }
 
             if (cur_angle < new_angle)
                 for (int i = (int) cur_angle; i < (int) new_angle; i++) {
                     float i_float = (float) i;
-                    sendData<float>(m_oOutputPin_angle, &i_float);
+                    sendData<float>(&m_oOutputPin_angle, &i_float);
                 }
             else
                 for (int i = (int) cur_angle; i > (int) new_angle; i--) {
                     float i_float = (float) i;
-                    sendData<float>(m_oOutputPin_angle, &i_float);
+                    sendData<float>(&m_oOutputPin_angle, &i_float);
                 }
 
 
             if (!emergeny_break_enabled)
-                sendData<float>(m_oOutputPin_speed, &new_speed);
-            sendData<float>(m_oOutputPin_angle, &new_angle);
+                sendData<float>(&m_oOutputPin_speed, &new_speed);
+            sendData<float>(&m_oOutputPin_angle, &new_angle);
 
 
         }
@@ -197,10 +197,11 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
                            CALIBRATION_SAMPLES, (sum_x / samples), (sum_y / samples), (sum_z / samples));
                 }
             }
-            printf("%f\n", acc_z);
+            //printf("%f\n", acc_z);
             //TODO emergeny break if acceleration(z) is to high
             if (acc_z > ACC_Z_NORMAL + 1.5) {
-                emergeny_break();
+				printf("%f\n", acc_z);
+                //emergeny_break();
             }
 
         }
@@ -212,7 +213,8 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
 
 void c_motorcontrol::emergeny_break() {
     cur_speed = 0;
-    sendData<float>(m_oOutputPin_speed, &cur_speed);
     emergeny_break_enabled = 1;
     printf("emergency break enabled");
+    sendData<float>(&m_oOutputPin_speed, &cur_speed);
+    
 }
