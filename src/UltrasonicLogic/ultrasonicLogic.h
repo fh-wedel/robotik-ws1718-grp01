@@ -20,7 +20,7 @@ private:
 protected:
     cInputPin m_oInputPin;
     cOutputPin m_oOutputPin;
-    cOutputPin m_oEmergencyFlagPin;
+    cOutputPin m_oOutputEmergencyFlagPin;
 
 public:
     /*! default constructor for template class
