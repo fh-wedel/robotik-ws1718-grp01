@@ -65,20 +65,37 @@ tResult cUltrasonicLogic::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam
 
             UltrasonicStruct ultrasonicStruct = receiveData<UltrasonicStruct>(pMediaSample);
 
-            if (       ultrasonicStruct.tFrontCenter.f32Value < GetPropertyInt("STOP_distance")
-                    || ultrasonicStruct.tFrontCenterLeft.f32Value < GetPropertyInt("STOP_distance")
-                    || ultrasonicStruct.tFrontLeft.f32Value < GetPropertyInt("STOP_distance")
-                    || ultrasonicStruct.tSideLeft.f32Value < GetPropertyInt("STOP_distance")
-                    || ultrasonicStruct.tRearLeft.f32Value < GetPropertyInt("STOP_distance")
-                    || ultrasonicStruct.tRearCenter.f32Value < GetPropertyInt("STOP_distance")
-                    || ultrasonicStruct.tRearRight.f32Value < GetPropertyInt("STOP_distance")
-                    || ultrasonicStruct.tSideRight.f32Value < GetPropertyInt("STOP_distance")
-                    || ultrasonicStruct.tFrontRight.f32Value < GetPropertyInt("STOP_distance")
-                    || ultrasonicStruct.tFrontCenterRight.f32Value < GetPropertyInt("STOP_distance")) {
+            if (       (ultrasonicStruct.tFrontCenter.f32Value < GetPropertyInt("STOP_distance")
+					&& ultrasonicStruct.tFrontCenter.f32Value > 0)
+                    || (ultrasonicStruct.tFrontCenterLeft.f32Value < GetPropertyInt("STOP_distance")
+                    && ultrasonicStruct.tFrontCenterLeft.f32Value > 0)
+                    || (ultrasonicStruct.tFrontLeft.f32Value < GetPropertyInt("STOP_distance")
+                    && ultrasonicStruct.tFrontLeft.f32Value > 0)
+                    || (ultrasonicStruct.tSideLeft.f32Value < GetPropertyInt("STOP_distance")
+                    && ultrasonicStruct.tSideLeft.f32Value > 0)
+                    || (ultrasonicStruct.tRearLeft.f32Value < GetPropertyInt("STOP_distance")
+                    && ultrasonicStruct.tRearLeft.f32Value > 0)
+                    || (ultrasonicStruct.tRearCenter.f32Value < GetPropertyInt("STOP_distance")
+                    && ultrasonicStruct.tRearCenter.f32Value > 0)
+                    || (ultrasonicStruct.tRearRight.f32Value < GetPropertyInt("STOP_distance")
+                    && ultrasonicStruct.tRearRight.f32Value > 0)
+                    || (ultrasonicStruct.tSideRight.f32Value < GetPropertyInt("STOP_distance")
+                    && ultrasonicStruct.tSideRight.f32Value > 0)
+                    || (ultrasonicStruct.tFrontRight.f32Value < GetPropertyInt("STOP_distance")
+                    && ultrasonicStruct.tFrontRight.f32Value > 0)
+                    || (ultrasonicStruct.tFrontCenterRight.f32Value < GetPropertyInt("STOP_distance")
+                    && ultrasonicStruct.tFrontCenterRight.f32Value > 0))
+                     {
                 Flag flag = FLAG_EMERGENCY_BREAK;
                 cout << "UltrasonicLogik:: FLAG_EMERGENCY_BREAK" << endl;
                 sendData<Flag>(&m_oOutputEmergencyFlagPin, &flag);
             }
+            else{
+			Flag flag = 2;
+			 cout << "UltrasonicLogik:: ok" << endl;
+                sendData<Flag>(&m_oOutputEmergencyFlagPin, &flag);
+			
+			}
             sendData<UltrasonicStruct>(&m_oOutputPin, &ultrasonicStruct);
 
         }

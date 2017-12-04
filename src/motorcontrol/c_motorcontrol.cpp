@@ -129,7 +129,8 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
 
             Flag flags = receiveData<Flag>(pMediaSample);
             if (flags & FLAG_EMERGENCY_BREAK) {
-                emergeny_break();
+				printf("break");
+                //emergeny_break();
             }
 
 
@@ -173,7 +174,10 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
 
 
         if (pSource == &m_oInputPin_acceleration) {
-
+			printf("%d\n", sizeof(float));
+			printf("%d\n", sizeof(tFloat32));
+			//tFloat32 test = receiveData<tFloat32>(pMediaSample);
+			//sendData<tFloat32>(&m_oOutputPin_speed, &test);
 
             tInerMeasUnitData inerMeasUnitData = receiveData<tInerMeasUnitData>(pMediaSample);
 
@@ -201,7 +205,7 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
             //TODO emergeny break if acceleration(z) is to high
             if (acc_z > ACC_Z_NORMAL + 1.5) {
 				printf("%f\n", acc_z);
-                //emergeny_break();
+                emergeny_break();
             }
 
         }
@@ -215,6 +219,6 @@ void c_motorcontrol::emergeny_break() {
     cur_speed = 0;
     emergeny_break_enabled = 1;
     printf("emergency break enabled");
-    sendData<float>(&m_oOutputPin_speed, &cur_speed);
+    ArduinoTransmitFloatValue(&m_oOutputPin_speed, cur_speed, 0);
     
 }
