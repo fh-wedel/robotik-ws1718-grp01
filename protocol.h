@@ -79,10 +79,10 @@ template <typename T> T receiveData(adtf::IMediaSample* pSample) {
     return rDataCopy;
 }
 
-cv::Mat receiveData(adtf::cVideoPin inputPin, adtf::IMediaSample* pSample) {
+cv::Mat receiveData(adtf::cVideoPin *inputPin, adtf::IMediaSample* pSample) {
 
     cv::Mat newMat;
-    const tBitmapFormat inputFormat = *inputPin.GetFormat();
+    const tBitmapFormat inputFormat = *inputPin->GetFormat();
     //create the input matrix
     BmpFormat2Mat(inputFormat, newMat);
 

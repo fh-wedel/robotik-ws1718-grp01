@@ -37,7 +37,7 @@ tResult cFileToVideo::Shutdown(tInitStage eStage, __exception) {
 
 tResult cFileToVideo::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample) {
 
-    Mat mat = receiveData(m_oVideoInputPin, pMediaSample);
+    Mat mat = receiveData(&m_oVideoInputPin, pMediaSample);
 
 
     RETURN_IF_POINTER_NULL(pMediaSample);

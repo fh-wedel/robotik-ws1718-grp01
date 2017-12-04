@@ -2,7 +2,6 @@
 #define _VIDEOTOFILE_H_
 
 #include "stdafx.h"
-#include "ADTF_OpenCV_helper.h"
 
 #include <aadc_structs.h>
 #include <iostream>
