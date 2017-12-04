@@ -52,8 +52,8 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
         if (pSource == &m_oVideoInputPin) {
             Mat image = receiveData(&m_oVideoInputPin, pMediaSample);
 
-            Mat dest(image.rows, image.cols, image.type());
-            dest = image.clone();
+            //Mat dest(image.rows, image.cols, image.type());
+            Mat dest = image.clone();
 
             //inRange(image,Scalar(0,0,0), Scalar(0,0,0),dest);
             //cout << "color range in image created: from image to dest" << endl;

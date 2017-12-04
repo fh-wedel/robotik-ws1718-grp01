@@ -37,8 +37,6 @@ tResult cVideoToFile::Shutdown(tInitStage eStage, __exception) {
 
 tResult cVideoToFile::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample) {
 
-    Mat m = receiveData(&m_oVideoInputPin, pMediaSample);
-
     RETURN_IF_POINTER_NULL(pMediaSample);
     RETURN_IF_POINTER_NULL(pSource);
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
@@ -47,6 +45,8 @@ tResult cVideoToFile::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, t
             if (m_sInputFormat.nPixelFormat == IImage::PF_UNKNOWN) {
                 RETURN_IF_FAILED(UpdateInputImageFormat(m_oVideoInputPin.GetFormat()));
             }
+
+            Mat m = receiveData(&m_oVideoInputPin, pMediaSample);
 
             ProcessVideo(pMediaSample);
 
