@@ -1,16 +1,11 @@
 #include <iostream>
-#include <stdio.h>
 
-//#include <opencv2/core/mat.hpp>
-#include <opencv2/highgui/highgui.hpp>
 
 #include "stdafx.h"
+#include "../../protocol.h"
 #include "blueImgFilter.h"
 
-#include "../../protocol.h"
-//#include <opencv2/core/mat.hpp>
 
-cv::Mat dgfhgjhjk();
 
 ADTF_FILTER_PLUGIN("blueImgFilter", OID_ADTF_BLUEIMG_FILTER, cBlueImgFilter);
 
@@ -53,10 +48,10 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
 
         if (pSource == &m_oVideoInputPin) {
-            Mat image = receiveData(m_oVideoInputPin, pMediaSample);
-            Mat dest;
-            inRange(image,Scalar(30,30,30), Scalar(70,70,70),dest);
-            sendData(m_oVideoOutputPin, &dest);
+            //Mat image = receiveData(&m_oVideoInputPin, pMediaSample);
+            //Mat dest;
+            //inRange(image,Scalar(30,30,30), Scalar(70,70,70),dest);
+            //sendData(m_oVideoOutputPin, &dest);
 
 
 

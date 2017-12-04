@@ -1,6 +1,8 @@
 #ifndef _blueImgFilter_H_
 #define _blueImgFilter_H_
 
+#include "stdafx.h"
+
 #define OID_ADTF_BLUEIMG_FILTER "adtf.example.blueImgFilter"
 
 /*
