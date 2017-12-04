@@ -1,0 +1,14 @@
+#add_subdirectory(KalmanFilter)
+#add_subdirectory(MedianFilter)
+#add_subdirectory(UltrasonicLogic)
+#add_subdirectory(TestBildFilter)
+<<<<<<< Updated upstream
+add_subdirectory(BlueImgFilter)
+#add_subdirectory(motorcontrol)
+#add_subdirectory(VideoToFile)
+=======
+#add_subdirectory(BlueImgFilter)
+add_subdirectory(motorcontrol)
+add_subdirectory(VideoToFile)
+>>>>>>> Stashed changes
+#add_subdirectory(FileToVideo)
