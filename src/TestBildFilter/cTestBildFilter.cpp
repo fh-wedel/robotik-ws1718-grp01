@@ -7,14 +7,14 @@
 ADTF_FILTER_PLUGIN("testBildFilter", OID_ADTF_TESTBILDFILTER, cTestBildFilter);
 
 
-cTestBildFilter::cTestBildFilter(const tChar* __info):cFilter(__info) {
+cVideoToFile::cVideoToFile(const tChar* __info):cFilter(__info) {
 
 }
 
-cTestBildFilter::~cTestBildFilter() {
+cVideoToFile::~cVideoToFile() {
 }
 
-tResult cTestBildFilter::Init(tInitStage eStage, __exception) {
+tResult cVideoToFile::Init(tInitStage eStage, __exception) {
     RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
 
     if (eStage == StageFirst) {
@@ -35,13 +35,13 @@ tResult cTestBildFilter::Init(tInitStage eStage, __exception) {
     RETURN_NOERROR;
 }
 
-tResult cTestBildFilter::Shutdown(tInitStage eStage, __exception) {
+tResult cVideoToFile::Shutdown(tInitStage eStage, __exception) {
     return cFilter::Shutdown(eStage, __exception_ptr);
 }
 
 
 
-tResult cTestBildFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample) {
+tResult cVideoToFile::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample) {
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         RETURN_IF_POINTER_NULL(pMediaSample);
         if (pSource == &m_oVideoInputPin) {
@@ -51,6 +51,8 @@ tResult cTestBildFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1
             saveImage = receiveData<Mat>(pMediaSample);
 
             sendData<Mat>(m_oVideoOutputPin, &saveImage);
+
+            sendData(m_oVideoOutputPin, &saveImage);
             //newImage.Create(m_oVideoOutputPin.GetFormat(), NULL, saveImage.data);
 
 

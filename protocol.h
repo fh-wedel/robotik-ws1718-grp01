@@ -55,10 +55,7 @@ bool sendData(adtf::cVideoPin &outPin, cv::Mat* data) {
     static tBitmapFormat sOutputFormat;
     if (IS_OK(adtf::cMediaAllocHelper::AllocMediaSample(&pNewSample)))
     {
-
         Mat2BmpFormat(*data, sOutputFormat);
-
-
         outPin.SetFormat(&sOutputFormat, NULL);
 
         //Update Kopiert die Daten (laut Doku)

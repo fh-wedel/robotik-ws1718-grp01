@@ -10,7 +10,7 @@
 
 #define OID_ADTF_TESTBILDFILTER "adtf.example.testBildFilter"
 
-class cTestBildFilter : public adtf::cFilter {
+class cVideoToFile : public adtf::cFilter {
     ADTF_FILTER(OID_ADTF_TESTBILDFILTER, "testBildFilter", adtf::OBJCAT_DataFilter);
 
 private:
@@ -20,8 +20,8 @@ protected:
     cVideoPin m_oVideoOutputPin;
 
 public:
-    cTestBildFilter(const tChar* __info);
-    virtual ~cTestBildFilter();
+    cVideoToFile(const tChar* __info);
+    virtual ~cVideoToFile();
 
 protected:
 
