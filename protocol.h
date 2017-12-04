@@ -78,14 +78,20 @@ template <typename T> T receiveData(adtf::IMediaSample* pSample) {
     return rDataCopy;
 }
 
-template <> cv::Mat receiveData<cv::Mat>(adtf::IMediaSample* pSample) {
+cv::Mat receiveData(adtf::cVideoPin inputPin, adtf::IMediaSample* pSample) {
+
+    cv::Mat newMat;
+    const tBitmapFormat inputFormat = *inputPin.GetFormat();
+    //create the input matrix
+    BmpFormat2Mat(inputFormat, newMat);
+
     const void* rData;
-    cv::Mat rDataCopy(cv::Size(VIDEO_SIZE_X, VIDEO_SIZE_Y), CV_8UC3);
+
     if (IS_OK(pSample->Lock((const tVoid**)&rData))) {
-        memcpy(rDataCopy.data, rData, VIDEO_SIZE_X * VIDEO_SIZE_Y);
+        memcpy(newMat.data, rData, size_t(inputFormat.nSize));
         pSample->Unlock(rData);
     }
-    return rDataCopy;
+    return newMat;
 }
 
 
