@@ -1,5 +1,5 @@
-#ifndef _medianFilter_H_
-#define _medianFilter_H_
+#ifndef _blueImgFilter_H_
+#define _blueImgFilter_H_
 
 #define OID_ADTF_BLUEIMG_FILTER "adtf.example.blueImgFilter"
 
@@ -13,8 +13,8 @@ class cBlueImgFilter : public adtf::cFilter {
 private:
 
 protected:
-    cInputPin m_oInputPin;
-    cOutputPin m_oOutputPin;
+    cVideoPin m_oVideoInputPin;
+    cVideoPin m_oVideoOutputPin;
 
 public:
     cBlueImgFilter(const tChar* __info);
