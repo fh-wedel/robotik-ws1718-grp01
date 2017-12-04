@@ -1,7 +1,7 @@
 # add the include directory of the filter
 include_directories(../include)
 # declare our filter
-set(FILTER_NAME user_templateFilter)
+set(FILTER_NAME motorcontrol)
 
 adtf_add_filter(${FILTER_NAME}
     stdafx.h

@@ -67,6 +67,9 @@ class c_motorcontrol : public adtf::cFilter
     /*! set the filter ID and the version */
     ADTF_FILTER(OID_ADTF_TEMPLATE_FILTER, "Motorcontol", adtf::OBJCAT_DataFilter);
 
+#define CALIBRATION 1
+#define CALIBRATION_SAMPLES 60
+
 
 #define G 9.80665
 #define ACC_Z_NORMAL 9.75
@@ -78,9 +81,7 @@ class c_motorcontrol : public adtf::cFilter
 #define ACC_X_NORMAL 0.13
 protected:
     /*! the input pin for template data */
-    cInputPin    m_oInputPin_speed;
-
-    cInputPin    m_oInputPin_angle;
+    cInputPin    m_oInputPin_motorcontol;
 
     cInputPin    m_oInputPin_acceleration;
 
@@ -144,11 +145,7 @@ protected:
     tResult TransmitFloatValue(cOutputPin* oPin, tFloat32 value, tUInt32 timestamp);
 
 private:
-    cObjectPtr<IMediaTypeDescription> m_pDescriptionFloat;
-
-
-	    /*! media desctiption for reading accelerate input data */
-    cObjectPtr<IMediaTypeDescription> m_pDescriptionAccelerateSignalInput;
+    void emergeny_break();
 
 };
 
