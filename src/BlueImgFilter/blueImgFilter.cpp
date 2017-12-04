@@ -18,7 +18,7 @@ cBlueImgFilter::~cBlueImgFilter() {
 }
 
 tResult cBlueImgFilter::Init(tInitStage eStage, __exception) {
-    RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
+    RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr));
 
     if (eStage == StageFirst) {
         cObjectPtr<IMediaDescriptionManager> pDescManager;
