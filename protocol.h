@@ -10,6 +10,7 @@
 #include <aadc_structs.h>
 #include <sdk/mediaallochelper.h>
 #include <sdk/filter.h>
+#include "ADTF_OpenCV_helper.h"
 
 #define MEDIA_TYPE_ULTRASONICSTRUCT     MEDIA_HANDLE_UNKNOWN
 #define MEDIA_SUBTYPE_ULTRASONICSTRUCT  MEDIA_HANDLE_UNKNOWN

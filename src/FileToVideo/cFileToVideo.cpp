@@ -36,6 +36,10 @@ tResult cFileToVideo::Shutdown(tInitStage eStage, __exception) {
 }
 
 tResult cFileToVideo::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample) {
+
+    Mat mat = receiveData(m_oVideoInputPin, pMediaSample);
+
+
     RETURN_IF_POINTER_NULL(pMediaSample);
     RETURN_IF_POINTER_NULL(pSource);
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
@@ -53,7 +57,6 @@ tResult cFileToVideo::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, t
             RETURN_IF_FAILED(UpdateInputImageFormat(m_oVideoInputPin.GetFormat()));
         }
     }
-
 
         if (!m_videoWriter.isOpened()) {
             cout << "size: width= " << m_sInputFormat.nWidth << " ,height= " << m_sInputFormat.nHeight << endl;
