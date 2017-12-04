@@ -24,6 +24,9 @@
 #define MEDIA_TYPE_LINEDETECTION        MEDIA_TYPE_USER
 #define MEDIA_SUBTYPE_LINEDETECTIONDIFF 2
 
+#define MEDIA_TYPE_OTHER 0x00000000
+
+#define FLAG_EMERGENCY_BREAK 1
 
 #define VIDEO_SIZE_X                    640
 #define VIDEO_SIZE_Y                    480

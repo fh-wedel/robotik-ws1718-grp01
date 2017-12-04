@@ -73,9 +73,7 @@ tResult c_motorcontrol::Init(tInitStage eStage, __exception) {
         RETURN_IF_FAILED(m_oInputPin_acceleration.Create("acc_in", pAccelerationlType, this));
         RETURN_IF_FAILED(RegisterPin(&m_oInputPin_acceleration));
 
-        // create and register the input pin
-        RETURN_IF_FAILED(m_oInputPin_angle.Create("angle_in", pMotorcontrolType, this));
-        RETURN_IF_FAILED(RegisterPin(&m_oInputPin_angle));
+
 
         // create and register the input pin
         RETURN_IF_FAILED(m_oInputPin_flags.Create("flag_in", pFlagType, this));
