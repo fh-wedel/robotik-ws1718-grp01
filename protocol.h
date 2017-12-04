@@ -28,9 +28,6 @@
 
 #define FLAG_EMERGENCY_BREAK 1
 
-#define VIDEO_SIZE_X                    640
-#define VIDEO_SIZE_Y                    480
-
 
 
 typedef struct {
