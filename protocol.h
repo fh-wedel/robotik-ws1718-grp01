@@ -60,7 +60,7 @@ bool sendData(adtf::cVideoPin *outPin, cv::Mat* data) {
         outPin->SetFormat(&sOutputFormat, NULL);
 
         //Update Kopiert die Daten (laut Doku)
-        pNewSample->Update(0, data->data, data->cols * data->rows, 0);
+        pNewSample->Update(0, data->data, sizeof(*data), 0);
         outPin->Transmit(pNewSample);
         //Bei Speicherleck doch wichtig!
         //data->release();
