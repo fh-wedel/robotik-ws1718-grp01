@@ -1,7 +1,6 @@
 #ifndef _VIDEOTOFILE_H_
 #define _VIDEOTOFILE_H_
 
-#include "stdafx.h"
 
 #include <aadc_structs.h>
 #include <iostream>
