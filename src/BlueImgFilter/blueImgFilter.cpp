@@ -26,21 +26,18 @@ tResult cBlueImgFilter::Init(tInitStage eStage, __exception) {
     RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
 
     if (eStage == StageFirst) {
-        // get a media type for the input pin
-        cObjectPtr<IMediaType> pInputType;
-        RETURN_IF_FAILED(AllocMediaType(&pInputType, MEDIA_TYPE_VIDEO, MEDIA_SUBTYPE_VIDEO_UNCOMPRESSED, __exception_ptr));
+        cObjectPtr<IMediaDescriptionManager> pDescManager;
+        RETURN_IF_FAILED(_runtime->GetObject(OID_ADTF_MEDIA_DESCRIPTION_MANAGER, IID_ADTF_MEDIA_DESCRIPTION_MANAGER, (tVoid**)&pDescManager, __exception_ptr));
 
-        // create and register the input pin
-        RETURN_IF_FAILED(m_oInputPin.Create("video_in", pInputType, this));
-        RETURN_IF_FAILED(RegisterPin(&m_oInputPin));
+        // Video Input
+        RETURN_IF_FAILED(m_oVideoInputPin.Create("Video_Input", IPin::PD_Input, static_cast<IPinEventSink*>(this)));
+        RETURN_IF_FAILED(RegisterPin(&m_oVideoInputPin));
 
-        // get a media type for the output pin
-        cObjectPtr<IMediaType> pOutputType;
-        RETURN_IF_FAILED(AllocMediaType(&pOutputType, MEDIA_TYPE_VIDEO, MEDIA_SUBTYPE_VIDEO_UNCOMPRESSED, __exception_ptr));
 
-        // create and register the output pin
-        RETURN_IF_FAILED(m_oOutputPin.Create("video_out", pOutputType, this));
-        RETURN_IF_FAILED(RegisterPin(&m_oOutputPin));
+        // Video Ouput
+        RETURN_IF_FAILED(m_oVideoInputPin.Create("Video_Output", IPin::PD_Output, static_cast<IPinEventSink*>(this)));
+        RETURN_IF_FAILED(RegisterPin(&m_oVideoOutputPin));
+
     }
 
     RETURN_NOERROR;
@@ -55,9 +52,13 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
         RETURN_IF_POINTER_NULL(pMediaSample);
 
 
-        if (pSource == &m_oInputPin) {
-            Mat image = receiveData<Mat>(pMediaSample);
-            Mat filteredImage;
+        if (pSource == &m_oVideoInputPin) {
+            Mat image = receiveData(m_oVideoInputPin, pMediaSample);
+            Mat dest;
+            inRange(image,Scalar(30,30,30), Scalar(70,70,70),dest);
+            sendData(m_oVideoOutputPin, &dest);
+
+
 
             // cv::Mat image(200,200,CV_8UC3,cv::Scalar(0,0,100));
            // cv::imshow("Fenstername ImgShow", image);
@@ -67,7 +68,7 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
 
 
-            cout << "Daten empfangen." << endl;
+            //cout << "Daten empfangen." << endl;
 
         }
     }
