@@ -11,9 +11,6 @@
 #include <sdk/mediaallochelper.h>
 #include <sdk/filter.h>
 #include "ADTF_OpenCV_helper.h"
-#include <opencv/cv.h>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 
 #define MEDIA_TYPE_ULTRASONICSTRUCT     MEDIA_HANDLE_UNKNOWN
 #define MEDIA_SUBTYPE_ULTRASONICSTRUCT  MEDIA_HANDLE_UNKNOWN

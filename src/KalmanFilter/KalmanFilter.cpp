@@ -3,10 +3,8 @@
 #include "KalmanFilter.h"
 #include <aadc_structs.h>
 #include "../../protocol.h"
-#include "ADTF_OpenCV_helper.h"
 
 #include <iostream>
-#include <opencv2/core/mat.hpp>
 
 
 ADTF_FILTER_PLUGIN("KalmanFilter", OID_ADTF_TEMPLATE_FILTER, cKalmanFilter);
@@ -102,11 +100,6 @@ tResult cKalmanFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, 
                     m_oOutputPin.Transmit(pNewSample);
                 }
                  */
-
-                MotorControl m = {};
-                LineDetectionDiff l = 5;
-                sendData<LineDetectionDiff>(m_oOutputPin, &l);
-                sendData<MotorControl>(m_oOutputPin, &m);
             }
         }
 

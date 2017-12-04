@@ -113,7 +113,7 @@ tResult cMedianFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, 
             filteredUltrasonicStruct.tSideRight.f32Value = sortCopyMedian(_list_SideRight);
             filteredUltrasonicStruct.tFrontRight.f32Value = sortCopyMedian(_list_FrontRight);
             filteredUltrasonicStruct.tFrontCenterRight.f32Value = sortCopyMedian(_list_FrontCenterRight);
-            sendData<UltrasonicStruct>(m_oOutputPin, &filteredUltrasonicStruct);
+            sendData<UltrasonicStruct>(&m_oOutputPin, &filteredUltrasonicStruct);
         }
     }
     RETURN_NOERROR;
