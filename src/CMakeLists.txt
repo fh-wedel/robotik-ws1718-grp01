@@ -2,6 +2,6 @@
 #add_subdirectory(MedianFilter)
 #add_subdirectory(UltrasonicLogic)
 #add_subdirectory(BlueImgFilter)
-add_subdirectory(motorcontrol)
+#add_subdirectory(motorcontrol)
 #add_subdirectory(VideoToFile)
 #add_subdirectory(FileToVideo)
