@@ -27,11 +27,13 @@ tResult cBlueImgFilter::Init(tInitStage eStage, __exception) {
         // Video Input
         RETURN_IF_FAILED(m_oVideoInputPin.Create("Video_Input", IPin::PD_Input, static_cast<IPinEventSink*>(this)));
         RETURN_IF_FAILED(RegisterPin(&m_oVideoInputPin));
+        cout << "VideoInputPin created." << endl;
 
 
         // Video Ouput
-        RETURN_IF_FAILED(m_oVideoInputPin.Create("Video_Output", IPin::PD_Output, static_cast<IPinEventSink*>(this)));
+        RETURN_IF_FAILED(m_oVideoOutputPin.Create("Video_Output", IPin::PD_Output, static_cast<IPinEventSink*>(this)));
         RETURN_IF_FAILED(RegisterPin(&m_oVideoOutputPin));
+        cout << "VideoOutputPin created." << endl;
 
     }
 
@@ -48,23 +50,15 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
 
         if (pSource == &m_oVideoInputPin) {
-            //Mat image = receiveData(&m_oVideoInputPin, pMediaSample);
-            //Mat dest;
-            //inRange(image,Scalar(30,30,30), Scalar(70,70,70),dest);
-            //sendData(m_oVideoOutputPin, &dest);
+            Mat image = receiveData(&m_oVideoInputPin, pMediaSample);
 
+            Mat dest(image.rows, image.cols, image.type());
+            dest = image.clone();
 
+            //inRange(image,Scalar(0,0,0), Scalar(0,0,0),dest);
+            //cout << "color range in image created: from image to dest" << endl;
 
-            // cv::Mat image(200,200,CV_8UC3,cv::Scalar(0,0,100));
-           // cv::imshow("Fenstername ImgShow", image);
-
-            //image = receiveData<cv::Mat>(pMediaSample);
-            //cv::imshow("Fenstername", mtrx);
-
-
-
-            //cout << "Daten empfangen." << endl;
-
+            sendData(&m_oVideoOutputPin, &dest);
         }
     }
     RETURN_NOERROR;

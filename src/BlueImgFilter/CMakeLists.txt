@@ -1,15 +1,19 @@
 # add the include directory of the filter
 include_directories(../include)
-INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIR})
 
 # declare our filter
 set(FILTER_NAME BlueImgFilter)
+
+INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIR})
+
 
 adtf_add_filter(${FILTER_NAME}
     stdafx.h
         blueImgFilter.h
         blueImgFilter.cpp
 )
+
+target_link_libraries(${FILTER_NAME} ${OpenCV_LIBS})
 
 adtf_set_folder(${FILTER_NAME} BlueImgFilter)
 

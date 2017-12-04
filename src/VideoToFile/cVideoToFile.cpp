@@ -52,7 +52,10 @@ tResult cVideoToFile::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, t
 
             if (!m_videoWriter.isOpened()) {
                 cout << "size: width= " << m_sInputFormat.nWidth << " ,height= " << m_sInputFormat.nHeight << endl;
-                m_videoWriter.open(GetPropertyStr("filename"), CV_FOURCC('M', 'J', 'P', 'G'), 10, Size(m_sInputFormat.nWidth, m_sInputFormat.nHeight));
+                if (m_sInputFormat.nWidth > 0 && m_sInputFormat.nHeight > 0) {
+                    m_videoWriter.open(GetPropertyStr("filename"), CV_FOURCC('M', 'J', 'P', 'G'), 10,
+                                       Size(m_sInputFormat.nWidth, m_sInputFormat.nHeight));
+                }
             }
             m_videoWriter.write(m_inputImage);
 

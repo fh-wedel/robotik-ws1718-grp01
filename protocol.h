@@ -58,9 +58,12 @@ bool sendData(adtf::cVideoPin *outPin, cv::Mat* data) {
     {
         Mat2BmpFormat(*data, sOutputFormat);
         outPin->SetFormat(&sOutputFormat, NULL);
+        cImage newImage;
+        newImage.Create(sOutputFormat.nWidth, sOutputFormat.nHeight, sOutputFormat.nBitsPerPixel, sOutputFormat.nBytesPerLine, data->data);
+
 
         //Update Kopiert die Daten (laut Doku)
-        pNewSample->Update(0, data->data, data->cols * data->rows, 0);
+        pNewSample->Update(0, newImage.GetBitmap(), newImage.GetSize(), 0);
         outPin->Transmit(pNewSample);
         //Bei Speicherleck doch wichtig!
         //data->release();
