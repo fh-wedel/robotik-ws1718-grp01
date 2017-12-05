@@ -129,8 +129,7 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
 
             Flag flags = receiveData<Flag>(pMediaSample);
             if (flags & FLAG_EMERGENCY_BREAK) {
-				printf("break");
-                //emergeny_break();
+                emergeny_break();
             }
 
 
@@ -140,44 +139,43 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
 
             MotorControl motorControl_data = receiveData<MotorControl>(pMediaSample);
             float new_speed = motorControl_data.speed;
+            printf("%f",new_speed);
             float new_angle = motorControl_data.angle;
             if (!emergeny_break_enabled)
-                if (cur_speed < new_speed)
+                if (cur_speed < new_speed){
                     for (int i = (int) cur_speed; i < (int) new_speed; i++) {
                         float i_float = (float) i;
-                        sendData<float>(&m_oOutputPin_speed, &i_float);
-                    }
+                        printf("%f",i_float);
+						ArduinoTransmitFloatValue(&m_oOutputPin_speed, i_float, 0);
+						            }
+						            cur_speed = new_speed;}
                 else
                     for (int i = (int) cur_speed; i > (int) new_speed; i--) {
                         float i_float = (float) i;
-                        sendData<float>(&m_oOutputPin_speed, &i_float);
+                        ArduinoTransmitFloatValue(&m_oOutputPin_speed, i_float, 0);
                     }
 
             if (cur_angle < new_angle)
                 for (int i = (int) cur_angle; i < (int) new_angle; i++) {
                     float i_float = (float) i;
-                    sendData<float>(&m_oOutputPin_angle, &i_float);
+                    ArduinoTransmitFloatValue(&m_oOutputPin_angle, i_float, 0);
                 }
             else
                 for (int i = (int) cur_angle; i > (int) new_angle; i--) {
                     float i_float = (float) i;
-                    sendData<float>(&m_oOutputPin_angle, &i_float);
+                    ArduinoTransmitFloatValue(&m_oOutputPin_angle, i_float, 0);
                 }
 
 
             if (!emergeny_break_enabled)
-                sendData<float>(&m_oOutputPin_speed, &new_speed);
-            sendData<float>(&m_oOutputPin_angle, &new_angle);
-
+                ArduinoTransmitFloatValue(&m_oOutputPin_speed, new_speed, 0);
+            ArduinoTransmitFloatValue(&m_oOutputPin_angle, new_angle, 0);
+			
 
         }
 
 
         if (pSource == &m_oInputPin_acceleration) {
-			printf("%d\n", sizeof(float));
-			printf("%d\n", sizeof(tFloat32));
-			//tFloat32 test = receiveData<tFloat32>(pMediaSample);
-			//sendData<tFloat32>(&m_oOutputPin_speed, &test);
 
             tInerMeasUnitData inerMeasUnitData = receiveData<tInerMeasUnitData>(pMediaSample);
 
@@ -201,8 +199,6 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
                            CALIBRATION_SAMPLES, (sum_x / samples), (sum_y / samples), (sum_z / samples));
                 }
             }
-            //printf("%f\n", acc_z);
-            //TODO emergeny break if acceleration(z) is to high
             if (acc_z > ACC_Z_NORMAL + 1.5) {
 				printf("%f\n", acc_z);
                 emergeny_break();
