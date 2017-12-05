@@ -10,6 +10,7 @@ ADTF_FILTER_PLUGIN("videoToFile", OID_ADTF_VIDEOTOFILE, cVideoToFile);
 cVideoToFile::cVideoToFile(const tChar* __info):cFilter(__info) {
     SetPropertyStr("filename", "/home/aadc/ADTF/records/filename.avi");
     SetPropertyStr("filename" NSSUBPROP_DESCRIPTION, "use absolut path");
+    SetPropertyInt("FPS", 60);
 }
 
 cVideoToFile::~cVideoToFile() {
@@ -23,11 +24,17 @@ tResult cVideoToFile::Init(tInitStage eStage, __exception) {
         cObjectPtr<IMediaDescriptionManager> pDescManager;
         RETURN_IF_FAILED(_runtime->GetObject(OID_ADTF_MEDIA_DESCRIPTION_MANAGER, IID_ADTF_MEDIA_DESCRIPTION_MANAGER, (tVoid**)&pDescManager, __exception_ptr));
 
-        // Video Input
         RETURN_IF_FAILED(m_oVideoInputPin.Create("Video_Input", IPin::PD_Input, static_cast<IPinEventSink*>(this)));
         RETURN_IF_FAILED(RegisterPin(&m_oVideoInputPin));
+    } else if (eStage == StageGraphReady) {
+        cObjectPtr<IMediaType> pType;
+        RETURN_IF_FAILED(m_oVideoInputPin.GetMediaType(&pType));
+        cObjectPtr<IMediaTypeVideo> pTypeVideo;
+        RETURN_IF_FAILED(pType->GetInterface(IID_ADTF_MEDIA_TYPE_VIDEO, (tVoid**)&pTypeVideo));
+        if (IS_FAILED(UpdateInputImageFormat(pTypeVideo->GetFormat()))) {
+            LOG_ERROR("Invalid Input Format for this filter");
+        }
     }
-
     RETURN_NOERROR;
 }
 
@@ -46,16 +53,10 @@ tResult cVideoToFile::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, t
                 RETURN_IF_FAILED(UpdateInputImageFormat(m_oVideoInputPin.GetFormat()));
             }
 
-            Mat m = receiveData(&m_oVideoInputPin, pMediaSample);
-
             ProcessVideo(pMediaSample);
 
             if (!m_videoWriter.isOpened()) {
-                cout << "size: width= " << m_sInputFormat.nWidth << " ,height= " << m_sInputFormat.nHeight << endl;
-                if (m_sInputFormat.nWidth > 0 && m_sInputFormat.nHeight > 0) {
-                    m_videoWriter.open(GetPropertyStr("filename"), CV_FOURCC('M', 'J', 'P', 'G'), 10,
-                                       Size(m_sInputFormat.nWidth, m_sInputFormat.nHeight));
-                }
+                m_videoWriter.open(GetPropertyStr("filename"), CV_FOURCC('M', 'J', 'P', 'G'), GetPropertyInt("FPS"), Size(m_sInputFormat.nWidth, m_sInputFormat.nHeight));
             }
             m_videoWriter.write(m_inputImage);
 
@@ -66,10 +67,6 @@ tResult cVideoToFile::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, t
             RETURN_IF_FAILED(UpdateInputImageFormat(m_oVideoInputPin.GetFormat()));
         }
     }
-
-
-
-
     RETURN_NOERROR;
 }
 

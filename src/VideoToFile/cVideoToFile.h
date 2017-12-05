@@ -32,7 +32,6 @@ private:
 
     VideoWriter m_videoWriter;
 
-
 protected:
     cVideoPin m_oVideoInputPin;
 
