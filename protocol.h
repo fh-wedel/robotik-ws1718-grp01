@@ -11,6 +11,7 @@
 #include <sdk/mediaallochelper.h>
 #include <sdk/filter.h>
 #include "ADTF_OpenCV_helper.h"
+#include <ucom/exception_intf.h>
 
 #define MEDIA_TYPE_ULTRASONICSTRUCT     MEDIA_HANDLE_UNKNOWN
 #define MEDIA_SUBTYPE_ULTRASONICSTRUCT  MEDIA_HANDLE_UNKNOWN
@@ -59,6 +60,7 @@ bool sendData(adtf::cVideoPin *outPin, cv::Mat* data) {
         Mat2BmpFormat(*data, sOutputFormat);
         outPin->SetFormat(&sOutputFormat, NULL);
         cImage newImage;
+        cout << "new cImage width= " << sOutputFormat.nWidth << " ,height= " << sOutputFormat.nHeight << endl;
         newImage.Create(sOutputFormat.nWidth, sOutputFormat.nHeight, sOutputFormat.nBitsPerPixel, sOutputFormat.nBytesPerLine, data->data);
 
 
