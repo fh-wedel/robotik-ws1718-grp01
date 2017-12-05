@@ -1,13 +1,15 @@
 #add_subdirectory(KalmanFilter)
 <<<<<<< HEAD
-#add_subdirectory(MedianFilter)
-#add_subdirectory(UltrasonicLogic)
-add_subdirectory(BlueImgFilter)
-=======
 add_subdirectory(MedianFilter)
 add_subdirectory(UltrasonicLogic)
 #add_subdirectory(BlueImgFilter)
->>>>>>> ad2938a79dc430f608e52727b80852860ee41402
+add_subdirectory(motorcontrol)
+#add_subdirectory(VideoToFile)
+=======
+#add_subdirectory(MedianFilter)
+#add_subdirectory(UltrasonicLogic)
+add_subdirectory(BlueImgFilter)
 #add_subdirectory(motorcontrol)
 add_subdirectory(VideoToFile)
+>>>>>>> 6d1a6ad04f9a4cdcb60549fd315d6a07a7203243
 #add_subdirectory(FileToVideo)
