@@ -51,12 +51,16 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
         if (pSource == &m_oVideoInputPin) {
             Mat image = receiveData(&m_oVideoInputPin, pMediaSample);
+            cout << "orig image: cols: " << image.cols << "; rows: " << image.rows << "; type: " << image.type() << endl;
 
-            Mat dest(image.rows, image.cols, image.type());
-            //Mat dest = image.clone();
+            Mat dest_one_channel;
+            Mat dest;
 
-            inRange(image,Scalar(0,0,0), Scalar(0,0,0),dest);
-            //cout << "color range in image created: from image to dest" << endl;
+            inRange(image, Scalar(0,0,0), Scalar(255,0,0), dest_one_channel);
+            cout << "after inRange -> dest image: cols: " << dest_one_channel.cols << "; rows: " << dest_one_channel.rows << "; type: " << dest_one_channel.type() << endl;
+
+            cvtColor(dest_one_channel, dest, CV_GRAY2BGR);
+            cout << "after cvtColor -> image: cols: " << dest.cols << "; rows: " << dest.rows << "; type: " << dest.type() << endl;
 
             sendData(&m_oVideoOutputPin, &dest);
         }
