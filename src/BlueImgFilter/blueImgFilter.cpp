@@ -53,15 +53,15 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
             Mat image = receiveData(&m_oVideoInputPin, pMediaSample);
             //cout << "orig image: cols: " << image.cols << "; rows: " << image.rows << "; type: " << image.type() << endl;
 
-            Mat dest_one_channel;
             Mat dest;
+            Mat dest2;
 
-            inRange(image, Scalar(0,0,0), Scalar(255,0,0), dest_one_channel);
+            cvtColor(image, dest, CV_BGR2HSV);
+
+            inRange(dest, Scalar(0,0,0), Scalar(255,0,0), dest2);
             //cout << "after inRange -> dest image: cols: " << dest_one_channel.cols << "; rows: " << dest_one_channel.rows << "; type: " << dest_one_channel.type() << endl;
 
-
-
-            sendData(&m_oVideoOutputPin, &dest);
+            sendData(&m_oVideoOutputPin, &dest2);
         }
     }
     RETURN_NOERROR;

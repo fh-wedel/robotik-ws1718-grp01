@@ -37,7 +37,7 @@ tResult cVideoToFile::Shutdown(tInitStage eStage, __exception) {
 tResult cVideoToFile::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample) {
     RETURN_IF_POINTER_NULL(pMediaSample);
     RETURN_IF_POINTER_NULL(pSource);
-    
+
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         if (pSource == &m_oVideoInputPin) {
             m_inputImage = receiveData(&m_oVideoInputPin, pMediaSample);
