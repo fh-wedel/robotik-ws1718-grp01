@@ -28,7 +28,7 @@ Kleinschrittiger:
 ---
 # Tagebuch
 
-## Woche 20. - 26.11.2017
+## 1. Woche 20. - 26.11.2017
 
 #### Motorsteuerung
 - TODO
@@ -40,7 +40,7 @@ Kleinschrittiger:
 - TODO
 
 ---
-## Woche 27.11 - 3.12.2017
+## 2. Woche 27.11 - 3.12.2017
 
 #### Motorsteuerung
 - TODO
@@ -53,7 +53,7 @@ Kleinschrittiger:
 
 
 ---
-## Woche 04.12 - 10.12.2017
+## 3. Woche 04.12 - 10.12.2017
 
 #### Motorsteuerung
 - TODO
