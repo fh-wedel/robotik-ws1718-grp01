@@ -50,3 +50,16 @@ Kleinschrittiger:
 
 #### Filter/ Messwertoptimierung
 - TODO
+
+
+---
+## Woche 04.12 - 10.12.2017
+
+#### Motorsteuerung
+- TODO
+
+#### Linienerkennung
+- TODO
+
+#### Filter/ Messwertoptimierung
+- TODO
