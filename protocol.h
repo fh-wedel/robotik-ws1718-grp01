@@ -52,11 +52,10 @@ template <typename T> bool sendData(adtf::cPin *outPin, T* data) {
     return false;
 }
 
-bool sendData(adtf::cVideoPin *outPin, cv::Mat* data) {
+bool sendData(adtf::cVideoPin *outPin, cv::Mat *data) {
     cObjectPtr<adtf::IMediaSample> pNewSample;
     static tBitmapFormat sOutputFormat;
-    if (IS_OK(adtf::cMediaAllocHelper::AllocMediaSample(&pNewSample)))
-    {
+    if (IS_OK(adtf::cMediaAllocHelper::AllocMediaSample(&pNewSample))) {
         Mat2BmpFormat(*data, sOutputFormat);
         outPin->SetFormat(&sOutputFormat, NULL);
         cImage newImage;
