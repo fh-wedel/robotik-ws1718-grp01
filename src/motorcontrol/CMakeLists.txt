@@ -9,7 +9,6 @@ adtf_add_filter(${FILTER_NAME}
     stdafx.h
     c_motorcontrol.h
     c_motorcontrol.cpp
-    template_data.h
 )
 
 target_link_libraries(${FILTER_NAME} ${OpenCV_LIBS})
