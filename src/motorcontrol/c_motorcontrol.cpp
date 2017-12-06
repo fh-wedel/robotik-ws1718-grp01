@@ -88,6 +88,7 @@ tResult c_motorcontrol::Init(tInitStage eStage, __exception) {
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin_speed));
         RETURN_IF_FAILED(m_oOutputPin_angle.Create("angle_out", pOutputType, static_cast<IPinEventSink *> (this)));
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin_angle));
+        ArduinoTransmitFloatValue(&m_oOutputPin_speed, 0.0, 0);
     } else if (eStage == StageNormal) {
         // In this stage you would do further initialisation and/or create your dynamic pins.
         // Please take a look at the demo_dynamicpin example for further reference.
