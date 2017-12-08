@@ -37,6 +37,7 @@ tInt32 samples = 0;
 float cur_speed = 0;
 float cur_angle = 0;
 bool emergeny_break_enabled = 0;
+int intital0send = 0;
 
 
 c_motorcontrol::c_motorcontrol(const tChar *__info) : cFilter(__info) {
@@ -88,14 +89,16 @@ tResult c_motorcontrol::Init(tInitStage eStage, __exception) {
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin_speed));
         RETURN_IF_FAILED(m_oOutputPin_angle.Create("angle_out", pOutputType, static_cast<IPinEventSink *> (this)));
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin_angle));
-        ArduinoTransmitFloatValue(&m_oOutputPin_speed, 0.0, 0);
+        
     } else if (eStage == StageNormal) {
         // In this stage you would do further initialisation and/or create your dynamic pins.
         // Please take a look at the demo_dynamicpin example for further reference.
+        
     } else if (eStage == StageGraphReady) {
         // All pin connections have been established in this stage so you can query your pins
         // about their media types and additional meta data.
         // Please take a look at the demo_imageproc example for further reference.
+     
     }
 
     RETURN_NOERROR;
@@ -126,7 +129,7 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
     // first check what kind of event it is
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         if (pSource == &m_oInputPin_flags) {
-
+			
 
             Flag flags = receiveData<Flag>(pMediaSample);
             if (flags & FLAG_EMERGENCY_BREAK) {
@@ -136,17 +139,23 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
 
         }
         if (pSource == &m_oInputPin_motorcontol) {
-
+			
+			if (intital0send < 150){
+			
+			ArduinoTransmitFloatValue(&m_oOutputPin_speed, 0.0, 0);
+			intital0send++;
+			
+			}else{
 
             MotorControl motorControl_data = receiveData<MotorControl>(pMediaSample);
             float new_speed = motorControl_data.speed;
-            printf("%f",new_speed);
+            printf("new Speed: %f",new_speed);
             float new_angle = motorControl_data.angle;
-            if (!emergeny_break_enabled)
+            /*if (!emergeny_break_enabled)
                 if (cur_speed < new_speed){
                     for (int i = (int) cur_speed; i < (int) new_speed; i++) {
                         float i_float = (float) i;
-                        printf("%f",i_float);
+                        printf("for: %f\n",i_float);
 						ArduinoTransmitFloatValue(&m_oOutputPin_speed, i_float, 0);
 						            }
 						            cur_speed = new_speed;}
@@ -165,13 +174,13 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
                 for (int i = (int) cur_angle; i > (int) new_angle; i--) {
                     float i_float = (float) i;
                     ArduinoTransmitFloatValue(&m_oOutputPin_angle, i_float, 0);
-                }
+                }*/
 
 
             if (!emergeny_break_enabled)
                 ArduinoTransmitFloatValue(&m_oOutputPin_speed, new_speed, 0);
             ArduinoTransmitFloatValue(&m_oOutputPin_angle, new_angle, 0);
-			
+		}
 
         }
 
