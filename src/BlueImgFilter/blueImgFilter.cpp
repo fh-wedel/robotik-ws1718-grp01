@@ -59,7 +59,12 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
             inRange(dest, Scalar(95,100,70), Scalar(130,255,255), dest2); // filtering all relevant blues
 
-            sendData(&m_oVideoOutputPin, &dest2);
+
+            cvtColor(dest2, dest, CV_GRAY2BGR);
+
+            cout << "Typ:" << dest.type() << endl;
+
+            sendData(&m_oVideoOutputPin, &dest);
         }
     }
     RETURN_NOERROR;
