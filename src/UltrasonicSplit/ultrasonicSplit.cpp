@@ -1,7 +1,7 @@
 
 
 #include "stdafx.h"
-#include "medianFilter.h"
+#include "ultrasonicSplit.h"
 #include <aadc_structs.h>
 #include "../../protocol.h"
 
