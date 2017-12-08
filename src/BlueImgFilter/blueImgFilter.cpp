@@ -62,7 +62,7 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
             cvtColor(dest2, dest, CV_GRAY2BGR);
 
-            cout << "Typ:" << dest.type() << endl;
+            //cout << "Typ:" << dest.type() << endl;
 
             sendData(&m_oVideoOutputPin, &dest);
         }
