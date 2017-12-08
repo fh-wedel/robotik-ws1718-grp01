@@ -157,6 +157,7 @@ tResult c_controller::OnPinEvent(IPin *pSource,
 		float f32value;
 		static tBufferID szIDF32Value_SpeedContr;
 
+
 		__adtf_sample_read_lock_mediadescription(m_pDescriptionAccelerateSignalInput, pMediaSample, pCoderInput);
 
         

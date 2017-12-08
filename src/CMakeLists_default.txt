@@ -1,5 +1,6 @@
 #add_subdirectory(KalmanFilter)
 #add_subdirectory(MedianFilter)
+#add_subdirectory(UltrasonicSplit)
 #add_subdirectory(UltrasonicLigic)
 #add_subdirectory(BlueImgFilter)
 add_subdirectory(motorcontrol)
