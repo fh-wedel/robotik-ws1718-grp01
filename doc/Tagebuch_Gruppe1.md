@@ -54,8 +54,13 @@ Kleinschrittiger:
 - Grobe ADTF-Ordnerstruktur nachvollziehen (u.a. anhand der Dokumentation)
 - Einfinden in Projektstrukturen und Abhängigkeiten
 - Template-Filter nachvollzogen und in eigenem Projekt angepasst implementiert
-  - Einfinden in visuelle Repräsentation der Pins
+  - Einfinden in visuelle Repräsentation der Pins und setzen von *propertys*
   - Einarbeiten in Daten-Kommunikations-Schnittstellen (Daten, Video, Arduino)
+    - Erstellen der Schnittstelle Kommunikationsschnittstelle *Protocol.h*
+    - Einheitliche Definitionen der Pins verschiedener Bausteine
+    - Definition der zu sendenen und empfangenen Daten
+    - Funktion zum Senden und Empfangen beliebiger Daten, mit Ausnahme von
+        Bildern/Video und Daten zum Arduinokommunikation Baustein
 
 #### Arbeit an Branches
 - Motorsteuerung
@@ -63,7 +68,8 @@ Kleinschrittiger:
 - Linienerkennung
   - TODO
 - Filter/ Messwertoptimierung
-  - TODO
+  - Erstellung eines Median-Filters mit variabler Listenlänge
+  - Erstellung eines Kalman-Filters, genaue Justierung der parameter fehlt noch
 
 #### Mergen der Branches zur weiteren gemeinsamen Arbeit auf dem Master-Zweig
 - Begründung:
@@ -73,6 +79,16 @@ Kleinschrittiger:
 ---
 ## 3. Woche 4.12 - 10.12.2017
 
+#### Erstellung des VideoToFile Bausteins
+Da in der VM Ausgabevideos aufgrund fehlender Hardwarebeschleunigung nicht angezeigt werden kann,
+ist es mit dem Baustein möglich die Daten in einer *.avi* Videodatei zu speichern.
+
+#### Protocol.h um Schnittstelle für Images erweitert
+Es lassen sich nun auch direkt *cv::Mat* Typen zwischen Bausteinen versenden.
+
+#### Verknüpfung der Motorsteuerung mit dem Ultrasonic Sensoren über Filter und Logik
+Stoppen der Motoren bei eingestellter Näherung
+
 #### Motorsteuerung
 - TODO
 
@@ -80,4 +96,4 @@ Kleinschrittiger:
 - TODO
 
 #### Filter/ Messwertoptimierung
-- TODO
+- Erstellung des *UltrasonicLogik*-Bausteins
