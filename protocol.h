@@ -25,6 +25,9 @@
 #define MEDIA_TYPE_LINEDETECTION        MEDIA_TYPE_USER
 #define MEDIA_SUBTYPE_LINEDETECTIONDIFF 2
 
+#define MEDIA_TYPE_FILTERVALUE          MEDIA_TYPE_USER
+#define MEDIA_SUBTYPE_FILTERVALUE       3
+
 #define MEDIA_TYPE_OTHER 0x00000000
 
 #define FLAG_EMERGENCY_BREAK 1
@@ -36,6 +39,7 @@ typedef struct {
     float speed;
 } MotorControl;
 
+typedef tFloat32 FilterValue;
 typedef uint64_t Flag;
 typedef int64_t LineDetectionDiff;
 typedef tUltrasonicStruct UltrasonicStruct;
