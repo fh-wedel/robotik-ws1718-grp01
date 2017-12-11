@@ -86,7 +86,6 @@ int cOneLineDetect::whiteAreaInRow(int targetRow, Mat src, Mat greyImg){
     circle(src, pt, 5, Scalar(0, 0, 255), 3, 0, 0);
 
     int offset =  (int) (pos <= mid) ? - (mid - pos) : (pos - mid);
-
     //return offset;
 
     return (int) (offset <= -320 || offset >= 320) ? -101 : offset*100/320; // Normieren des Outputs auf (-100 <= returned_offset <= 100)
@@ -104,7 +103,7 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
             cvtColor(image, greyImg, CV_BGR2GRAY);
 
 
-            LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(41, image, greyImg);
+            LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(60, image, greyImg);
             sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_0);
             cout << "Difference: " << difference_0 << endl;
 
