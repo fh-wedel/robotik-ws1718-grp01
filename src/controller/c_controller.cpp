@@ -38,7 +38,6 @@ float cur_speed = 0;
 float cur_angle = 0;
 bool emergeny_break_enabled = 0;
 
-
 c_controller::c_controller(const tChar *__info) : cFilter(__info) {
 
 }
@@ -137,7 +136,12 @@ tResult c_controller::OnPinEvent(IPin *pSource,
     // first check what kind of event it is
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         if (pSource == &m_oInputPin_USS) {
-		
+			
+		MotorControl test;
+		test.speed = 7.0;
+		test.angle = 0.0;
+		sendData<MotorControl>(&m_oOutputPin_carcontrol, &test);
+           printf("start send uss");
 		
 
 
@@ -166,7 +170,7 @@ tResult c_controller::OnPinEvent(IPin *pSource,
         MotorControl test;
 		test.speed = f32value;
 		sendData<MotorControl>(&m_oOutputPin_carcontrol, &test);
-           printf("start send");   
+            
 
 
 
