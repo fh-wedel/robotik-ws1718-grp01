@@ -12,7 +12,9 @@ ADTF_FILTER_PLUGIN("UltrasonicLogic", OID_ADTF_TEMPLATE_FILTER, cUltrasonicLogic
 
 
 cUltrasonicLogic::cUltrasonicLogic(const tChar *__info) {
-    SetPropertyInt("STOP_distance", 100);
+    SetPropertyInt("STOP_distance_Front", 100);
+    SetPropertyInt("STOP_distance_Side", 50);
+    SetPropertyInt("STOP_distance_Rear", 100);
 }
 
 cUltrasonicLogic::~cUltrasonicLogic() {
@@ -22,8 +24,6 @@ cUltrasonicLogic::~cUltrasonicLogic() {
 tResult cUltrasonicLogic::Init(tInitStage eStage, __exception) {
     // never miss calling the parent implementation!!
     RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
-
-
 
     // in StageFirst you can create and register your static pins.
     if (eStage == StageFirst) {
@@ -65,36 +65,23 @@ tResult cUltrasonicLogic::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam
 
             UltrasonicStruct ultrasonicStruct = receiveData<UltrasonicStruct>(pMediaSample);
 
-            if (       (ultrasonicStruct.tFrontCenter.f32Value < GetPropertyInt("STOP_distance")
-					&& ultrasonicStruct.tFrontCenter.f32Value > 0)
-                    || (ultrasonicStruct.tFrontCenterLeft.f32Value < GetPropertyInt("STOP_distance")
-                    && ultrasonicStruct.tFrontCenterLeft.f32Value > 0)
-                    || (ultrasonicStruct.tFrontLeft.f32Value < GetPropertyInt("STOP_distance")
-                    && ultrasonicStruct.tFrontLeft.f32Value > 0)
-                    || (ultrasonicStruct.tSideLeft.f32Value < GetPropertyInt("STOP_distance")
-                    && ultrasonicStruct.tSideLeft.f32Value > 0)
-                    || (ultrasonicStruct.tRearLeft.f32Value < GetPropertyInt("STOP_distance")
-                    && ultrasonicStruct.tRearLeft.f32Value > 0)
-                    || (ultrasonicStruct.tRearCenter.f32Value < GetPropertyInt("STOP_distance")
-                    && ultrasonicStruct.tRearCenter.f32Value > 0)
-                    || (ultrasonicStruct.tRearRight.f32Value < GetPropertyInt("STOP_distance")
-                    && ultrasonicStruct.tRearRight.f32Value > 0)
-                    || (ultrasonicStruct.tSideRight.f32Value < GetPropertyInt("STOP_distance")
-                    && ultrasonicStruct.tSideRight.f32Value > 0)
-                    || (ultrasonicStruct.tFrontRight.f32Value < GetPropertyInt("STOP_distance")
-                    && ultrasonicStruct.tFrontRight.f32Value > 0)
-                    || (ultrasonicStruct.tFrontCenterRight.f32Value < GetPropertyInt("STOP_distance")
-                    && ultrasonicStruct.tFrontCenterRight.f32Value > 0))
-                     {
+            if (       (ultrasonicStruct.tFrontCenter.f32Value < GetPropertyInt("STOP_distance_Front"))
+                    || (ultrasonicStruct.tFrontCenterLeft.f32Value < GetPropertyInt("STOP_distance_Front"))
+                    || (ultrasonicStruct.tFrontLeft.f32Value < GetPropertyInt("STOP_distance_Front"))
+                    || (ultrasonicStruct.tSideLeft.f32Value < GetPropertyInt("STOP_distance_Side"))
+                    || (ultrasonicStruct.tRearLeft.f32Value < GetPropertyInt("STOP_distance_Rear"))
+                    || (ultrasonicStruct.tRearCenter.f32Value < GetPropertyInt("STOP_distance_Rear"))
+                    || (ultrasonicStruct.tRearRight.f32Value < GetPropertyInt("STOP_distance_Rear"))
+                    || (ultrasonicStruct.tSideRight.f32Value < GetPropertyInt("STOP_distance_Side"))
+                    || (ultrasonicStruct.tFrontRight.f32Value < GetPropertyInt("STOP_distance_Front"))
+                    || (ultrasonicStruct.tFrontCenterRight.f32Value < GetPropertyInt("STOP_distance_Front"))) {
                 Flag flag = FLAG_EMERGENCY_BREAK;
                 cout << "UltrasonicLogik:: FLAG_EMERGENCY_BREAK" << endl;
                 sendData<Flag>(&m_oOutputEmergencyFlagPin, &flag);
             }
             else{
 			Flag flag = 2;
-			 cout << "UltrasonicLogik:: ok" << endl;
                 sendData<Flag>(&m_oOutputEmergencyFlagPin, &flag);
-			
 			}
             sendData<UltrasonicStruct>(&m_oOutputPin, &ultrasonicStruct);
 

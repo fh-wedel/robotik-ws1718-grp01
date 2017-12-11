@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "displayGraph.h"
 #include "../../protocol.h"
+#include <iostream>
 
 ADTF_FILTER_PLUGIN("displayGraph", OID_ADTF_DisplayGraph, cDisplayGraph);
 
@@ -27,8 +28,9 @@ tResult cDisplayGraph::Init(tInitStage eStage, __exception) {
     _graphSize.heightPx = GetPropertyInt("height");
     _graphSize.widthPx = GetPropertyInt("width");
 
-    _image = Mat::zeros(_graphSize.heightPx, _graphSize.widthPx, CV_8UC1);
+    //_image = Mat::ones(_graphSize.heightPx, _graphSize.widthPx, CV_8UC3);
 
+    _image = Mat(_graphSize.heightPx, _graphSize.widthPx, CV_8UC3, Vec3b(255,255,255));
 
     if (eStage == StageFirst) {
         // get a media type for the input pin
@@ -73,18 +75,20 @@ tResult cDisplayGraph::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, 
 
             Mat tmp = _image.clone();
 
-            _image = Mat::ones(_graphSize.heightPx, _graphSize.widthPx, _image.type());
+            _image = Mat(_graphSize.heightPx, _graphSize.widthPx, _image.type(), Vec3b(255,255,255));
 
             tmp(Rect(1,0,tmp.cols-1,tmp.rows)).copyTo(_image(Rect(0,0,_image.cols-1, _image.rows)));
 
-            _image.at<uint8_t>(map(0, _graphSize.rangeMin, _graphSize.rangeMax, _graphSize.heightPx, 0),_image.cols-1) = 255;
+            _image.at<Vec3b>(map(0, _graphSize.rangeMin, _graphSize.rangeMax, _graphSize.heightPx, 0),_image.cols-1) = Vec3b(0,0,0);
 
 
-            //_image.at<uint8_t>(map(_list[0], _graphSize.rangeMin, _graphSize.rangeMax, _graphSize.heightPx, 0),_image.cols-1) = 100;
-            //_image.at<uint8_t>(map(_list[1], _graphSize.rangeMin, _graphSize.rangeMax, _graphSize.heightPx, 0),_image.cols-1) = 200;
+            _image.at<Vec3b>(map(_list[0], _graphSize.rangeMin, _graphSize.rangeMax, _graphSize.heightPx, 0),_image.cols-1) = Vec3b(0,0,255);
+            _image.at<Vec3b>(map(_list[1], _graphSize.rangeMin, _graphSize.rangeMax, _graphSize.heightPx, 0),_image.cols-1) = Vec3b(0,255,0);
 
             sendData(&m_oVideoOutputPin, &_image);
 
+        } else {
+            _bitTest |= tmpBittest;
         }
     }
     RETURN_NOERROR;
