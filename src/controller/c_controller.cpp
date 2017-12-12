@@ -22,6 +22,7 @@ THIS SOFTWARE IS PROVIDED BY AUDI AG AND CONTRIBUTORS �AS IS� AND ANY EXPRES
 #include "../../protocol.h"
 #include <stdio.h>
 #include <cmath>
+#include <aadc_structs.h>
 
 
 
@@ -127,7 +128,7 @@ tResult c_controller::Shutdown(tInitStage eStage, __exception) {
     return cFilter::Shutdown(eStage, __exception_ptr);
 }
 
-
+int diff = -100;
 tResult c_controller::OnPinEvent(IPin *pSource,
                                    tInt nEventCode,
                                    tInt nParam1,
@@ -136,22 +137,133 @@ tResult c_controller::OnPinEvent(IPin *pSource,
     // first check what kind of event it is
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         if (pSource == &m_oInputPin_USS) {
-			
-		MotorControl test;
-		test.speed = 7.0;
-		test.angle = 0.0;
-		sendData<MotorControl>(&m_oOutputPin_carcontrol, &test);
-           printf("start send uss");
-		
+
+
+           //printf("start send uss");
+        UltrasonicStruct uss = receiveData<UltrasonicStruct>(pMediaSample);
+
+            float front_center = uss.tFrontCenter.f32Value;
+            switch ((int)front_center){
+                case 120 ... 400:
+                    cur_speed = MAX_SPEED;
+                    break;
+                case 100 ... 119:
+                    cur_speed = MAX_SPEED * 0.75;
+                    break;
+                case 25 ... 99:
+                    cur_speed = MAX_SPEED * 0.55;
+                    break;
+                default:
+                    cur_speed = -0;
+                    break;
+
+            }
+
+
+            float front_center_right = uss.tFrontCenterRight.f32Value;
+            switch ((int)front_center_right){
+                case 50 ... 400:
+                    cur_speed = MAX_SPEED;
+                    break;
+                case 25 ... 49:
+                    cur_speed = MAX_SPEED * 0.75;
+                    break;
+                case 10 ... 24:
+                    cur_speed = MAX_SPEED * 0.55;
+                    break;
+                default:
+                    cur_speed = -0;
+                    break;
+
+            }
+
+            float front_center_left = uss.tFrontCenterLeft.f32Value;
+            switch ((int)front_center_left){
+                case 50 ... 400:
+                    cur_speed = MAX_SPEED;
+                    break;
+                case 25 ... 49:
+                    cur_speed = MAX_SPEED * 0.75;
+                    break;
+                case 10 ... 24:
+                    cur_speed = MAX_SPEED * 0.55;
+                    break;
+                default:
+                    cur_speed = -0;
+                    break;
+
+            }
+
+            float front_left = uss.tFrontLeft.f32Value;
+            switch ((int)front_left){
+                case 21 ... 400:
+                    cur_speed = MAX_SPEED;
+                    break;
+                case 8 ... 20:
+                    cur_speed = MAX_SPEED * 0.55;
+                    break;
+                default:
+                    cur_speed = -0;
+                    break;
+
+            }
+
+            float front_right = uss.tFrontRight.f32Value;
+            switch ((int)front_right){
+                case 21 ... 400:
+                    cur_speed = MAX_SPEED;
+                    break;
+                case 8 ... 20:
+                    cur_speed = MAX_SPEED * 0.55;
+                    break;
+                default:
+                    cur_speed = -0;
+                    break;
+
+            }
+
+
+            MotorControl test;
+            test.speed = cur_speed;
+            test.angle = cur_angle;
+            sendData<MotorControl>(&m_oOutputPin_carcontrol, &test);
 
 
         }
         if (pSource == &m_oInputPin_diff) {
+            int8_t diff = receiveData<int8_t>(pMediaSample);
+
+            MotorControl test;
+            float transform_angle = diff *100 /40;
+            switch(diff){
+                case 0:
+                    cur_angle = 0.0;
+                    break;
+                case 40 ... 100:
+                    test.angle = 100.0;
+                    break;
+                case -100 ... -40:
+                    cur_angle = -100.0;
+                    break;
+                case 1 ... 39 :
+                case -39 ... -1:
+                    cur_angle = transform_angle;
+                    break;
+                default:
+                    cur_speed = -6;
+                    break;
+            }
+            test.speed = cur_speed;
+            test.angle = cur_angle;
+                    sendData<MotorControl>(&m_oOutputPin_carcontrol, &test);
+           /* if(diff<100)
+                diff++;*/
+            }
 
 
             
 
-        }
+
         
         if (pSource == &m_oInputPin_speed) {
 		float f32value;

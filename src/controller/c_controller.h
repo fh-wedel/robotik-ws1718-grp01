@@ -75,6 +75,7 @@ class c_controller : public adtf::cFilter
 #define ACC_Z_NORMAL 9.75
 #define ACC_Z_DELTA_NEG 0.02
 #define ACC_Z_DELTA_POS 0.01
+#define  MAX_SPEED -12
 
 
 #define ACC_Y_NORMAL -0.85

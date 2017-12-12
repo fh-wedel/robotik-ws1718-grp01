@@ -135,6 +135,9 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
             if (flags & FLAG_EMERGENCY_BREAK) {
                 emergeny_break();
             }
+            if (flags == 2) {
+                emergeny_break_enabled = 0;
+            }
 
 
         }
@@ -149,33 +152,7 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
 
             MotorControl motorControl_data = receiveData<MotorControl>(pMediaSample);
             float new_speed = motorControl_data.speed;
-            printf("new Speed: %f",new_speed);
             float new_angle = motorControl_data.angle;
-            /*if (!emergeny_break_enabled)
-                if (cur_speed < new_speed){
-                    for (int i = (int) cur_speed; i < (int) new_speed; i++) {
-                        float i_float = (float) i;
-                        printf("for: %f\n",i_float);
-						ArduinoTransmitFloatValue(&m_oOutputPin_speed, i_float, 0);
-						            }
-						            cur_speed = new_speed;}
-                else
-                    for (int i = (int) cur_speed; i > (int) new_speed; i--) {
-                        float i_float = (float) i;
-                        ArduinoTransmitFloatValue(&m_oOutputPin_speed, i_float, 0);
-                    }
-
-            if (cur_angle < new_angle)
-                for (int i = (int) cur_angle; i < (int) new_angle; i++) {
-                    float i_float = (float) i;
-                    ArduinoTransmitFloatValue(&m_oOutputPin_angle, i_float, 0);
-                }
-            else
-                for (int i = (int) cur_angle; i > (int) new_angle; i--) {
-                    float i_float = (float) i;
-                    ArduinoTransmitFloatValue(&m_oOutputPin_angle, i_float, 0);
-                }*/
-
 
             if (!emergeny_break_enabled)
                 ArduinoTransmitFloatValue(&m_oOutputPin_speed, new_speed, 0);
@@ -209,7 +186,7 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource,
                            CALIBRATION_SAMPLES, (sum_x / samples), (sum_y / samples), (sum_z / samples));
                 }
             }
-            if (acc_z > ACC_Z_NORMAL + 1.5) {
+            if (acc_z > ACC_Z_NORMAL + 5) {
 				printf("%f\n", acc_z);
                 emergeny_break();
             }

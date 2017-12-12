@@ -103,7 +103,7 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
             cvtColor(image, greyImg, CV_BGR2GRAY);
 
 
-            LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(60, image, greyImg);
+            LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(15, image, greyImg);
             sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_0);
             cout << "Difference: " << difference_0 << endl;
 

@@ -13,6 +13,7 @@ cMedianFilter::cMedianFilter(const tChar* __info):cFilter(__info) {
     SetPropertyStr("list_length" NSSUBPROP_DESCRIPTION, "length of the median filter list");
     SetPropertyInt("list_length" NSSUBPROP_MIN, 1);
     SetPropertyInt("list_length" NSSUBPROP_MAX, 1000);
+    SetPropertyInt("initvalue", 400);
 }
 
 cMedianFilter::~cMedianFilter() {
@@ -23,6 +24,10 @@ tResult cMedianFilter::Init(tInitStage eStage, __exception) {
 
     //erzeugen der Liste mit der Laenge aus dem Property 'list_length'
     _list.resize((unsigned int)GetPropertyInt("list_length"));
+
+    for (unsigned int i = 0; i < _list.size(); ++i) {
+        _list[i] = GetPropertyInt("initvalue");
+    }
 
     if (eStage == StageFirst) {
         // get a media type for the input pin
