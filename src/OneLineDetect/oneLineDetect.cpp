@@ -11,7 +11,7 @@ ADTF_FILTER_PLUGIN("oneLineDetect", OID_ADTF_OneLineDetect_FILTER, cOneLineDetec
 
 
 cOneLineDetect::cOneLineDetect(const tChar* __info):cFilter(__info) {
-
+    SetPropertyInt("minLineWidth", 10);
 }
 
 cOneLineDetect::~cOneLineDetect() {
@@ -83,11 +83,14 @@ int cOneLineDetect::whiteAreaInRow(int targetRow, Mat src, Mat greyImg){
 
     //erkannte Linie markieren
     Point pt(pos, src.rows - targetRow);
-    circle(src, pt, 5, Scalar(0, 0, 255), 3, 0, 0);
+
 
     int offset =  (int) (pos <= mid) ? - (mid - pos) : (pos - mid);
     //return offset;
-
+    if (max < GetPropertyInt("minLineWidth") ) {
+        return -101;
+    }
+    circle(src, pt, 5, Scalar(0, 0, 255), 3, 0, 0);
     return (int) (offset <= -320 || offset >= 320) ? -101 : offset*100/320; // Normieren des Outputs auf (-100 <= returned_offset <= 100)
 }
 
@@ -105,7 +108,7 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
             LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(15, image, greyImg);
             sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_0);
-            cout << "Difference: " << difference_0 << endl;
+            //cout << "Difference: " << difference_0 << endl;
 
             /*
             LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(1, image, greyImg);

@@ -20,6 +20,8 @@ THIS SOFTWARE IS PROVIDED BY AUDI AG AND CONTRIBUTORS �AS IS� AND ANY EXPRES
 
 #define OID_ADTF_TEMPLATE_FILTER "adtf.example.controller2"
 
+#include "../../protocol.h"
+
 
 /*! @defgroup TemplateFilter
 *  @{
@@ -141,11 +143,11 @@ protected:
     *   You need to synchronize this call by your own. Have a look to adtf_util::__synchronized , adtf_util::__synchronized_obj .
     */
     tResult OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample);
+
 private:
+    float getSmallerSpeed(float oldVal, float newVal);
 	cObjectPtr<IMediaTypeDescription> m_pDescriptionAccelerateSignalInput;
-
-
-
+    MotorControl _motorControl;
 };
 
 
