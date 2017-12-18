@@ -97,3 +97,29 @@ Stoppen der Motoren bei eingestellter Näherung
 
 #### Filter/ Messwertoptimierung
 - Erstellung des *UltrasonicLogik*-Bausteins
+
+---
+## 4. Woche 11.12 - 17.12.2017
+
+### Aufbau einer geschlossenen Teststrecke
+Testen der Auswirkung bestimmter Lichtverhaeltnisse auf die Linienerkennung.
+Abdunklung kritischer Bereiche in denen keine Linie mehr erkannt wurde.
+
+### Testfahrt
+Mehrere Testfahrten und mit verschiedenen Einstellungen ueber die Geschwindigkeit
+und Behandlung der einzelnen Ultraschallsenseoren.
+
+### Bildschirmuebertragung mit *VNC*
+Durch Aufspannen eines eigenen WLAN-Netzes funktioniert die Bildschirmuebertragung annehmbar.
+
+---
+## 5. Woche 18.12 - 24.12.2017
+
+
+
+
+
+
+
+
+
