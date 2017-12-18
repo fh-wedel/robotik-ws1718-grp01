@@ -100,16 +100,18 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
             // normierte Geschwindigkeiten [-100 <= x <= 100]
 
 
-            backfrontback_ucs[0] = uss.tRearCenter.f32Value * 0.0025f;
-            backfrontback_ucs[1] = uss.tRearLeft.f32Value * 0.0025f;
-            backfrontback_ucs[2] = uss.tSideLeft.f32Value * 0.0025f;
-            backfrontback_ucs[3] = uss.tFrontLeft.f32Value * 0.0025f;
-            backfrontback_ucs[4] = uss.tFrontCenterLeft.f32Value * 0.0025f;
-            backfrontback_ucs[5] = uss.tFrontCenter.f32Value * 0.0025f;
-            backfrontback_ucs[6] = uss.tFrontCenterRight.f32Value * 0.0025f;
-            backfrontback_ucs[7] = uss.tFrontRight.f32Value * 0.0025f;
-            backfrontback_ucs[8] = uss.tSideRight.f32Value * 0.0025f;
-            backfrontback_ucs[9] = uss.tRearRight.f32Value * 0.0025f;
+            float ultrasonicNormalisation = 1.0f;
+
+            backfrontback_ucs[0] = uss.tRearCenter.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[1] = uss.tRearLeft.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[2] = uss.tSideLeft.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[3] = uss.tFrontLeft.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[4] = uss.tFrontCenterLeft.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[5] = uss.tFrontCenter.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[6] = uss.tFrontCenterRight.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[7] = uss.tFrontRight.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[8] = uss.tSideRight.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[9] = uss.tRearRight.f32Value * ultrasonicNormalisation;
 
 
 
@@ -149,25 +151,44 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
             //...
             float steering_angle = 0;
 
-            backfrontback_ucs[0] *= getGaussianWeightedDistance(REAR_CENTER_ANGLE, steering_angle) / 2;
-            backfrontback_ucs[1] *= getGaussianWeightedDistance(REAR_LEFT_ANGLE, steering_angle) / 2; // neuere normierter Abstand
-            backfrontback_ucs[2] *= getGaussianWeightedDistance(SIDE_LEFT_ANGLE, steering_angle) / 2; // neuere normierter Abstand
-            backfrontback_ucs[3] *= getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle) / 2;
-            backfrontback_ucs[4] *= getGaussianWeightedDistance(FRONT_CENTER_LEFT_ANGLE, steering_angle) / 2;
-            backfrontback_ucs[5] *= getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle) / 2;
-            backfrontback_ucs[6] *= getGaussianWeightedDistance(FRONT_CENTER_RIGHT_ANGLE, steering_angle) / 2;
-            backfrontback_ucs[7] *= getGaussianWeightedDistance(FRONT_RIGHT_ANGLE, steering_angle) / 2;
-            backfrontback_ucs[8] *= getGaussianWeightedDistance(SIDE_RIGHT_ANGLE, steering_angle) / 2;
-            backfrontback_ucs[9] *= getGaussianWeightedDistance(REAR_RIGHT_ANGLE, steering_angle) / 2;
+
+            backfrontback_ucs[0] *= getGaussianWeightedDistance(REAR_CENTER_ANGLE, steering_angle);
+            backfrontback_ucs[1] *= getGaussianWeightedDistance(REAR_LEFT_ANGLE, steering_angle); // neuere normierter Abstand
+            backfrontback_ucs[2] *= getGaussianWeightedDistance(SIDE_LEFT_ANGLE, steering_angle); // neuere normierter Abstand
+            backfrontback_ucs[3] *= getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle);
+            backfrontback_ucs[4] *= getGaussianWeightedDistance(FRONT_CENTER_LEFT_ANGLE, steering_angle);
+            backfrontback_ucs[5] *= getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle);
+            backfrontback_ucs[6] *= getGaussianWeightedDistance(FRONT_CENTER_RIGHT_ANGLE, steering_angle);
+            backfrontback_ucs[7] *= getGaussianWeightedDistance(FRONT_RIGHT_ANGLE, steering_angle);
+            backfrontback_ucs[8] *= getGaussianWeightedDistance(SIDE_RIGHT_ANGLE, steering_angle);
+            backfrontback_ucs[9] *= getGaussianWeightedDistance(REAR_RIGHT_ANGLE, steering_angle);
+
 
 
             float minDistanceNorm = 1;
+            /*
             for (unsigned int i = 0; i < backfrontback_ucs.size(); ++i) {
                 minDistanceNorm = backfrontback_ucs[i] < minDistanceNorm ? backfrontback_ucs[i] : minDistanceNorm;
             }
+             */
+
+            cout << "fcgauss= " << getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle);
+            cout << "flgauss= " << getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle);
+            cout << "frontCenter= " << backfrontback_ucs[5] << " frontLeft= " << backfrontback_ucs[3] << endl << endl;
+
+
+            ///TODO Bis hierhin alles Richtig
+
+
+
+            //minDistanceNorm = backfrontback_ucs[5] < backfrontback_ucs[3] ? backfrontback_ucs[5] : backfrontback_ucs[3];
+
+            //cout << "minDistanceNorm= " << minDistanceNorm << endl;
+
 
             float linear_speed = 100 * minDistanceNorm;
 
+            //cout << "linear_speed= " << linear_speed << " | ";
 
             _motorControl.speed = setArduinoSpeed(linear_speed);
 
@@ -293,7 +314,7 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
 
 
         //Send Data
-        cout << "speed= " << _motorControl.speed << ", angle= " << _motorControl.angle << endl;
+        //cout << "speed= " << _motorControl.speed << ", angle= " << _motorControl.angle << endl;
         sendData(&m_oOutputPin_carcontrol, &_motorControl);
     }
 
