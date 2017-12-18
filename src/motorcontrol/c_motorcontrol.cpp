@@ -94,5 +94,9 @@ void c_motorcontrol::emergeny_break() {
     emergeny_break_enabled = 1;
     printf("emergency break enabled");
     ArduinoTransmitFloatValue(&m_oOutputPin_speed, cur_speed, 0);
+
+    cObjectPtr<IMediaSerializer> pSerializer;
+    IMediaTypeDescription iMediaTypeDescription;
+    iMediaTypeDescription.GetMediaSampleSerializer(&pSerializer);
     
 }

@@ -65,7 +65,6 @@ bool sendData(adtf::cVideoPin *outPin, cv::Mat *data) {
         cImage newImage;
         newImage.Create(sOutputFormat.nWidth, sOutputFormat.nHeight, sOutputFormat.nBitsPerPixel, sOutputFormat.nBytesPerLine, data->data);
 
-
         //Update Kopiert die Daten (laut Doku)
         pNewSample->Update(0, newImage.GetBitmap(), newImage.GetSize(), 0);
         outPin->Transmit(pNewSample);
