@@ -165,25 +165,27 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
 
 
 
-            float minDistanceNorm = 1;
-            /*
+            float minDistanceNorm = 800;
+
             for (unsigned int i = 0; i < backfrontback_ucs.size(); ++i) {
                 minDistanceNorm = backfrontback_ucs[i] < minDistanceNorm ? backfrontback_ucs[i] : minDistanceNorm;
             }
-             */
-
-            cout << "fcgauss= " << getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle);
-            cout << "flgauss= " << getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle);
-            cout << "frontCenter= " << backfrontback_ucs[5] << " frontLeft= " << backfrontback_ucs[3] << endl << endl;
 
 
-            ///TODO Bis hierhin alles Richtig
+            //cout << "fcgauss= " << getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle);
+            //cout << "flgauss= " << getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle);
+            //cout << "frontCenter= " << backfrontback_ucs[5] << " frontLeft= " << backfrontback_ucs[3] << endl;
+
+
+
 
 
 
             //minDistanceNorm = backfrontback_ucs[5] < backfrontback_ucs[3] ? backfrontback_ucs[5] : backfrontback_ucs[3];
 
-            //cout << "minDistanceNorm= " << minDistanceNorm << endl;
+            cout << "minDistanceNorm= " << minDistanceNorm << endl;
+
+            ///TODO Bis hierhin alles Richtig
 
 
             float linear_speed = 100 * minDistanceNorm;
