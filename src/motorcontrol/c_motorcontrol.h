@@ -46,8 +46,6 @@ protected:
 
     tResult OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample);
 
-    tResult TransmitFloatValue(cOutputPin* oPin, tFloat32 value, tUInt32 timestamp);
-
 private:
     void emergeny_break();
 };
