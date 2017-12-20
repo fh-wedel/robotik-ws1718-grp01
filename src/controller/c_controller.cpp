@@ -5,6 +5,7 @@
 #include "../../protocol.h"
 #include <stdio.h>
 #include <cmath>
+#include <math.h>
 #include <aadc_structs.h>
 
 
@@ -78,11 +79,131 @@ float c_controller::getSmallerSpeed(float f1, float f2) {
     return f1;
 }
 
+float setArduinoSpeed(float relativeSpeed) {
+    return relativeSpeed * 12 / 100 * -1;
+}
+
+float getGaussianWeightedDistance(float sensor_angle, float steering_angle){
+    return 2-exp(-3 * pow((sensor_angle - steering_angle),2) );
+}
+
 tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample *pMediaSample) {
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         if (pSource == &m_oInputPin_USS) {
 
             UltrasonicStruct uss = receiveData<UltrasonicStruct>(pMediaSample);
+
+            vector<float> backfrontback_ucs(10);
+            //vector<float> left_ucs;
+
+
+            // normierte Geschwindigkeiten [-100 <= x <= 100]
+
+
+            float ultrasonicNormalisation = 1.0f;
+
+            backfrontback_ucs[0] = uss.tRearCenter.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[1] = uss.tRearLeft.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[2] = uss.tSideLeft.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[3] = uss.tFrontLeft.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[4] = uss.tFrontCenterLeft.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[5] = uss.tFrontCenter.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[6] = uss.tFrontCenterRight.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[7] = uss.tFrontRight.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[8] = uss.tSideRight.f32Value * ultrasonicNormalisation;
+            backfrontback_ucs[9] = uss.tRearRight.f32Value * ultrasonicNormalisation;
+
+
+
+            /*
+            float motorcontr_angle = _motorControl.angle;
+            int motorcontr_weight = 1;
+            float weighted_percentage = 100;
+
+            for(int i = 0; i < 10; ++i) {
+                 if (i >= 5){
+                    motorcontr_weight = -1;
+                }
+
+                weighted_percentage = motorcontr_angle / 100 *
+
+                backfrontback_ucs[i] = backfrontback_ucs[i]
+
+
+            }
+             */
+
+            // function to weigh the distances:
+            // Gauss-Kurve zur Gewichtung der Messwerte
+
+            // konstante Winkel pro Sensor:
+            float REAR_CENTER_ANGLE = 1;
+            float REAR_LEFT_ANGLE = 1;
+            float SIDE_LEFT_ANGLE = 0.7;
+            float FRONT_LEFT_ANGLE = 0.4;
+            float FRONT_CENTER_LEFT_ANGLE = 0.2;
+            float FRONT_CENTER_ANGLE = 0;
+            float FRONT_CENTER_RIGHT_ANGLE = 0.2;
+            float FRONT_RIGHT_ANGLE = 0.4;
+            float SIDE_RIGHT_ANGLE = 0.7;
+            float REAR_RIGHT_ANGLE = 1;
+
+            //...
+            float steering_angle = 0;
+
+
+            backfrontback_ucs[0] *= getGaussianWeightedDistance(REAR_CENTER_ANGLE, steering_angle);
+            backfrontback_ucs[1] *= getGaussianWeightedDistance(REAR_LEFT_ANGLE, steering_angle); // neuere normierter Abstand
+            backfrontback_ucs[2] *= getGaussianWeightedDistance(SIDE_LEFT_ANGLE, steering_angle); // neuere normierter Abstand
+            backfrontback_ucs[3] *= getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle);
+            backfrontback_ucs[4] *= getGaussianWeightedDistance(FRONT_CENTER_LEFT_ANGLE, steering_angle);
+            backfrontback_ucs[5] *= getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle);
+            backfrontback_ucs[6] *= getGaussianWeightedDistance(FRONT_CENTER_RIGHT_ANGLE, steering_angle);
+            backfrontback_ucs[7] *= getGaussianWeightedDistance(FRONT_RIGHT_ANGLE, steering_angle);
+            backfrontback_ucs[8] *= getGaussianWeightedDistance(SIDE_RIGHT_ANGLE, steering_angle);
+            backfrontback_ucs[9] *= getGaussianWeightedDistance(REAR_RIGHT_ANGLE, steering_angle);
+
+
+
+            float minDistanceNorm = 800;
+
+            for (unsigned int i = 0; i < backfrontback_ucs.size(); ++i) {
+                minDistanceNorm = backfrontback_ucs[i] < minDistanceNorm ? backfrontback_ucs[i] : minDistanceNorm;
+            }
+
+
+            //cout << "fcgauss= " << getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle);
+            //cout << "flgauss= " << getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle);
+            //cout << "frontCenter= " << backfrontback_ucs[5] << " frontLeft= " << backfrontback_ucs[3] << endl;
+
+
+
+
+
+
+            //minDistanceNorm = backfrontback_ucs[5] < backfrontback_ucs[3] ? backfrontback_ucs[5] : backfrontback_ucs[3];
+
+            cout << "minDistanceNorm= " << minDistanceNorm << endl;
+
+            ///TODO Bis hierhin alles Richtig
+
+
+            float linear_speed = 100 * minDistanceNorm;
+
+            //cout << "linear_speed= " << linear_speed << " | ";
+
+            _motorControl.speed = setArduinoSpeed(linear_speed);
+
+            /*
+            for(int i = 0; i < 10; ++i) {
+                backfrontback_ucs[i] = backfrontback_ucs[i] * (2-exp())
+
+            }
+             */
+
+
+/*
+
             float resultSpeed = MAX_SPEED;
 
             switch ((int)uss.tFrontCenter.f32Value){
@@ -155,6 +276,7 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
             }
 
             _motorControl.speed = resultSpeed;
+            */
 
         } else if (pSource == &m_oInputPin_diff) {
             LineDetectionDiff diff = receiveData<LineDetectionDiff>(pMediaSample);
@@ -178,10 +300,6 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
 
         }
 
-
-            
-
-
         /*
         if (pSource == &m_oInputPin_speed) {
 		float f32value;
@@ -195,7 +313,6 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
 		sendData<MotorControl>(&m_oOutputPin_carcontrol, &test);
         }
          */
-
 
 
         //Send Data

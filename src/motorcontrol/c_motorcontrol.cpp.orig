@@ -94,5 +94,8 @@ void c_motorcontrol::emergeny_break() {
     emergeny_break_enabled = 1;
     printf("emergency break enabled");
     ArduinoTransmitFloatValue(&m_oOutputPin_speed, cur_speed, 0);
+<<<<<<< HEAD
+=======
     
+>>>>>>> 300043b8c35ea151dbb1cfbf7d15a9b9f39f33da
 }
