@@ -79,12 +79,8 @@ float c_controller::getSmallerSpeed(float f1, float f2) {
     return f1;
 }
 
-float setArduinoSpeed(float relativeSpeed) {
-    return relativeSpeed * 12 / 100 * -1;
-}
-
 float getGaussianWeightedDistance(float sensor_angle, float steering_angle){
-    return 2-exp(-3 * pow((sensor_angle - steering_angle),2) );
+    return 3.5-2.5*exp(-3 * pow((sensor_angle - steering_angle),2) );
 }
 
 tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample *pMediaSample) {
@@ -183,16 +179,28 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
 
             //minDistanceNorm = backfrontback_ucs[5] < backfrontback_ucs[3] ? backfrontback_ucs[5] : backfrontback_ucs[3];
 
-            cout << "minDistanceNorm= " << minDistanceNorm << endl;
-
-            ///TODO Bis hierhin alles Richtig
+            cout << "minDistanceNorm= " << minDistanceNorm << " | ";
 
 
-            float linear_speed = 100 * minDistanceNorm;
 
-            //cout << "linear_speed= " << linear_speed << " | ";
+            float linear_speed = 0;
+            if (minDistanceNorm > 100) {
+                linear_speed = 75;
+            } else if (minDistanceNorm < 10) {
+                linear_speed = 0;
+            } else {
 
-            _motorControl.speed = setArduinoSpeed(linear_speed);
+                //todo Andere Funktion
+                linear_speed = 1.25f * minDistanceNorm / 4 + 45.0f;
+            }
+
+            cout << "linear_speed= " << linear_speed << " | ";
+
+
+
+            _motorControl.speed = linear_speed;
+
+            cout << "motorspeed= " << _motorControl.speed << endl;
 
             /*
             for(int i = 0; i < 10; ++i) {
