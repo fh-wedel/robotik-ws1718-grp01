@@ -79,7 +79,7 @@ bool sendData(adtf::cVideoPin *outPin, cv::Mat *data) {
 
 template <typename T> T receiveData(adtf::IMediaSample* pSample) {
     T* rData = NULL;
-    T rDataCopy;
+    T rDataCopy = T();
     if (IS_OK(pSample->Lock((const tVoid**)&rData))) {
         memcpy(&rDataCopy, rData, sizeof(T));
         pSample->Unlock(rData);

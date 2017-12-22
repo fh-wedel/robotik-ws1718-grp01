@@ -11,18 +11,32 @@
 
 ADTF_FILTER_PLUGIN("Controller", OID_ADTF_CARCONTROLLER, c_controller);
 
+#define ARRPOS_REAR_CENTER         0
+#define ARRPOS_REAR_LEFT           1
+#define ARRPOS_SIDE_LEFT           2
+#define ARRPOS_FRONT_LEFT          3
+#define ARRPOS_FRONT_CENTER_LEFT   4
+#define ARRPOS_FRONT_CENTER        5
+#define ARRPOS_FRONT_CENTER_RIGHT  6
+#define ARRPOS_FRONT_RIGHT         7
+#define ARRPOS_SIDE_RIGHT          8
+#define ARRPOS_REAR_RIGHT          9
 
-tFloat32 sum_x = 0;
-tFloat32 sum_y = 0;
-tFloat32 sum_z = 0;
-tInt32 samples = 0;
-
-float cur_speed = 0;
-float cur_angle = 0;
 bool emergeny_break_enabled = 0;
 
 c_controller::c_controller(const tChar *__info) : cFilter(__info) {
 
+    // konstante Winkel pro Sensor:
+    SetPropertyFloat("REAR_CENTER_ANGLE", sa.REAR_CENTER_ANGLE);
+    SetPropertyFloat("REAR_LEFT_ANGLE", sa.REAR_LEFT_ANGLE);
+    SetPropertyFloat("SIDE_LEFT_ANGLE", sa.SIDE_LEFT_ANGLE);
+    SetPropertyFloat("FRONT_LEFT_ANGLE", sa.FRONT_LEFT_ANGLE);
+    SetPropertyFloat("FRONT_CENTER_LEFT_ANGLE", sa.FRONT_CENTER_LEFT_ANGLE);
+    SetPropertyFloat("FRONT_CENTER_ANGLE", sa.FRONT_CENTER_ANGLE);
+    SetPropertyFloat("FRONT_CENTER_RIGHT_ANGLE", sa.FRONT_CENTER_RIGHT_ANGLE);
+    SetPropertyFloat("FRONT_RIGHT_ANGLE", sa.FRONT_CENTER_ANGLE);
+    SetPropertyFloat("SIDE_RIGHT_ANGLE", sa.SIDE_RIGHT_ANGLE);
+    SetPropertyFloat("REAR_RIGHT_ANGLE", sa.REAR_RIGHT_ANGLE);
 }
 
 c_controller::~c_controller() {
@@ -33,15 +47,20 @@ c_controller::~c_controller() {
 tResult c_controller::Init(tInitStage eStage, __exception) {
     RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
 
+    sa.REAR_CENTER_ANGLE = (float)GetPropertyFloat("REAR_CENTER_ANGLE");
+    sa.REAR_LEFT_ANGLE = (float)GetPropertyFloat("REAR_LEFT_ANGLE");
+    sa.SIDE_LEFT_ANGLE = (float)GetPropertyFloat("SIDE_LEFT_ANGLE");
+    sa.FRONT_LEFT_ANGLE = (float)GetPropertyFloat("FRONT_LEFT_ANGLE");
+    sa.FRONT_CENTER_LEFT_ANGLE = (float)GetPropertyFloat("FRONT_CENTER_LEFT_ANGLE");
+    sa.FRONT_CENTER_ANGLE = (float)GetPropertyFloat("FRONT_CENTER_ANGLE");
+    sa.FRONT_CENTER_RIGHT_ANGLE = (float)GetPropertyFloat("FRONT_CENTER_RIGHT_ANGLE");
+    sa.FRONT_CENTER_ANGLE = (float)GetPropertyFloat("FRONT_RIGHT_ANGLE");
+    sa.SIDE_RIGHT_ANGLE = (float)GetPropertyFloat("SIDE_RIGHT_ANGLE");
+    sa.REAR_RIGHT_ANGLE = (float)GetPropertyFloat("REAR_RIGHT_ANGLE");
+
+
     if (eStage == StageFirst) {
-        /*
-        cObjectPtr<IMediaDescriptionManager> pDescManager;
-        RETURN_IF_FAILED(_runtime->GetObject(OID_ADTF_MEDIA_DESCRIPTION_MANAGER, IID_ADTF_MEDIA_DESCRIPTION_MANAGER, (tVoid**)&pDescManager, __exception_ptr));
-        tChar const * strDescSignalValue = pDescManager->GetMediaDescription("tSignalValue");
-        RETURN_IF_POINTER_NULL(strDescSignalValue);
-        cObjectPtr<IMediaType> pTypeSignalValue = new cMediaType(0, 0, 0, "tSignalValue", strDescSignalValue, IMediaDescription::MDF_DDL_DEFAULT_VERSION);
-        RETURN_IF_FAILED(pTypeSignalValue->GetInterface(IID_ADTF_MEDIA_TYPE_DESCRIPTION, (tVoid**)&m_pDescriptionAccelerateSignalInput))
-        */
+
         cObjectPtr<IMediaType> pUSSType;
         RETURN_IF_FAILED(AllocMediaType(&pUSSType, MEDIA_TYPE_ULTRASONICSTRUCT, MEDIA_SUBTYPE_ULTRASONICSTRUCT, __exception_ptr));
         RETURN_IF_FAILED(m_oInputPin_USS.Create("USS", pUSSType, this));
@@ -51,13 +70,6 @@ tResult c_controller::Init(tInitStage eStage, __exception) {
         RETURN_IF_FAILED(AllocMediaType(&pdiffType, MEDIA_TYPE_LINEDETECTION, MEDIA_SUBTYPE_LINEDETECTIONDIFF, __exception_ptr));
         RETURN_IF_FAILED(m_oInputPin_diff.Create("diff", pdiffType, this));
         RETURN_IF_FAILED(RegisterPin(&m_oInputPin_diff));
-
-        /*
-		cObjectPtr<IMediaType> pSpeedType;
-        RETURN_IF_FAILED(AllocMediaType(&pSpeedType, MEDIA_TYPE_OTHER, MEDIA_TYPE_OTHER, __exception_ptr));
-        RETURN_IF_FAILED(m_oInputPin_speed.Create("speed", pSpeedType, this));
-        RETURN_IF_FAILED(RegisterPin(&m_oInputPin_speed));
-        */
 
         cObjectPtr<IMediaType> pOutputType;
         RETURN_IF_FAILED(AllocMediaType(&pOutputType, MEDIA_TYPE_MOTORCONTROL, MEDIA_SUBTYPE_MOTORCONTROL, __exception_ptr));
@@ -71,16 +83,8 @@ tResult c_controller::Shutdown(tInitStage eStage, __exception) {
     return cFilter::Shutdown(eStage, __exception_ptr);
 }
 
-float c_controller::getSmallerSpeed(float f1, float f2) {
-    //WEGEN NEGATIV
-    if (f2 > f1) {
-        return f2;
-    }
-    return f1;
-}
-
-float getGaussianWeightedDistance(float sensor_angle, float steering_angle){
-    return 3.5-2.5*exp(-3 * pow((sensor_angle - steering_angle),2) );
+float getGaussianWeightedDistance(float sensor_angle, float steering_angle) {
+    return 5-4*exp(-3 * pow((sensor_angle - steering_angle),2) );
 }
 
 tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample *pMediaSample) {
@@ -89,95 +93,35 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
 
             UltrasonicStruct uss = receiveData<UltrasonicStruct>(pMediaSample);
 
-            vector<float> backfrontback_ucs(10);
-            //vector<float> left_ucs;
+            vector<float> us_values(10);
 
+            //
+            float steering_angle = _motorControl.angle / 100 * (sa.FRONT_RIGHT_ANGLE - sa.FRONT_CENTER_RIGHT_ANGLE);
 
-            // normierte Geschwindigkeiten [-100 <= x <= 100]
-
-
-            float ultrasonicNormalisation = 1.0f;
-
-            backfrontback_ucs[0] = uss.tRearCenter.f32Value * ultrasonicNormalisation;
-            backfrontback_ucs[1] = uss.tRearLeft.f32Value * ultrasonicNormalisation;
-            backfrontback_ucs[2] = uss.tSideLeft.f32Value * ultrasonicNormalisation;
-            backfrontback_ucs[3] = uss.tFrontLeft.f32Value * ultrasonicNormalisation;
-            backfrontback_ucs[4] = uss.tFrontCenterLeft.f32Value * ultrasonicNormalisation;
-            backfrontback_ucs[5] = uss.tFrontCenter.f32Value * ultrasonicNormalisation;
-            backfrontback_ucs[6] = uss.tFrontCenterRight.f32Value * ultrasonicNormalisation;
-            backfrontback_ucs[7] = uss.tFrontRight.f32Value * ultrasonicNormalisation;
-            backfrontback_ucs[8] = uss.tSideRight.f32Value * ultrasonicNormalisation;
-            backfrontback_ucs[9] = uss.tRearRight.f32Value * ultrasonicNormalisation;
-
-
-
-            /*
-            float motorcontr_angle = _motorControl.angle;
-            int motorcontr_weight = 1;
-            float weighted_percentage = 100;
-
-            for(int i = 0; i < 10; ++i) {
-                 if (i >= 5){
-                    motorcontr_weight = -1;
-                }
-
-                weighted_percentage = motorcontr_angle / 100 *
-
-                backfrontback_ucs[i] = backfrontback_ucs[i]
-
-
-            }
-             */
-
-            // function to weigh the distances:
-            // Gauss-Kurve zur Gewichtung der Messwerte
-
-            // konstante Winkel pro Sensor:
-            float REAR_CENTER_ANGLE = 1;
-            float REAR_LEFT_ANGLE = 1;
-            float SIDE_LEFT_ANGLE = 0.7;
-            float FRONT_LEFT_ANGLE = 0.4;
-            float FRONT_CENTER_LEFT_ANGLE = 0.2;
-            float FRONT_CENTER_ANGLE = 0;
-            float FRONT_CENTER_RIGHT_ANGLE = 0.2;
-            float FRONT_RIGHT_ANGLE = 0.4;
-            float SIDE_RIGHT_ANGLE = 0.7;
-            float REAR_RIGHT_ANGLE = 1;
-
-            //...
-            float steering_angle = 0;
-
-
-            backfrontback_ucs[0] *= getGaussianWeightedDistance(REAR_CENTER_ANGLE, steering_angle);
-            backfrontback_ucs[1] *= getGaussianWeightedDistance(REAR_LEFT_ANGLE, steering_angle); // neuere normierter Abstand
-            backfrontback_ucs[2] *= getGaussianWeightedDistance(SIDE_LEFT_ANGLE, steering_angle); // neuere normierter Abstand
-            backfrontback_ucs[3] *= getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle);
-            backfrontback_ucs[4] *= getGaussianWeightedDistance(FRONT_CENTER_LEFT_ANGLE, steering_angle);
-            backfrontback_ucs[5] *= getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle);
-            backfrontback_ucs[6] *= getGaussianWeightedDistance(FRONT_CENTER_RIGHT_ANGLE, steering_angle);
-            backfrontback_ucs[7] *= getGaussianWeightedDistance(FRONT_RIGHT_ANGLE, steering_angle);
-            backfrontback_ucs[8] *= getGaussianWeightedDistance(SIDE_RIGHT_ANGLE, steering_angle);
-            backfrontback_ucs[9] *= getGaussianWeightedDistance(REAR_RIGHT_ANGLE, steering_angle);
-
+            // gewichte Sensor-Input nach Gauss-Kurve
+            us_values[ARRPOS_REAR_CENTER] = uss.tRearCenter.f32Value * getGaussianWeightedDistance(sa.REAR_CENTER_ANGLE, steering_angle);
+            us_values[ARRPOS_REAR_LEFT] = uss.tRearLeft.f32Value * getGaussianWeightedDistance(sa.REAR_LEFT_ANGLE, steering_angle);
+            us_values[ARRPOS_SIDE_LEFT] = uss.tSideLeft.f32Value * getGaussianWeightedDistance(sa.SIDE_LEFT_ANGLE, steering_angle);
+            us_values[ARRPOS_FRONT_LEFT] = uss.tFrontLeft.f32Value * getGaussianWeightedDistance(sa.FRONT_LEFT_ANGLE, steering_angle);
+            us_values[ARRPOS_FRONT_CENTER_LEFT] = uss.tFrontCenterLeft.f32Value * getGaussianWeightedDistance(sa.FRONT_CENTER_LEFT_ANGLE, steering_angle);;
+            us_values[ARRPOS_FRONT_CENTER] = uss.tFrontCenter.f32Value * getGaussianWeightedDistance(sa.FRONT_CENTER_ANGLE, steering_angle);;
+            us_values[ARRPOS_FRONT_CENTER_RIGHT] = uss.tFrontCenterRight.f32Value * getGaussianWeightedDistance(sa.FRONT_CENTER_RIGHT_ANGLE, steering_angle);
+            us_values[ARRPOS_FRONT_RIGHT] = uss.tFrontRight.f32Value * getGaussianWeightedDistance(sa.FRONT_RIGHT_ANGLE, steering_angle);
+            us_values[ARRPOS_SIDE_RIGHT] = uss.tSideRight.f32Value * getGaussianWeightedDistance(sa.SIDE_RIGHT_ANGLE, steering_angle);
+            us_values[ARRPOS_REAR_RIGHT] = uss.tRearRight.f32Value * getGaussianWeightedDistance(sa.REAR_RIGHT_ANGLE, steering_angle);
 
 
             float minDistanceNorm = 800;
-
-            for (unsigned int i = 0; i < backfrontback_ucs.size(); ++i) {
-                minDistanceNorm = backfrontback_ucs[i] < minDistanceNorm ? backfrontback_ucs[i] : minDistanceNorm;
+            for (unsigned int i = 0; i < us_values.size(); ++i) {
+                minDistanceNorm = us_values[i] < minDistanceNorm ? us_values[i] : minDistanceNorm;
             }
-
 
             //cout << "fcgauss= " << getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle);
             //cout << "flgauss= " << getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle);
-            //cout << "frontCenter= " << backfrontback_ucs[5] << " frontLeft= " << backfrontback_ucs[3] << endl;
+            //cout << "frontCenter= " << us_values[5] << " frontLeft= " << us_values[3] << endl;
 
 
-
-
-
-
-            //minDistanceNorm = backfrontback_ucs[5] < backfrontback_ucs[3] ? backfrontback_ucs[5] : backfrontback_ucs[3];
+            //minDistanceNorm = us_values[5] < us_values[3] ? us_values[5] : us_values[3];
 
             cout << "minDistanceNorm= " << minDistanceNorm << " | ";
 
@@ -190,7 +134,7 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
                 linear_speed = 0;
             } else {
 
-                //todo Andere Funktion
+                //todo MotorSpeed nicht-linear??
                 linear_speed = 1.25f * minDistanceNorm / 4 + 45.0f;
             }
 
@@ -202,93 +146,12 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
 
             cout << "motorspeed= " << _motorControl.speed << endl;
 
-            /*
-            for(int i = 0; i < 10; ++i) {
-                backfrontback_ucs[i] = backfrontback_ucs[i] * (2-exp())
-
-            }
-             */
-
-
-/*
-
-            float resultSpeed = MAX_SPEED;
-
-            switch ((int)uss.tFrontCenter.f32Value){
-                case 80 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 50 ... 79:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.75f);
-                    break;
-                case 25 ... 49:
-                    resultSpeed = getSmallerSpeed(resultSpeed, (MAX_SPEED * 0.55f));
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            switch ((int)uss.tFrontCenterRight.f32Value) {
-                case 50 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 25 ... 49:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.75f);
-                    break;
-                case 10 ... 24:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.55f);
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            switch ((int)uss.tFrontCenterLeft.f32Value) {
-                case 50 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 25 ... 49:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.75f);
-                    break;
-                case 10 ... 24:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.55f);
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            switch ((int)uss.tFrontLeft.f32Value){
-                case 21 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 8 ... 20:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.55f);
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            switch ((int)uss.tFrontRight.f32Value){
-                case 21 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 8 ... 20:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.55f);
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            _motorControl.speed = resultSpeed;
-            */
 
         } else if (pSource == &m_oInputPin_diff) {
-            LineDetectionDiff diff = receiveData<LineDetectionDiff>(pMediaSample);
-            switch(diff){
+            LineDetectionDiff difference = receiveData<LineDetectionDiff>(pMediaSample);
+
+
+            switch(difference){
                 case 0:
                     _motorControl.angle = 0;
                     break;
@@ -300,7 +163,7 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
                     break;
                 case 1 ... 39 :
                 case -39 ... -1:
-                    _motorControl.angle = diff * 100 / 40;
+                    _motorControl.angle = difference * 100 / 40;
                     break;
                 default:
                     break;
