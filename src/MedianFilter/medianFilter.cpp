@@ -8,6 +8,7 @@ ADTF_FILTER_PLUGIN("medianFilter", OID_ADTF_MEDIAN_FILTER, cMedianFilter);
 
 
 cMedianFilter::cMedianFilter(const tChar* __info):cFilter(__info) {
+    medianFilter.reset(new MedianFilter(10, 400));
     //Property fuer die Median-Listen-Laenge
     SetPropertyInt("list_length", 10);
     SetPropertyStr("list_length" NSSUBPROP_DESCRIPTION, "length of the median filter list");
@@ -23,11 +24,13 @@ tResult cMedianFilter::Init(tInitStage eStage, __exception) {
     RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
 
     //erzeugen der Liste mit der Laenge aus dem Property 'list_length'
-    _list.resize((unsigned int)GetPropertyInt("list_length"));
+    //_list.resize((unsigned int)GetPropertyInt("list_length"));
 
-    for (unsigned int i = 0; i < _list.size(); ++i) {
-        _list[i] = GetPropertyInt("initvalue");
-    }
+    //for (unsigned int i = 0; i < _list.size(); ++i) {
+    //    _list[i] = GetPropertyInt("initvalue");
+    //}
+
+
 
     if (eStage == StageFirst) {
         // get a media type for the input pin
@@ -53,12 +56,15 @@ tResult cMedianFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, 
         RETURN_IF_POINTER_NULL(pMediaSample);
 
         if (pSource == &m_oInputPin) {
+            /*
             rotate(_list.begin(), _list.begin() + _list.size() - 1, _list.end());
             _list[0] = receiveData<FilterValue>(pMediaSample);
 
             vector<FilterValue> tmpList = _list;
             sort(tmpList.begin(), tmpList.end());
             sendData<FilterValue>(&m_oOutputPin, &(tmpList[tmpList.size()/2]));
+             */
+            sendData<FilterValue>(&m_oOutputPin, )
         }
     }
     RETURN_NOERROR;

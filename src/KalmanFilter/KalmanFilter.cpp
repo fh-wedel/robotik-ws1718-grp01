@@ -5,12 +5,18 @@
 #include "../../protocol.h"
 
 #include <iostream>
-
+#include "../../helperFunctions.h"
 
 ADTF_FILTER_PLUGIN("KalmanFilter", OID_ADTF_TEMPLATE_FILTER, cKalmanFilter);
 
 
 cKalmanFilter::cKalmanFilter(const tChar* __info):cFilter(__info) {
+
+    MedianFilter medianFilter(5,0);
+    medianFilter.putNewValue(2);
+
+
+
     SetPropertyInt("processNoise", 0);
     SetPropertyStr("processNoise" NSSUBPROP_DESCRIPTION, "Prozessrauschen");
     SetPropertyInt("processNoise" NSSUBPROP_MIN, 0);

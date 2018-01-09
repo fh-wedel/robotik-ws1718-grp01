@@ -202,81 +202,6 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
              */
 
 
-/*
-
-            float resultSpeed = MAX_SPEED;
-
-            switch ((int)uss.tFrontCenter.f32Value){
-                case 80 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 50 ... 79:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.75f);
-                    break;
-                case 25 ... 49:
-                    resultSpeed = getSmallerSpeed(resultSpeed, (MAX_SPEED * 0.55f));
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            switch ((int)uss.tFrontCenterRight.f32Value) {
-                case 50 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 25 ... 49:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.75f);
-                    break;
-                case 10 ... 24:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.55f);
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            switch ((int)uss.tFrontCenterLeft.f32Value) {
-                case 50 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 25 ... 49:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.75f);
-                    break;
-                case 10 ... 24:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.55f);
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            switch ((int)uss.tFrontLeft.f32Value){
-                case 21 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 8 ... 20:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.55f);
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            switch ((int)uss.tFrontRight.f32Value){
-                case 21 ... 400:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED);
-                    break;
-                case 8 ... 20:
-                    resultSpeed = getSmallerSpeed(resultSpeed, MAX_SPEED * 0.55f);
-                    break;
-                default:
-                    resultSpeed = getSmallerSpeed(resultSpeed, 0);
-                    break;
-            }
-
-            _motorControl.speed = resultSpeed;
-            */
 
         } else if (pSource == &m_oInputPin_diff) {
             LineDetectionDiff diff = receiveData<LineDetectionDiff>(pMediaSample);
@@ -299,20 +224,6 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
             }
 
         }
-
-        /*
-        if (pSource == &m_oInputPin_speed) {
-		float f32value;
-		static tBufferID szIDF32Value_SpeedContr;
-		__adtf_sample_read_lock_mediadescription(m_pDescriptionAccelerateSignalInput, pMediaSample, pCoderInput);
-         pCoderInput->GetID("f32Value", szIDF32Value_SpeedContr);
-        pCoderInput->Get(szIDF32Value_SpeedContr, (tVoid*)&f32value);
-          
-        MotorControl test;
-		test.speed = f32value;
-		sendData<MotorControl>(&m_oOutputPin_carcontrol, &test);
-        }
-         */
 
 
         //Send Data
