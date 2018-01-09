@@ -115,6 +115,25 @@ Durch Aufspannen eines eigenen WLAN-Netzes funktioniert die Bildschirmuebertragu
 ---
 ## 5. Woche 18.12 - 24.12.2017
 
+#### Bildschirmuerbertragung mit *VNC*
+Das Auto erstellt selber einen Accesspoint, bei Bedarf kann der *VNC*-Serverdienst auch ueber *ssh* gestartet werden.
+
+#### Ueber die Ultrasonic-Sensoren ermittelter Abstand regelt die Geschwindigkeit
+Bisher wurde die Geschwindigkeit ueber die Ultrasonic-Sensoren statisch ermittelt. Konstanten
+beeinflussten die Gewichtung der Sensoren. Dies fuehrte dazu, dass das Auto in Kurven, in denen an den
+Seiten wenig Platz vorhanden war, langsamer fuhr als noetig, weil trotz Einlenkung der Sensor FrontCenter
+die staerkste Gewichtung hatte. Um dies dynamischer zu gestalten und den Lenkwinkel mit der Gewichtung
+einfliessen zu lassen, haben wir die Ultrasonic-Sensoren auf die Gaußverteilung abgebildet. Dadurch ergibt
+sich auch anschaulich die Wichtigkeit der Sensoren. Der Lenkwinkel ist dabei die Verschiebung der Funktion
+auf der x-Achse. Somit werden bei einer Einlenkung die entsprechenden Sensoren die innerhalb der Kurve liegen
+staerker gewichtet und das Auto kann schneller um die kurve fahren.
+
+#### Testfahrten
+Die eben beschreibene Aenderung wurde oeffters getestet und jedes mal Parameter geaendert und angepasst.
+
+
+#### Anfang Umbau der ADTF-Klasse Medianfilter zu einer normalen Klasse, kein Baustein
+
 
 
 

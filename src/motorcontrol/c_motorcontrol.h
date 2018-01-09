@@ -11,7 +11,7 @@ class c_motorcontrol : public adtf::cFilter
 
 #define CALIBRATION 1
 #define CALIBRATION_SAMPLES 60
-
+#define  MAX_SPEED -12
 
 #define G 9.80665
 #define ACC_Z_NORMAL 9.75

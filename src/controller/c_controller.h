@@ -6,20 +6,36 @@
 
 #include "../../protocol.h"
 
-#define CALIBRATION 1
-#define CALIBRATION_SAMPLES 60
 
 
-#define G 9.80665
-#define ACC_Z_NORMAL 9.75
-#define ACC_Z_DELTA_NEG 0.02
-#define ACC_Z_DELTA_POS 0.01
-#define  MAX_SPEED -12
+//todo fuer morgen... KalmanFilter implementieren fuer Lenkung und Ultrasonic
+//todo fuer morgen... Dynamischer BildFilter (Kontrastanpassung - Blauanteil)
 
+typedef struct SensorAngle {
+    float REAR_CENTER_ANGLE;
+    float REAR_LEFT_ANGLE;
+    float SIDE_LEFT_ANGLE;
+    float FRONT_LEFT_ANGLE;
+    float FRONT_CENTER_LEFT_ANGLE;
+    float FRONT_CENTER_ANGLE;
+    float FRONT_CENTER_RIGHT_ANGLE;
+    float FRONT_RIGHT_ANGLE;
+    float SIDE_RIGHT_ANGLE;
+    float REAR_RIGHT_ANGLE;
 
-#define ACC_Y_NORMAL -0.85
-#define ACC_X_NORMAL 0.13
-
+    SensorAngle() {
+        REAR_CENTER_ANGLE = 1;
+        REAR_LEFT_ANGLE = -1;
+        SIDE_LEFT_ANGLE = -0.7f;
+        FRONT_LEFT_ANGLE = -0.4f;
+        FRONT_CENTER_LEFT_ANGLE = -0.2f;
+        FRONT_CENTER_ANGLE = 0;
+        FRONT_CENTER_RIGHT_ANGLE = 0.2f;
+        FRONT_RIGHT_ANGLE = 0.4f;
+        SIDE_RIGHT_ANGLE = 0.7f;
+        REAR_RIGHT_ANGLE = 1;
+    }
+} SensorAngle;
 
 class c_controller : public adtf::cFilter
 {
@@ -27,14 +43,13 @@ class c_controller : public adtf::cFilter
     ADTF_FILTER(OID_ADTF_CARCONTROLLER, "Contoller", adtf::OBJCAT_DataFilter);
 
 private:
-    float getSmallerSpeed(float oldVal, float newVal);
-    //cObjectPtr<IMediaTypeDescription> m_pDescriptionAccelerateSignalInput;
     MotorControl _motorControl;
+    SensorAngle sa;
+
 
 protected:
     cInputPin    m_oInputPin_USS;
     cInputPin    m_oInputPin_diff;
-    //cInputPin    m_oInputPin_speed;
     cOutputPin    m_oOutputPin_carcontrol;
 
 public:
