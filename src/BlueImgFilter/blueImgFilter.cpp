@@ -57,6 +57,8 @@ tResult cBlueImgFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
             cvtColor(image, dest, CV_BGR2HSV); // converting to HSV color space
 
+            // TODO: dynamic parameter adjustment for filtering...?
+
             inRange(dest, Scalar(95,100,70), Scalar(130,255,255), dest2); // filtering all relevant blues
             //inRange(dest, Scalar(95,10,10), Scalar(130,255,255), dest2); // filtering all relevant blues
 
