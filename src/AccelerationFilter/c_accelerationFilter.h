@@ -2,8 +2,8 @@
 #ifndef _ACCELERATION_FILTER_H_
 #define _ACCELERATION_FILTER_H_
 
+#include "../../helperFunctions.h"
 #define OID_ADTF_ACCELERATION_FILTER "adtf.example.accelerationFilter"
-
 
 //!  Template filter for AADC Teams
 /*!

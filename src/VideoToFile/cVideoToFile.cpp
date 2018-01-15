@@ -1,8 +1,8 @@
 
 
 #include "stdafx.h"
+#include "../../helperFunctions.h"
 #include "cVideoToFile.h"
-
 
 ADTF_FILTER_PLUGIN("videoToFile", OID_ADTF_VIDEOTOFILE, cVideoToFile);
 

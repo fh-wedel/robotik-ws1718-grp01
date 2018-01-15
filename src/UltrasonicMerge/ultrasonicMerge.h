@@ -3,7 +3,6 @@
 
 #define OID_ADTF_ULTRASONICMERGE "adtf.example.ultrasonicMerge"
 
-#include "../../protocol.h"
 
 /*
 * MedianFilter zum Filtern der Ultraschallsensoren.

@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "negativNumberFilter.h"
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 
 ADTF_FILTER_PLUGIN("negativNumberFilter", OID_ADTF_NEGATIVNUMBER_FILTER, cNegativNumberFilter);
 

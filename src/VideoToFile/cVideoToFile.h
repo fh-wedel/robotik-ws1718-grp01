@@ -4,7 +4,6 @@
 
 #include <aadc_structs.h>
 #include <iostream>
-#include "../../protocol.h"
 
 #define OID_ADTF_VIDEOTOFILE "adtf.example.videoToFile"
 

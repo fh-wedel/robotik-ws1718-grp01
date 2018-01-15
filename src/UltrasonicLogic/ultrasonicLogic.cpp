@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "ultrasonicLogic.h"
 #include <aadc_structs.h>
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 
 #include <iostream>
 

@@ -2,7 +2,7 @@
 
 
 #include "stdafx.h"
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 #include "oneLineDetect.h"
 
 

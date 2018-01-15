@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
+#include "../../helperFunctions.h"
 #include "c_accelerationFilter.h"
-#include "../../protocol.h"
 #include <stdio.h>
 #include <cmath>
 

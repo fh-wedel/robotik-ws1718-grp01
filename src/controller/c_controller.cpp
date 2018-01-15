@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "c_controller.h"
 #include <iostream>
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 #include <stdio.h>
 #include <cmath>
 #include <math.h>

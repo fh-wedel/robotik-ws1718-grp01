@@ -1,9 +1,10 @@
 
 
 #include "stdafx.h"
+#include "../../helperFunctions.h
 #include "ultrasonicMerge.h"
 #include <aadc_structs.h>
-#include "../../protocol.h"
+
 
 
 ADTF_FILTER_PLUGIN("ultrasonicMerge", OID_ADTF_ULTRASONICMERGE, cUltrasonicMerge);

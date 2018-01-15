@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include "c_motorcontrol.h"
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 #include <stdio.h>
 #include <iostream>
 #include <cmath>

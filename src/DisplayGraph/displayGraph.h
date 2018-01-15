@@ -3,7 +3,7 @@
 
 #define OID_ADTF_DisplayGraph "adtf.example.displayGraph"
 
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 
 typedef struct {
     int heightPx;

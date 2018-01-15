@@ -3,7 +3,7 @@
 
 #define OID_ADTF_NEGATIVNUMBER_FILTER "adtf.example.negativNumberFilter"
 
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 
 /*
 * MedianFilter zum Filtern der Ultraschallsensoren.

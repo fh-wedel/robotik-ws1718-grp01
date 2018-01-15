@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "displayGraph.h"
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 #include <iostream>
 
 ADTF_FILTER_PLUGIN("displayGraph", OID_ADTF_DisplayGraph, cDisplayGraph);

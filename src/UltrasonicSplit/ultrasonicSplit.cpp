@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "ultrasonicSplit.h"
 #include <aadc_structs.h>
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 
 
 ADTF_FILTER_PLUGIN("ultrasonicSplit", OID_ADTF_ULTRASONICSPLIT, cUltrasonicSplit);

@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "KalmanFilter.h"
 #include <aadc_structs.h>
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 
 #include <iostream>
 #include "../../helperFunctions.h"

@@ -4,7 +4,7 @@
 
 #define OID_ADTF_CARCONTROLLER "adtf.example.controller2"
 
-#include "../../protocol.h"
+#include "../../helperFunctions.h"
 
 
 
