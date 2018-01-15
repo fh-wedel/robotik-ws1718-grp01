@@ -4,7 +4,7 @@
 
 MedianFilter::MedianFilter(uint64_t listlength, FilterValue initalValue) {
     _filterList.resize(listlength);
-    for (int i = 0; i < _filterList.size(); ++i) {
+    for (unsigned int i = 0; i < _filterList.size(); ++i) {
         _filterList[i] = initalValue;
     }
 }
@@ -24,5 +24,5 @@ FilterValue MedianFilter::putNewValue(FilterValue value) {
 }
 
 MedianFilter::MedianFilter() {
-    MedianFilter::MedianFilter(10, 400);
+
 }

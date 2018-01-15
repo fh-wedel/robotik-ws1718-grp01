@@ -13,6 +13,7 @@
 #include "ADTF_OpenCV_helper.h"
 #include <adtf_platform_inc.h>
 
+
 #define MEDIA_TYPE_ULTRASONICSTRUCT     MEDIA_HANDLE_UNKNOWN
 #define MEDIA_SUBTYPE_ULTRASONICSTRUCT  MEDIA_HANDLE_UNKNOWN
 
@@ -35,7 +36,9 @@
 
 
 typedef struct {
+    //Winkel von -100 bis 100
     float angle;
+    //Speed von -100 bis 100
     float speed;
 } MotorControl;
 
@@ -77,7 +80,7 @@ bool sendData(adtf::cVideoPin *outPin, cv::Mat *data) {
 
 template <typename T> T receiveData(adtf::IMediaSample* pSample) {
     T* rData = NULL;
-    T rDataCopy;
+    T rDataCopy = T();
     if (IS_OK(pSample->Lock((const tVoid**)&rData))) {
         memcpy(&rDataCopy, rData, sizeof(T));
         pSample->Unlock(rData);

@@ -3,6 +3,7 @@
 #include "c_motorcontrol.h"
 #include "../../protocol.h"
 #include <stdio.h>
+#include <iostream>
 #include <cmath>
 
 
@@ -74,13 +75,16 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1,
 			} else {
 
                 MotorControl motorControl_data = receiveData<MotorControl>(pMediaSample);
-                float new_speed = motorControl_data.speed;
-                float new_angle = motorControl_data.angle;
 
-                if (!emergeny_break_enabled) {
-                    ArduinoTransmitFloatValue(&m_oOutputPin_speed, new_speed, 0);
+                float tmp_maxSpeed = motorControl_data.speed * 12 / 100 * -1;
+                if (fabs(tmp_maxSpeed) <= fabs(MAX_SPEED)) {
+                    if (!emergeny_break_enabled) {
+                        ArduinoTransmitFloatValue(&m_oOutputPin_speed, tmp_maxSpeed, 0);
+                    }
+                } else {
+                    cout << "Motorcontrol: Limit ueberschritten (" << tmp_maxSpeed << ")" << endl;
                 }
-                ArduinoTransmitFloatValue(&m_oOutputPin_angle, new_angle, 0);
+                ArduinoTransmitFloatValue(&m_oOutputPin_angle, motorControl_data.angle, 0);
             }
         }
     }

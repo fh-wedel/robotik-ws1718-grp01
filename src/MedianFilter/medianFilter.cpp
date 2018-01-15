@@ -2,19 +2,21 @@
 
 #include "stdafx.h"
 #include "medianFilter.h"
-#include "../../protocol.h"
+
 
 ADTF_FILTER_PLUGIN("medianFilter", OID_ADTF_MEDIAN_FILTER, cMedianFilter);
 
 
 cMedianFilter::cMedianFilter(const tChar* __info):cFilter(__info) {
-    medianFilter.reset(new MedianFilter(10, 400));
+    //edianFilter.reset(new MedianFilter(10, 400));
+    //medianFilter = MedianFilter(10,400);
     //Property fuer die Median-Listen-Laenge
     SetPropertyInt("list_length", 10);
     SetPropertyStr("list_length" NSSUBPROP_DESCRIPTION, "length of the median filter list");
     SetPropertyInt("list_length" NSSUBPROP_MIN, 1);
     SetPropertyInt("list_length" NSSUBPROP_MAX, 1000);
     SetPropertyInt("initvalue", 400);
+
 }
 
 cMedianFilter::~cMedianFilter() {
@@ -64,7 +66,13 @@ tResult cMedianFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, 
             sort(tmpList.begin(), tmpList.end());
             sendData<FilterValue>(&m_oOutputPin, &(tmpList[tmpList.size()/2]));
              */
-            sendData<FilterValue>(&m_oOutputPin, )
+
+            //unique_ptr<MedianFilter> t(new MedianFilter);
+            MedianFilter medianFilter;
+            medianFilter.putNewValue(42);
+
+            //FilterValue filterValue = medianFilter.putNewValue(receiveData<FilterValue>(pMediaSample));
+            //sendData<FilterValue>(&m_oOutputPin, &filterValue);
         }
     }
     RETURN_NOERROR;

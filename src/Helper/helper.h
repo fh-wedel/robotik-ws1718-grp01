@@ -3,7 +3,9 @@
 #ifndef PROJECT_HELPER_H
 #define PROJECT_HELPER_H
 
-#include "../../protocol.h"
+#include "stdafx.h"
+#include "protocol.h"
+
 
 class MedianFilter {
 private:
@@ -16,5 +18,6 @@ public:
     FilterValue putNewValue(FilterValue value);
 };
 
+#include "helper.cpp"
 
 #endif //PROJECT_HELPER_H

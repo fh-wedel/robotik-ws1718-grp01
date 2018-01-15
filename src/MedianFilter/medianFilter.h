@@ -3,10 +3,9 @@
 
 #define OID_ADTF_MEDIAN_FILTER "adtf.example.medianFilter"
 
-#include "../../protocol.h"
 #include "../../helperFunctions.h"
-#include "../Helper/helper.h"
-#include <bits/unique_ptr.h>
+//#include "../Helper/helper.h"
+//#include <bits/unique_ptr.h>
 
 /*
 * MedianFilter zum Filtern der Ultraschallsensoren.
@@ -18,7 +17,8 @@ class cMedianFilter : public adtf::cFilter {
 private:
     //Listen zur Speicherung der Messwerte
     //vector<FilterValue> _list;
-    unique_ptr<MedianFilter> medianFilter;
+    //unique_ptr<MedianFilter> medianFilter;
+    //MedianFilter medianFilter;
 
 protected:
     cInputPin m_oInputPin;
