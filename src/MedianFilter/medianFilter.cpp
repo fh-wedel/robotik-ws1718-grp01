@@ -1,22 +1,15 @@
-
-
 #include "stdafx.h"
 #include "medianFilter.h"
 
-
 ADTF_FILTER_PLUGIN("medianFilter", OID_ADTF_MEDIAN_FILTER, cMedianFilter);
 
-
 cMedianFilter::cMedianFilter(const tChar* __info):cFilter(__info) {
-    //edianFilter.reset(new MedianFilter(10, 400));
-    //medianFilter = MedianFilter(10,400);
-    //Property fuer die Median-Listen-Laenge
     SetPropertyInt("list_length", 10);
     SetPropertyStr("list_length" NSSUBPROP_DESCRIPTION, "length of the median filter list");
     SetPropertyInt("list_length" NSSUBPROP_MIN, 1);
     SetPropertyInt("list_length" NSSUBPROP_MAX, 1000);
     SetPropertyInt("initvalue", 400);
-
+    medianFilter.initMedianFilter((uint64_t) GetPropertyInt("list_length"), GetPropertyInt("initvalue"));
 }
 
 cMedianFilter::~cMedianFilter() {
@@ -24,16 +17,6 @@ cMedianFilter::~cMedianFilter() {
 
 tResult cMedianFilter::Init(tInitStage eStage, __exception) {
     RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
-
-    //erzeugen der Liste mit der Laenge aus dem Property 'list_length'
-    //_list.resize((unsigned int)GetPropertyInt("list_length"));
-
-    //for (unsigned int i = 0; i < _list.size(); ++i) {
-    //    _list[i] = GetPropertyInt("initvalue");
-    //}
-
-
-
     if (eStage == StageFirst) {
         // get a media type for the input pin
         cObjectPtr<IMediaType> pType;
@@ -45,7 +28,6 @@ tResult cMedianFilter::Init(tInitStage eStage, __exception) {
         RETURN_IF_FAILED(m_oOutputPin.Create("filteredValue", pType, this));
         RETURN_IF_FAILED(RegisterPin(&m_oOutputPin));
     }
-
     RETURN_NOERROR;
 }
 
@@ -56,23 +38,9 @@ tResult cMedianFilter::Shutdown(tInitStage eStage, __exception) {
 tResult cMedianFilter::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample) {
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         RETURN_IF_POINTER_NULL(pMediaSample);
-
         if (pSource == &m_oInputPin) {
-            /*
-            rotate(_list.begin(), _list.begin() + _list.size() - 1, _list.end());
-            _list[0] = receiveData<FilterValue>(pMediaSample);
-
-            vector<FilterValue> tmpList = _list;
-            sort(tmpList.begin(), tmpList.end());
-            sendData<FilterValue>(&m_oOutputPin, &(tmpList[tmpList.size()/2]));
-             */
-
-            //unique_ptr<MedianFilter> t(new MedianFilter);
-            MedianFilter medianFilter;
-            medianFilter.putNewValue(42);
-
-            //FilterValue filterValue = medianFilter.putNewValue(receiveData<FilterValue>(pMediaSample));
-            //sendData<FilterValue>(&m_oOutputPin, &filterValue);
+            FilterValue filterValue = medianFilter.putNewValue(receiveData<FilterValue>(pMediaSample));
+            sendData<FilterValue>(&m_oOutputPin, &filterValue);
         }
     }
     RETURN_NOERROR;

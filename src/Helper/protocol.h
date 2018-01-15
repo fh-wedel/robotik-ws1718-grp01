@@ -5,6 +5,7 @@
 #ifndef PROJECT_PROTOCOL_H
 #define PROJECT_PROTOCOL_H
 
+#include "stdafx.h"
 #include <stdint.h>
 #include <adtf_plugin_sdk.h>
 #include <aadc_structs.h>

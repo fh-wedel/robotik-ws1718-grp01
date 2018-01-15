@@ -4,7 +4,6 @@
 #define OID_ADTF_MEDIAN_FILTER "adtf.example.medianFilter"
 
 #include "../../helperFunctions.h"
-//#include "../Helper/helper.h"
 //#include <bits/unique_ptr.h>
 
 /*
@@ -18,7 +17,7 @@ private:
     //Listen zur Speicherung der Messwerte
     //vector<FilterValue> _list;
     //unique_ptr<MedianFilter> medianFilter;
-    //MedianFilter medianFilter;
+    MedianFilter medianFilter;
 
 protected:
     cInputPin m_oInputPin;
