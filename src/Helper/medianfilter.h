@@ -45,7 +45,7 @@ FilterValue MedianFilter::putNewValue(FilterValue value) {
     return tmpFilterList[tmpFilterList.size() / 2];
 }
 
-MedianFilter::FilterValue medianFromArray(vector<FilterValue> filterVals){
+FilterValue MedianFilter::medianFromArray(vector<FilterValue> filterVals){
     if (filterVals.size() == 0) {
         cout << "MedianFilter not initialized" << endl;
         return 0; //lerder eher unpraktisch...
