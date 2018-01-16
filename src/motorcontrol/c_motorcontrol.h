@@ -11,7 +11,7 @@ class c_motorcontrol : public adtf::cFilter
 
 #define CALIBRATION 1
 #define CALIBRATION_SAMPLES 60
-#define  MAX_SPEED -12
+#define MAX_SPEED -12
 
 #define G 9.80665
 #define ACC_Z_NORMAL 9.75
@@ -21,6 +21,7 @@ class c_motorcontrol : public adtf::cFilter
 
 #define ACC_Y_NORMAL -0.85
 #define ACC_X_NORMAL 0.13
+
 protected:
     cInputPin    m_oInputPin_motorcontol;
 
@@ -40,7 +41,6 @@ public:
 protected:
 
     tResult Init(tInitStage eStage, ucom::IException** __exception_ptr);
-
 
     tResult Shutdown(tInitStage eStage, ucom::IException** __exception_ptr = NULL);
 
