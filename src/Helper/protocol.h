@@ -40,6 +40,7 @@
 
 
 
+
 typedef struct {
     //Winkel von -100 bis 100
     float angle;
