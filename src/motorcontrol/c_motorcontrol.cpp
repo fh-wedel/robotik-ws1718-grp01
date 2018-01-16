@@ -59,10 +59,13 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1,
         if (pSource == &m_oInputPin_flags) {
 
             Flag flags = receiveData<Flag>(pMediaSample);
-            if (flags & FLAG_EMERGENCY_BREAK) {
+            if (flags == FLAG_EMERGENCY_BREAK_USS) {
                 emergeny_break();
             }
-            if (flags == 2) {
+	    if (flags == FLAG_EMERGENCY_BREAK_ACC){
+		emergency_break();
+	    }
+            if (flags == FLAG_EMERGENCY_BREAK_USS_OK) {
                 emergeny_break_enabled = 0;
             }
         } else if (pSource == &m_oInputPin_motorcontol) {
