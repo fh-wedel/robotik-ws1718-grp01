@@ -53,7 +53,21 @@ tResult c_motorcontrol::Shutdown(tInitStage eStage, __exception) {
     return cFilter::Shutdown(eStage, __exception_ptr);
 }
 
+/**
+ * Geschwindigkeitswerte von -100 - 100
+ * @param normedSpeed [-100 - 100] keine bis maximale Geschwindigkeit
+ * @return [-12 - 12] minimale (12) bis maximale (-12) Motorcontrol-Geschwindigkeit
+ */
+float normedSpeedToMotorSpeed(float normedSpeed) {
+    float dir = normedSpeed > 0 ? 1 : -1;
+    float absSpeed = fabs(normedSpeed);
 
+    float speed = 0.04 * absSpeed + 6; // maxSpeed = -10
+
+    // negative Geschwindigkeit: vorwärts -> * (-1)
+    // dir: ursprüngliche Richtung
+    return speed * (-1) * dir;
+}
 
 
 tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample *pMediaSample) {
@@ -81,12 +95,13 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1,
 
                 MotorControl motorControl_data = receiveData<MotorControl>(pMediaSample);
 
-                //float tmp_maxSpeed = motorControl_data.speed * 12 / 100 * -1;
                 float tmp_maxSpeed = normedSpeedToMotorSpeed(motorControl_data.speed);
+				cout << " speed= " << tmp_maxSpeed << " ";
 
                 if (fabs(tmp_maxSpeed) <= fabs(MAX_SPEED)) {
                     if (!emergeny_break_enabled) {
                         ArduinoTransmitFloatValue(&m_oOutputPin_speed, tmp_maxSpeed, 0);
+                        cout << " sendData " ;
                     }
                 } else {
                     cout << "Motorcontrol: Limit ueberschritten (" << tmp_maxSpeed << ")" << endl;
@@ -103,23 +118,9 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1,
 void c_motorcontrol::emergency_break() {
     cur_speed = 0;
     emergeny_break_enabled = 1;
-    printf("emergency break enabled");
+    //printf("emergency break enabled\n");
     ArduinoTransmitFloatValue(&m_oOutputPin_speed, cur_speed, 0);
     
 }
 
-/**
- * Geschwindigkeitswerte von -100 - 100
- * @param normedSpeed [-100 - 100] keine bis maximale Geschwindigkeit
- * @return [-12 - 12] minimale (12) bis maximale (-12) Motorcontrol-Geschwindigkeit
- */
-float normedSpeedToMotorSpeed(float normedSpeed) {
-    float dir = normedSpeed > 0 ? 1 : -1;
-    float absSpeed = fabs(speed);
 
-    float speed = 0.04 * absSpeed + 6;
-
-    // negative Geschwindigkeit: vorwärts -> * (-1)
-    // dir: ursprüngliche Richtung
-    return speed * (-1) * dir;
-}

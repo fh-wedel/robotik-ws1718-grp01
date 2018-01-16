@@ -118,7 +118,8 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
             // Berechnet den Median-Wert aus zehn Pixel-Reihen-Werten im oberen Bildbereich
             vector<FilterValue> tmpFilterList_1;
-            for (unsigned int i = 130; i <150; i+=2){
+            //for (unsigned int i = 130; i <150; i+=2){
+			for (unsigned int i = 130; i <150; i+=2){
                 tmpFilterList_1.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
             }
             LineDetectionDiff difference_1 = medianFilter.medianFromArray(tmpFilterList_1);

@@ -157,16 +157,16 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
             // auf 0 - 100 normierter mindest-Distanzwert
             float minDistanceNorm = minDistance; // / 4
 
-            cout << "minDistanceNorm= " << minDistanceNorm << " | ";
+            cout << "\nminDistanceNorm= " << minDistanceNorm << " | ";
 
             // Berechnet die Geschwindigkeit anhand der minimalsten Distanz und des mindest-Schwellwertes
-			float speed = minDistToSpeed(minDistanceNorm, 15);
+			float speed = minDistToSpeed(minDistanceNorm, 20);
 
-            cout << "speed= " << speed << " | ";
+            //cout << "speed= " << speed << " | ";
 
             _motorControl.speed = speed;
 
-            //cout << "motorspeed= " << _motorControl.speed << endl;
+            cout << "speed= " << _motorControl.speed;
 
 
         } else if (pSource == &m_oInputPin_diff) {
