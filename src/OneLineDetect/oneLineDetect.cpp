@@ -12,6 +12,8 @@ ADTF_FILTER_PLUGIN("oneLineDetect", OID_ADTF_OneLineDetect_FILTER, cOneLineDetec
 
 cOneLineDetect::cOneLineDetect(const tChar* __info):cFilter(__info) {
     SetPropertyInt("minLineWidth", 10);
+    medianFilter.initMedianFilter((uint64_t) GetPropertyInt("list_length"), GetPropertyInt("initvalue"));
+
 }
 
 cOneLineDetect::~cOneLineDetect() {
@@ -106,15 +108,31 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
             cvtColor(image, greyImg, CV_BGR2GRAY);
 
 
-            LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(15, image, greyImg);
+            //LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(15, image, greyImg);
             //sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_0);
             //cout << "Difference: " << difference_0 << endl;
 
-            LineDetectionDiff difference_1 = cOneLineDetect::whiteAreaInRow(41, image, greyImg);
+            //LineDetectionDiff difference_1 = cOneLineDetect::whiteAreaInRow(41, image, greyImg);
             //sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_1);
 
 
+            // Berechnet den Median-Wert aus zehn Pixel-Reihen-Werten im oberen Bildbereich
+            vector<FilterValue> tmpFilterList_1;
+            for (unsigned int i = 145; i <155; i++){
+                tmpFilterList_1.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
+            }
+            LineDetectionDiff difference_1 = medianFilter.medianFromArray(tmpFilterList_1);
+
+
+
             if (difference_1 == -101) {
+                // Berechnet den Median-Wert aus zehn Pixel-Reihen-Werten im unteren Bildbereich
+                vector<FilterValue> tmpFilterList_0;
+                for (unsigned int i = 35; i < 45; i++){
+                    tmpFilterList_0.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
+                }
+                LineDetectionDiff difference_0 = medianFilter.medianFromArray(tmpFilterList_0);
+
                 sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_0);
             } else {
                 sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_1);

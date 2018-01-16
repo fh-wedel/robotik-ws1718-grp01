@@ -17,6 +17,7 @@ public:
     ~MedianFilter();
     void initMedianFilter(uint64_t listlength, FilterValue initalValue);
     FilterValue putNewValue(FilterValue value);
+    FilterValue medianFromArray(vector<FilterValue> filterVals);
 };
 
 void MedianFilter::initMedianFilter(uint64_t listlength, FilterValue initalValue) {
@@ -43,6 +44,17 @@ FilterValue MedianFilter::putNewValue(FilterValue value) {
     sort(tmpFilterList.begin(), tmpFilterList.end());
     return tmpFilterList[tmpFilterList.size() / 2];
 }
+
+MedianFilter::FilterValue medianFromArray(vector<FilterValue> filterVals){
+    if (filterVals.size() == 0) {
+        cout << "MedianFilter not initialized" << endl;
+        return 0; //lerder eher unpraktisch...
+    }
+    vector<FilterValue> tmpFilterList = filterVals;
+    sort(tmpFilterList.begin(), tmpFilterList.end());
+    return tmpFilterList[tmpFilterList.size() / 2];
+}
+
 
 MedianFilter::MedianFilter() {
 
