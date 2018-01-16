@@ -107,8 +107,19 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
 
             LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(15, image, greyImg);
-            sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_0);
+            //sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_0);
             //cout << "Difference: " << difference_0 << endl;
+
+            LineDetectionDiff difference_1 = cOneLineDetect::whiteAreaInRow(41, image, greyImg);
+            //sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_1);
+
+
+            if (difference_1 == -101) {
+                sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_0);
+            } else {
+                sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_1);
+            }
+
 
             /*
             LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(1, image, greyImg);
