@@ -47,6 +47,6 @@ protected:
     tResult OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample);
 
 private:
-    void emergeny_break();
+    void emergency_break();
 };
 #endif // _MOTORCONTROL_H_

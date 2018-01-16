@@ -60,7 +60,7 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1,
 
             Flag flags = receiveData<Flag>(pMediaSample);
             if (flags == FLAG_EMERGENCY_BREAK_USS) {
-                emergeny_break();
+                emergency_break();
             }
 	    if (flags == FLAG_EMERGENCY_BREAK_ACC){
 		emergency_break();
@@ -96,7 +96,7 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1,
 }
 
 
-void c_motorcontrol::emergeny_break() {
+void c_motorcontrol::emergency_break() {
     cur_speed = 0;
     emergeny_break_enabled = 1;
     printf("emergency break enabled");

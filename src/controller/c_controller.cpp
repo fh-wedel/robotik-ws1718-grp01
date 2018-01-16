@@ -87,6 +87,21 @@ float getGaussianWeightedDistance(float sensor_angle, float steering_angle) {
     return 5-4*exp(-3 * pow((sensor_angle - steering_angle),2) );
 }
 
+float minDistToSpeed(float minDistance) {
+  
+            float linear_speed = 0;
+            if (minDistanceNorm > 100) {
+                linear_speed = 75;
+            } else if (minDistanceNorm < 10) {
+                linear_speed = 0;
+            } else {
+
+                //todo MotorSpeed nicht-linear??
+                linear_speed = 1.25f * (minDistanceNorm / 4) + 45.0f;
+            }
+            return linear_speed;
+}
+
 tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample *pMediaSample) {
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         if (pSource == &m_oInputPin_USS) {
@@ -126,17 +141,7 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
             cout << "minDistanceNorm= " << minDistanceNorm << " | ";
 
 
-
-            float linear_speed = 0;
-            if (minDistanceNorm > 100) {
-                linear_speed = 75;
-            } else if (minDistanceNorm < 10) {
-                linear_speed = 0;
-            } else {
-
-                //todo MotorSpeed nicht-linear??
-                linear_speed = 1.25f * minDistanceNorm / 4 + 45.0f;
-            }
+			float linear_speed = minDistToSpeed(minDistanceNorm);
 
             cout << "linear_speed= " << linear_speed << " | ";
 

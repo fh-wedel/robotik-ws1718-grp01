@@ -67,7 +67,7 @@ tResult cUltrasonicLogic::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam
         if (pSource == &m_oInputPin) {
 
             UltrasonicStruct receivedUltrasonicStruct = receiveData<UltrasonicStruct>(pMediaSample);
-
+			receivedUltrasonicStruct.tFrontCenterLeft.f32Value = 400;
             if (receivedUltrasonicStruct.tFrontCenter.f32Value >= (0 - SIG_ATOMIC_MAX)) {
                 _ultrasonicStruct.tFrontCenter.f32Value = frontCenterFilter.putNewValue(fabs(receivedUltrasonicStruct.tFrontCenter.f32Value));
             }
