@@ -75,12 +75,12 @@ tResult cUltrasonicLogic::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam
                     || (ultrasonicStruct.tSideRight.f32Value < GetPropertyInt("STOP_distance_Side"))
                     || (ultrasonicStruct.tFrontRight.f32Value < GetPropertyInt("STOP_distance_Front"))
                     || (ultrasonicStruct.tFrontCenterRight.f32Value < GetPropertyInt("STOP_distance_Front"))) {
-                Flag flag = FLAG_EMERGENCY_BREAK;
+                Flag flag = FLAG_EMERGENCY_BREAK_USS;
                 cout << "UltrasonicLogik:: FLAG_EMERGENCY_BREAK" << endl;
                 sendData<Flag>(&m_oOutputEmergencyFlagPin, &flag);
             }
             else{
-			Flag flag = 2;
+			Flag flag = FLAG_EMERGENCY_BREAK_USS_OK;
                 sendData<Flag>(&m_oOutputEmergencyFlagPin, &flag);
 			}
             sendData<UltrasonicStruct>(&m_oOutputPin, &ultrasonicStruct);
