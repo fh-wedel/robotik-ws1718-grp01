@@ -83,23 +83,37 @@ tResult c_controller::Shutdown(tInitStage eStage, __exception) {
     return cFilter::Shutdown(eStage, __exception_ptr);
 }
 
-float getGaussianWeightedDistance(float sensor_angle, float steering_angle) {
+// sensor_angle: [0 - 1]
+// steering_angle: [0 - 1]
+// Berechnet die durch eine Gauss-Kurve gewichtete Sensor-Wertigkeit
+float getGaussianSensorWeight(float sensor_angle, float steering_angle) {
     return 5-4*exp(-3 * pow((sensor_angle - steering_angle),2) );
 }
 
-float minDistToSpeed(float minDistance) {
-  
-            float linear_speed = 0;
-            if (minDistanceNorm > 100) {
-                linear_speed = 75;
-            } else if (minDistanceNorm < 10) {
-                linear_speed = 0;
-            } else {
+// sensor_angle: [0 - 1]
+// steering_angle: [0 - 1]
+// Berechnet die durch eine Gauss-Kurve gewichtete Sensor-Wertigkeit
+float getGaussianSensorWeight(float sensor_angle, float steering_angle, bool front) {
+    return 5-4*exp(-3 * pow((sensor_angle - steering_angle),2) );
+}
 
-                //todo MotorSpeed nicht-linear??
-                linear_speed = 1.25f * (minDistanceNorm / 4) + 45.0f;
-            }
-            return linear_speed;
+// dist: zwischen [0 - 400]
+// minDistCutoff: [0 - 100] cotoff für die mindestGeschwindigkeit
+// return: Geschwindigkeit zwischen [0 - 100]
+// Berechnet die Geschwindigkeit aus dem gegebenen Distanzwert und dem Distanz-Schwellwert
+float minDistToSpeed(float dist, float minDistCutoff) {
+    float speed = 0;
+
+    if (dist < minDistCutoff){ // Distanz unter Cutoff: Geschwindigkeit 0
+        speed = 0;
+    } else if (dist > 100) { // Distanz größer als 1 Meter: Maximalgeschwindigkeit
+        speed = 100;
+    } else {
+        speed = dist;
+        //dist = dist - minDistCutoff;
+        //speed = 50/(100-minDistCutoff) * dist + 50.0f;
+    }
+    return speed;
 }
 
 tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample *pMediaSample) {
@@ -114,42 +128,45 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
             float steering_angle = _motorControl.angle / 100 * (sa.FRONT_RIGHT_ANGLE - sa.FRONT_CENTER_RIGHT_ANGLE);
 
             // gewichte Sensor-Input nach Gauss-Kurve
-            us_values[ARRPOS_REAR_CENTER] = uss.tRearCenter.f32Value * getGaussianWeightedDistance(sa.REAR_CENTER_ANGLE, steering_angle);
-            us_values[ARRPOS_REAR_LEFT] = uss.tRearLeft.f32Value * getGaussianWeightedDistance(sa.REAR_LEFT_ANGLE, steering_angle);
-            us_values[ARRPOS_SIDE_LEFT] = uss.tSideLeft.f32Value * getGaussianWeightedDistance(sa.SIDE_LEFT_ANGLE, steering_angle);
-            us_values[ARRPOS_FRONT_LEFT] = uss.tFrontLeft.f32Value * getGaussianWeightedDistance(sa.FRONT_LEFT_ANGLE, steering_angle);
-            us_values[ARRPOS_FRONT_CENTER_LEFT] = uss.tFrontCenterLeft.f32Value * getGaussianWeightedDistance(sa.FRONT_CENTER_LEFT_ANGLE, steering_angle);;
-            us_values[ARRPOS_FRONT_CENTER] = uss.tFrontCenter.f32Value * getGaussianWeightedDistance(sa.FRONT_CENTER_ANGLE, steering_angle);;
-            us_values[ARRPOS_FRONT_CENTER_RIGHT] = uss.tFrontCenterRight.f32Value * getGaussianWeightedDistance(sa.FRONT_CENTER_RIGHT_ANGLE, steering_angle);
-            us_values[ARRPOS_FRONT_RIGHT] = uss.tFrontRight.f32Value * getGaussianWeightedDistance(sa.FRONT_RIGHT_ANGLE, steering_angle);
-            us_values[ARRPOS_SIDE_RIGHT] = uss.tSideRight.f32Value * getGaussianWeightedDistance(sa.SIDE_RIGHT_ANGLE, steering_angle);
-            us_values[ARRPOS_REAR_RIGHT] = uss.tRearRight.f32Value * getGaussianWeightedDistance(sa.REAR_RIGHT_ANGLE, steering_angle);
+            us_values[ARRPOS_REAR_CENTER] = uss.tRearCenter.f32Value *
+                    getGaussianSensorWeight(sa.REAR_CENTER_ANGLE, steering_angle);
+            us_values[ARRPOS_REAR_LEFT] = uss.tRearLeft.f32Value *
+                    getGaussianSensorWeight(sa.REAR_LEFT_ANGLE, steering_angle);
+            us_values[ARRPOS_SIDE_LEFT] = uss.tSideLeft.f32Value *
+                    getGaussianSensorWeight(sa.SIDE_LEFT_ANGLE, steering_angle);
+            us_values[ARRPOS_FRONT_LEFT] = uss.tFrontLeft.f32Value *
+                    getGaussianSensorWeight(sa.FRONT_LEFT_ANGLE, steering_angle);
+            us_values[ARRPOS_FRONT_CENTER_LEFT] = uss.tFrontCenterLeft.f32Value *
+                    getGaussianSensorWeight(sa.FRONT_CENTER_LEFT_ANGLE, steering_angle);;
+            us_values[ARRPOS_FRONT_CENTER] = uss.tFrontCenter.f32Value *
+                    getGaussianSensorWeight(sa.FRONT_CENTER_ANGLE, steering_angle);;
+            us_values[ARRPOS_FRONT_CENTER_RIGHT] = uss.tFrontCenterRight.f32Value *
+                    getGaussianSensorWeight(sa.FRONT_CENTER_RIGHT_ANGLE, steering_angle);
+            us_values[ARRPOS_FRONT_RIGHT] = uss.tFrontRight.f32Value *
+                    getGaussianSensorWeight(sa.FRONT_RIGHT_ANGLE, steering_angle);
+            us_values[ARRPOS_SIDE_RIGHT] = uss.tSideRight.f32Value *
+                    getGaussianSensorWeight(sa.SIDE_RIGHT_ANGLE, steering_angle);
+            us_values[ARRPOS_REAR_RIGHT] = uss.tRearRight.f32Value *
+                    getGaussianSensorWeight(sa.REAR_RIGHT_ANGLE, steering_angle);
 
 
-            float minDistanceNorm = 800;
+            float minDistance = 800;
             for (unsigned int i = 0; i < us_values.size(); ++i) {
-                minDistanceNorm = us_values[i] < minDistanceNorm ? us_values[i] : minDistanceNorm;
+                minDistance = us_values[i] < minDistance ? us_values[i] : minDistance;
             }
-
-            //cout << "fcgauss= " << getGaussianWeightedDistance(FRONT_CENTER_ANGLE, steering_angle);
-            //cout << "flgauss= " << getGaussianWeightedDistance(FRONT_LEFT_ANGLE, steering_angle);
-            //cout << "frontCenter= " << us_values[5] << " frontLeft= " << us_values[3] << endl;
-
-
-            //minDistanceNorm = us_values[5] < us_values[3] ? us_values[5] : us_values[3];
+            // auf 0 - 100 normierter mindest-Distanzwert
+            float minDistanceNorm = minDistance; // / 4
 
             cout << "minDistanceNorm= " << minDistanceNorm << " | ";
 
+            // Berechnet die Geschwindigkeit anhand der minimalsten Distanz und des mindest-Schwellwertes
+			float speed = minDistToSpeed(minDistanceNorm, 15);
 
-			float linear_speed = minDistToSpeed(minDistanceNorm);
+            cout << "speed= " << speed << " | ";
 
-            cout << "linear_speed= " << linear_speed << " | ";
+            _motorControl.speed = speed;
 
-
-
-            _motorControl.speed = linear_speed;
-
-            cout << "motorspeed= " << _motorControl.speed << endl;
+            //cout << "motorspeed= " << _motorControl.speed << endl;
 
 
         } else if (pSource == &m_oInputPin_diff) {

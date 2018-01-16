@@ -54,6 +54,8 @@ tResult c_motorcontrol::Shutdown(tInitStage eStage, __exception) {
 }
 
 
+
+
 tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample *pMediaSample) {
     if (nEventCode == IPinEventSink::PE_MediaSampleReceived) {
         if (pSource == &m_oInputPin_flags) {
@@ -79,7 +81,9 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1,
 
                 MotorControl motorControl_data = receiveData<MotorControl>(pMediaSample);
 
-                float tmp_maxSpeed = motorControl_data.speed * 12 / 100 * -1;
+                //float tmp_maxSpeed = motorControl_data.speed * 12 / 100 * -1;
+                float tmp_maxSpeed = normedSpeedToMotorSpeed(motorControl_data.speed);
+
                 if (fabs(tmp_maxSpeed) <= fabs(MAX_SPEED)) {
                     if (!emergeny_break_enabled) {
                         ArduinoTransmitFloatValue(&m_oOutputPin_speed, tmp_maxSpeed, 0);
@@ -102,4 +106,20 @@ void c_motorcontrol::emergency_break() {
     printf("emergency break enabled");
     ArduinoTransmitFloatValue(&m_oOutputPin_speed, cur_speed, 0);
     
+}
+
+/**
+ * Geschwindigkeitswerte von -100 - 100
+ * @param normedSpeed [-100 - 100] keine bis maximale Geschwindigkeit
+ * @return [-12 - 12] minimale (12) bis maximale (-12) Motorcontrol-Geschwindigkeit
+ */
+float normedSpeedToMotorSpeed(float normedSpeed) {
+    float dir = normedSpeed > 0 ? 1 : -1;
+    float absSpeed = fabs(speed);
+
+    float speed = 0.04 * absSpeed + 6;
+
+    // negative Geschwindigkeit: vorwärts -> * (-1)
+    // dir: ursprüngliche Richtung
+    return speed * (-1) * dir;
 }
