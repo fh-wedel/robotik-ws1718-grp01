@@ -12,6 +12,8 @@ ADTF_FILTER_PLUGIN("oneLineDetect", OID_ADTF_OneLineDetect_FILTER, cOneLineDetec
 
 cOneLineDetect::cOneLineDetect(const tChar* __info):cFilter(__info) {
     SetPropertyInt("minLineWidth", 10);
+    SetPropertyInt("maxLineWidth", 60);
+
     medianFilter.initMedianFilter((uint64_t) GetPropertyInt("list_length"), GetPropertyInt("initvalue"));
 
 }
@@ -54,8 +56,94 @@ tResult cOneLineDetect::Shutdown(tInitStage eStage, __exception) {
     return cFilter::Shutdown(eStage, __exception_ptr);
 }
 
+// Differenz zum Bildmittelpunt der Zeile ausgeben und Markierung im Debugvideo setzen
+int cOneLineDetect::doubleWhiteAreaInRow(int targetRow, Mat src, Mat greyImg){
+    int mid = greyImg.cols/2;
 
-// Differenz zum bildmittelpunt der Zeile ausgeben und Markierung im Debugvideo setzen
+    // position der Fahrlinienmitte
+    int pos = 0;
+
+    int i;
+    int cnt = 0;
+
+    int maxpos0 = 0;
+    int maxwidth0 = 0;
+
+    // Groesste zusammen haengende Anzahl an weißen Pixeln finden (Markierung detektieren)
+    for(i = 0; i < greyImg.cols; i++) {
+
+        if (greyImg.at<uchar>(greyImg.rows - targetRow, i) == 255) {
+            // if pixel is white
+            cnt++;
+
+            if (cnt >= maxwidth0) {
+                maxwidth0 = cnt;
+                maxpos0 = i;
+            }
+
+        } else {
+            cnt = 0;
+        }
+    }
+
+    if(maxwidth0 > GetPropertyInt("maxLineWidth") ) {
+        pos = -101;
+    }
+
+    // get second largest line in row
+    int maxpos1 = 0;
+    int maxwidth1 = 0;
+
+    for(i = 0; i < greyImg.cols; i++) {
+
+        if(i <= maxpos0 && i >= maxpos0-maxwidth0) {
+            if (greyImg.at<uchar>(greyImg.rows - targetRow, i) == 255) {
+                // if pixel is white
+                cnt++;
+
+                if (cnt >= maxwidth0) {
+                    maxwidth1 = cnt;
+                    maxpos1 = i;
+                }
+
+            } else {
+                cnt = 0;
+            }
+        }
+    }
+
+    if(maxwidth1 < GetPropertyInt("maxLineWidth") ) {
+        pos =  maxpos0 - (maxwidth0/2);
+    } else {
+        // decide which of the two recognized lines to return
+
+        //return maxpos0 - (maxwidth0/2); // always return wider line
+
+        // wähle Linie, die zentraler liegt
+        int center0diff = fabs( mid - (maxpos0 - (maxwidth0/2)));
+        int center1diff = fabs( mid - (maxpos1 - (maxwidth1/2)));
+        pos =  center0diff < center1diff ? center0diff : center1diff;
+        // ...
+
+    }
+
+    //erkannte Linie markieren
+    Point pt(pos, src.rows - targetRow);
+
+
+    int offset =  (int) (pos <= mid) ? - (mid - pos) : (pos - mid);
+    //return offset;
+    /*
+    if (max < GetPropertyInt("minLineWidth") ) {
+        return -101;
+    }
+     */
+    circle(src, pt, 5, Scalar(0, 0, 255), 3, 0, 0);
+    return (int) (offset <= -320 || offset >= 320) ? -101 : offset*100/320; // Normieren des Outputs auf (-100 <= returned_offset <= 100)
+}
+
+
+// Differenz zum Bildmittelpunt der Zeile ausgeben und Markierung im Debugvideo setzen
 int cOneLineDetect::whiteAreaInRow(int targetRow, Mat src, Mat greyImg){
     int mid = greyImg.cols/2;
 
@@ -107,20 +195,12 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
 
             cvtColor(image, greyImg, CV_BGR2GRAY);
 
-
-            //LineDetectionDiff difference_0 = cOneLineDetect::whiteAreaInRow(15, image, greyImg);
-            //sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_0);
-            //cout << "Difference: " << difference_0 << endl;
-
-            //LineDetectionDiff difference_1 = cOneLineDetect::whiteAreaInRow(41, image, greyImg);
-            //sendData<LineDetectionDiff>(&m_oDiff_CenterPin, &difference_1);
-
-
             // Berechnet den Median-Wert aus zehn Pixel-Reihen-Werten im oberen Bildbereich
             vector<FilterValue> tmpFilterList_1;
             //for (unsigned int i = 130; i <150; i+=2){
 			for (unsigned int i = 130; i <150; i+=2){
-                tmpFilterList_1.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
+                //tmpFilterList_1.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
+                tmpFilterList_1.push_back( doubleWhiteAreaInRow(i, image, greyImg));
             }
             LineDetectionDiff difference_1 = medianFilter.medianFromArray(tmpFilterList_1);
 
@@ -130,7 +210,8 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
                 // Berechnet den Median-Wert aus zehn Pixel-Reihen-Werten im unteren Bildbereich
                 vector<FilterValue> tmpFilterList_0;
                 for (unsigned int i = 30; i < 50; i+=2){
-                    tmpFilterList_0.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
+                    //tmpFilterList_0.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
+                    tmpFilterList_0.push_back( doubleWhiteAreaInRow(i, image, greyImg));
                 }
                 LineDetectionDiff difference_0 = medianFilter.medianFromArray(tmpFilterList_0);
 

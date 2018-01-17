@@ -14,6 +14,7 @@ class cOneLineDetect : public adtf::cFilter {
 
 private:
     int whiteAreaInRow(int targetRow, Mat src, Mat greyImg);
+    int doubleWhiteAreaInRow(int targetRow, Mat src, Mat greyImg);
     MedianFilter medianFilter;
 
 protected:
