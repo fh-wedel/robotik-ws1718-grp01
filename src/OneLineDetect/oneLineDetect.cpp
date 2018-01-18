@@ -199,8 +199,8 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
             vector<FilterValue> tmpFilterList_1;
             //for (unsigned int i = 130; i <150; i+=2){
 			for (unsigned int i = 130; i <150; i+=2){
-                //tmpFilterList_1.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
-                tmpFilterList_1.push_back( doubleWhiteAreaInRow(i, image, greyImg));
+                tmpFilterList_1.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
+                //tmpFilterList_1.push_back( cOneLineDetect::doubleWhiteAreaInRow(i, image, greyImg));
             }
             LineDetectionDiff difference_1 = medianFilter.medianFromArray(tmpFilterList_1);
 
@@ -210,8 +210,8 @@ tResult cOneLineDetect::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1,
                 // Berechnet den Median-Wert aus zehn Pixel-Reihen-Werten im unteren Bildbereich
                 vector<FilterValue> tmpFilterList_0;
                 for (unsigned int i = 30; i < 50; i+=2){
-                    //tmpFilterList_0.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
-                    tmpFilterList_0.push_back( doubleWhiteAreaInRow(i, image, greyImg));
+                    tmpFilterList_0.push_back( cOneLineDetect::whiteAreaInRow(i, image, greyImg));
+                    //tmpFilterList_0.push_back( cOneLineDetect::doubleWhiteAreaInRow(i, image, greyImg));
                 }
                 LineDetectionDiff difference_0 = medianFilter.medianFromArray(tmpFilterList_0);
 
