@@ -75,32 +75,40 @@
 
 
 %%% Neues Kapitel %%%
-\chapter{Einleitung}
+\chapter{Einführung}
 
-Autos sollen in der heutigen Welt immer intelligenter werden. Dies ist auch schon über viele Assistenzsysteme geschehen, 
-doch die Entwicklung soll weiter gehen. Das Auto, das selbst fahren kann. Viele Unternehmen treiben diese Forschung voran, 
-darunter auch Audi.
-Im Rahmen des  ?Audi Autonomous Driving Cup? lässt Audi Teams gegeneinander antreten. Die Disziplinen sind eine Parkourfahrt 
-und eine ?Open Challange?. Bewertet wird die Performance der einzelnen Fahrzeuge.
-Im Robotikpraktikum der FH-Wedel, haben wir die Möglichkeit uns mit dem 2017er Modell des Audi Cups näher auseinander zu setzten 
-und erste Schritte zu tätigen, das Modellauto selbstständig fahren zu lassen.
-Unsere Aufgabe bestand darin ein eigenes Ziel zu definieren und dieses zu verwirklichen.
-
+Das Robotik-Praktikum, welches im Ergebnis diese Dokumentation festhält, fand parallel zur und in Kombination mit der Bachelor-Vorlesung 'Einführung in die Robotik' statt, welche von Herrn Professor Dr. Ulrich Hoffmann im Wintersemester 2017 gehalten wurde.
+Ziel war die Vertiefung und Anwendung der in der Vorlesung vermittelten Inhalte, wobei der diessemestrige Schwerpunkt  auf autonomen Robotern lag. Im Praktikum wurde mit einem AADC\footnote{Audi Autonomous Driving Cup: \url{https://www.audi-autonomous-driving-cup.com/wettbewerb/ueberblick/}} 2017 Audi-Modell im Maßstab 1:8 gearbeitet. Es sollte zu Beginn eine nicht näher eingeschränkte Zielsetzung ausgearbeitet werden, welche auf der grundlegenden Anforderung der kollisionsfreien Fahrt aufbauen sollte.
 
 %%% Neues Kapitel %%%
-\chapter{Zielsetzung}
+\section{Zielsetzung}
 
-Ziel ist es, das Modellauto in die Lage zu versetzen, einer Fahrbahnmarkierung selbstständig fol-gen zu können, ohne dabei 
-mit Hindernissen zu kollidieren. Dafür wird auf die eingehenden Daten der RGB-Frontkamera sowie der Ultraschallsensoren 
-zugegriffen.
-
-Konkret wurde zu Beginn des Praktikums eine Roadmap ausgearbeitet (siehe \autoref{img_Roadmap_Gr1}).
-
-Die Fahrbahn wird mittig und durchgehend mit blauem Klebeband markiert. Die Lichtverhältnisse  müssen nicht konstant sein; 
-die Auswertung der Kamerabilder soll aber jederzeit möglich sein. Hindernisse sind derart beschaffen, dass sie von den 
-Ultraschallsensoren detektiert werden können (Mindestgröße, Schallharte Oberfläche, usw. sind gewährleistet).
-Ist ein Hindernis zu nah an bzw. auf der Fahrbahn, soll das Modellauto langsamer werden und vor dem Hindernis anhalten. 
-Das Modellauto fährt erst weiter, wenn die Ultraschallsensoren signalisie-ren, dass die Fahrbahn wieder frei ist.
+Aufbauend auf gegebener Grundanforderung der Kollisionsvermeidung wurden eigene Ziele definiert. Das Auto sollte später in der Lage sein, einer zentralen blauen Fahrbahnmarkierung zu folgen, dies unter verschiedenen Lichtverhältnissen. Bei Näherkommen eines von Ultraschallsensoren detektierbaren Hindernisses soll das Modell langsamer werden und vor ihm zum Stehen kommen sowie die Fahrt erst wieder aufnehmen, wenn die Sensoren signalisieren, dass die Fahrbahn wieder frei ist.
+\newpage
+Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
+\begin{enumerate}
+	\item{Kollisionsvermeidung
+	\begin{enumerate}
+		\item Messwertglättung durch Filterung (Kalman)
+		\item Messwertverarbeitung der Ultraschallsensoren
+	\end{enumerate}}
+	\item {Motorsteuerung
+		\begin{enumerate}
+		\item Schnittstellendefinition zur Ansteuerung
+		\item Steuerung von Geschwindigkeit und Lenkung
+		\end{enumerate}}
+	\item{Linienerkennung
+	\begin{enumerate}
+		\item Mittelpunktbestimmung
+		\item Testen unter verschiedenen Lichtintensitäten
+		\end{enumerate}}
+		\item{Zusammenbringung
+		\begin{enumerate}
+			\item Definition und Ausarbeitung des Controllers (Verhaltens-Logik)
+			\item Problembehandlung, Feinabstimmung und Testen
+		\end{enumerate}}
+\end{enumerate}
+Die zu Beginn des Praktikumsaus ausgearbeitete Roadmap findet sich in Abbildung \ref{img_Roadmap_Gr1}.
 
 \begin{figure}
 \centering

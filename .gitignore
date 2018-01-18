@@ -1,2 +1,7 @@
 CMakeLists.txt
 src/CMakeLists.txt
+doc/Doku/*.aux
+doc/Doku/*.log
+doc/Doku/*.out
+doc/Doku/*.synctex.gz
+doc/Doku/*.toc
