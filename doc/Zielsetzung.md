@@ -1,8 +1,8 @@
-###Grobziele:
+### Grobziele:
 - Fahrbahnmarkierung selbstständig folgen
 - Vermeidung der Kollision mit Hindernissen
 
-###Umsetzung - Mittel und Verhältnisse:
+### Umsetzung - Mittel und Verhältnisse:
 - Mithilfe von Daten der RGB-Frontkamera und Ultraschallsensoren
 - Fahrbahn mittig und durchgehend mit blauem Klebeband markiert
 - Lichtverhältnisse  müssen nicht konstant sein
@@ -15,7 +15,7 @@ detektiert werden können
   - Fährt erst weiter, wenn die Fahrbahn wieder frei ist
 
 
-###Zielsetzung - Textuelle Beschreibung
+### Zielsetzung - Textuelle Beschreibung
 
 Ziel ist es, das Modellauto in die Lage zu versetzen,
 einer Fahrbahnmarkierung selbstständig folgen zu können,
