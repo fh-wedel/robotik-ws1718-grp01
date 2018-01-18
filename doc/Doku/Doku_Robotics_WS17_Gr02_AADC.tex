@@ -83,7 +83,9 @@ Ziel war die Vertiefung und Anwendung der in der Vorlesung vermittelten Inhalte,
 %%% Neues Kapitel %%%
 \section{Zielsetzung}
 
-Aufbauend auf gegebener Grundanforderung der Kollisionsvermeidung wurden eigene Ziele definiert. Das Auto sollte später in der Lage sein, einer zentralen blauen Fahrbahnmarkierung zu folgen, dies unter verschiedenen Lichtverhältnissen. Bei Näherkommen eines von Ultraschallsensoren detektierbaren Hindernisses soll das Modell langsamer werden und vor ihm zum Stehen kommen sowie die Fahrt erst wieder aufnehmen, wenn die Sensoren signalisieren, dass die Fahrbahn wieder frei ist.
+Im Kontext der gegebenen Grundanforderung der Kollisionsvermeidung wurden eigene Ziele definiert. Das Auto sollte später in der Lage sein, einer zentralen blauen Fahrbahnmarkierung zu folgen, dies unter verschiedenen Lichtverhältnissen. Bei Näherkommen eines von Ultraschallsensoren detektierbaren Hindernisses soll das Modell langsamer werden und vor ihm zum Stehen kommen sowie die Fahrt erst wieder aufnehmen, wenn die Sensoren signalisieren, dass die Fahrbahn wieder frei ist.
+
+Die zu Beginn des Praktikums ausgearbeitete Roadmap findet sich in Abbildung \ref{img_Roadmap_Gr1}.
 \newpage
 Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
 \begin{enumerate}
@@ -105,15 +107,14 @@ Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
 		\item{Zusammenbringung
 		\begin{enumerate}
 			\item Definition und Ausarbeitung des Controllers (Verhaltens-Logik)
-			\item Problembehandlung, Feinabstimmung und Testen
+			\item Problembehandlung, Feinabstimmung und Testung
 		\end{enumerate}}
 \end{enumerate}
-Die zu Beginn des Praktikumsaus ausgearbeitete Roadmap findet sich in Abbildung \ref{img_Roadmap_Gr1}.
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{Bilder/Roadmap_Gr1.pdf}
-\caption{Ursprünglich erstellte Roadmap}
+\includegraphics[width=\textwidth, height=8cm, keepaspectratio]{Bilder/Roadmap_Gr1.pdf}
+\caption{Zu Projektbeginn erstellte Roadmap}
 \label{img_Roadmap_Gr1}
 \end{figure}
 
@@ -128,33 +129,26 @@ Das Audimodell bietet verschiedene Hardwarekomponenten, um das autonome Fahren z
 
 TODO: Bild vom Audi gesamt
 
-Herzstück des Audi ist das „GIGABYTE GA-Z170N-WIFI miniITX“ Mainboard. Unterstützt wird es von einer „NVIDIA GeForce GTX 1050Ti“. 
+Herzstück des Audi ist das \emph{GIGABYTE GA-Z170N-WIFI miniITX} Mainboard. Unterstützt wird es von einer \emph{NVIDIA GeForce GTX 1050Ti}. 
 
 TODO: Bild vom Audi, vor allem mit der Intel 
 
-Die Linienerkennung arbeitet mit der Intelkamera, die mit einer anderen Position und einem anderen Winkel benutzt wird, als im 
-Basismodell. Zum Vergleich siehe Abbild 1 und 2. Grund ist der verbesserte Blick auf den Nahbereich und das mittig ausgerichtete Bild.
+Die Linienerkennung arbeitet mit der Intelkamera, die mit einer anderen Position und einem anderen Winkel benutzt wird, als im Basismodell. Zum Vergleich siehe Abbild 1 und 2. Grund ist der verbesserte Blick auf den Nahbereich und das mittig ausgerichtete Bild.
 
 TODO: Bild von den Sensoren und Arduinos
 
-Zur Kollisionsvermeidung werden die verbauten Ultrasonic Sensoren verwendet. Ansteuern lassen sich diese über Arduinos, die mit 
-dem Mainboard verbunden sind. Der Audi besitzt insgesamt zehn Stück, von denen fünf, in unterschiedlichen Winkeln, nach vorne, 
-jeweils einer zu jeder Seite und drei, wieder in unterschiedlichen Winkeln, nach hinten ausgerichtet sind. Die drei hinteren 
-Sensoren bekommen nicht so viel Gewichtung, da das Auto in unserem Projekt nicht rückwärtsfahren soll.
+Zur Kollisionsvermeidung werden die verbauten Ultrasonic Sensoren verwendet. Ansteuern lassen sich diese über Arduinos, die mit dem Mainboard verbunden sind. Der Audi besitzt insgesamt zehn Stück, von denen fünf, in unterschiedlichen Winkeln, nach vorne, jeweils einer zu jeder Seite und drei, wieder in unterschiedlichen Winkeln, nach hinten ausgerichtet sind. Die drei hinteren Sensoren bekommen nicht so viel Gewichtung, da das Auto in unserem Projekt nicht rückwärts fahren soll.
 
-Angetrieben wird das Modell von vier „Hacker SKALAR 10 21.5 Brushless Motor 1/10“.
-Die Lenkung funktioniert über „Absima "ACS1615SG" Combat Series“ Servos. 
+Angetrieben wird das Modell von vier \emph{Hacker SKALAR 10 21.5 Brushless Motor 1/10}.
+Die Lenkung funktioniert über \emph{Absima 'ACS1615SG' Combat Series} Servos. 
 
-Die Stromversorgung während der Fahrt werden durch zwei Akkus sichergestellt.
+Die Stromversorgung während der Fahrt wird durch zwei Akkus sichergestellt.
 
 
 \section{Softwareplattform}
-Das Modellauto verwendet die Ubuntu Version 16.04 und zur Bildschirmübertragung ist der x11vcn Serverdienst eingerichtet. Die 
-Software EB Assist ADTF 2.14 von Elektrobit ist installiert, um die damit bereitgestellte Programmoberfläche und das Automotive 
-Data and Time-Triggered Framework zu verwenden. Das Framework stellt Funktionen zur Kommunikation mit den im Abschnitt 
-„Hardwareplattform“ erläuterten Sensoren und Kameras bereit. Außerdem ermöglicht es eine Programmaufteilung in Funktionsbloecken, welche parallel auf mehreren Prozessorkernen ausgeführt werden. Die Kommunikation zwischen diesen Blöcken wird über Nachrichtenqueues und Priorisierung vom Framework sichergestellt. Die Ausführung der Funktionsblöcke wird einstellbar periodisch eventgesteuert ausgelöst und beginnt meist mit dem Anstoß zum Auslesen der Sensoren, welche dann das Event über die Queues an andere Funktionsblöcke weitergeben.
+Das Modellauto verwendet die Ubuntu Version 16.04 und zur Bildschirmübertragung ist der x11vcn Serverdienst eingerichtet. Die Software EB Assist ADTF 2.14 von Elektrobit ist installiert, um die damit bereitgestellte Programmoberfläche und das Automotive Data and Time-Triggered Framework zu verwenden. Das Framework stellt Funktionen zur Kommunikation mit den im Abschnitt 'Hardwareplattform' erläuterten Sensoren und Kameras bereit. Außerdem ermöglicht es eine Programmaufteilung in Funktionsblöcken, welche parallel auf mehreren Prozessorkernen ausgeführt werden. Die Kommunikation zwischen diesen Blöcken wird über Nachrichtenqueues und Priorisierung vom Framework sichergestellt. Die Ausführung der Funktionsblöcke wird einstellbar periodisch eventgesteuert ausgelöst und beginnt meist mit dem Anstoß zum Auslesen der Sensoren, welche dann das Event über die Queues an andere Funktionsblöcke weitergeben.
 
-Von der Benutzeroberfläche aus lassen sich die Funktionsblöcke grafisch miteinander verbinden, welches die Kommunikation zwischen den Blöcken repräsentiert, und die Ausführung der Funktio-nen starten. Des Weiteren stellt die Oberfläche weitere fertige Funktionsblöcke zur Verfügung, etwa zum Anzeigen und Abspeichern von Kamerabildern und Sensordaten oder zum  Abspielen selbiger.
+Von der Benutzeroberfläche aus lassen sich die Funktionsblöcke grafisch miteinander verbinden, welches die Kommunikation zwischen den Blöcken repräsentiert, und die Ausführung der Funktionen starten. Des Weiteren stellt die Oberfläche weitere fertige Funktionsblöcke zur Verfügung, etwa zum Anzeigen und Abspeichern von Kamerabildern und Sensordaten oder zum  Abspielen selbiger.
 Durch Referenzen aus dem Programm heraus, können über die Benutzeroberfläche be-stimmte Parameter im Code zur Initialisierung und zur Laufzeit gesetzt werden.
 
 
@@ -163,9 +157,7 @@ Durch Referenzen aus dem Programm heraus, können über die Benutzeroberfläche 
 
 \section{Umgebung}
 
-Die Zielsetzung sieht vor, das Auto auf eine blaue Linie verfolgen zu lassen. Deswegen ist mit Klebeband ein Oval auf den Boden
-geklebt. Das verwendete Klebeband ist recht Matt, um Spiegelungen zu vermeiden. Außerdem ist das Fenster zugestellt, um die 
-Sonneneinstrahlung zu minimieren.
+Die Zielsetzung sieht vor, das Auto auf eine blaue Linie verfolgen zu lassen. Deswegen ist mit Klebeband ein Oval auf den Boden geklebt. Das verwendete Klebeband ist recht Matt, um Spiegelungen zu vermeiden. Außerdem ist das Fenster zugestellt, um die Sonneneinstrahlung zu minimieren.
 
 TODO: Bild(er) der Umgebung
 
@@ -173,26 +165,24 @@ TODO: Bild(er) der Umgebung
 
 Das Projekt ist in verschiedene Aufgabenbereiche aufgeteilt, die separat bearbeitet werden.
 
-TODO: Bild der angepassten Roasmap
+TODO: Bild der angepassten Roadmap
 
 \subsection{Linienerkennung und -verfolgung}
-Damit das Auto der blauen Fahrbahnlinie folgen kann, wird die Linie im Kamerabild detektiert. Anschließend wird die Position der Linie ausgewertet um daraus Steuersignale für die Lenkung zu gewinnen. Diese Aufgaben werden von zwei Filtern gelöst:\\
+Damit das Auto der blauen Fahrbahnlinie folgen kann, wird die Linie im Kamerabild detektiert. Anschließend wird die Position der Linie ausgewertet um daraus Steuersignale für die Lenkung zu gewinnen. Diese Aufgaben werden von zwei Filtern gelöst:
 
 \subsubsection{blueImgFilter}
-Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCv Bibliothek zurück. Weil die Kamera hauptsächlich den 
-(hellgrauen) Boden unmittelbar vor dem Auto sieht, kann man da-von ausgehen, dass die Fahrbahnlinie im relevanten Suchbereich der einzig blaue Bildinhalt ist.
+Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCv Bibliothek zurück. Weil die Kamera hauptsächlich den (hellgrauen) Boden unmittelbar vor dem Auto sieht, kann man da-von ausgehen, dass die Fahrbahnlinie im relevanten Suchbereich der einzig blaue Bildinhalt ist.
+
 Zunächst wird das Eingangsbild mit OpenCv vom RGB- in den HSV-Farbraum transformiert, um die Festlegung von Ober- und Untergrenzen für Blauwerte zu vereinfachen. Mittels der OpenCv-Funktion inRange werden anschließend alle nicht blauen Bildinhalte herausgefiltert und ein Binär-bild zurückgegeben, welches alle blauen Flächen markiert. Die endgültigen Farbwertgrenzen erge-ben sich durch Testläufe unter Realbedingungen.    
 
 TODO: Abbildung 1 und 2 (Übernehme ich aus deiner Doku Julian)
 
 
 \subsubsection{OneLineDetect}
-Dieser Filter erhält das Binärbild und ermittelt die Position der blauen Linie relativ zur Position des Autos. Dafür wird in einer 
-festgelegten Bildzeile nahe des Unteren Bildrandes nach der größ-ten Anzahl weißer, zusammenhängender Pixel gesucht. Durch die Aufbereitung des Bildes durch den blueImgFilter kann davon ausgegangen werden, dass diese Pixel zur blauen Linie gehören. 
-Anschließend wird die Mitte des weißen Pixelabschnittes berechnet und deren Abstand zur Bild-mitte ausgegeben. Dieser Abstand 
-wird auf einen Bereich zwischen -100 und 100 normiert. Über die Filterproperties lässt sich eine Mindestbreite für die Anzahl 
-weißer Pixel festlegen um die De-tektion noch robuster zu gestalten. Sind im aktuell zu bearbeitenden Bild keine oder zu wenig
-wei-ße Pixel am Stück, so wird statt einer Zahl zwischen -100 und 100 der Wert -101 ausgegeben.
+Dieser Filter erhält das Binärbild und ermittelt die Position der blauen Linie relativ zur Position des Autos. Dafür wird in einer festgelegten Bildzeile nahe des Unteren Bildrandes nach der größ-ten Anzahl weißer, zusammenhängender Pixel gesucht. Durch die Aufbereitung des Bildes durch den blueImgFilter kann davon ausgegangen werden, dass diese Pixel zur blauen Linie gehören. 
+
+Anschließend wird die Mitte des weißen Pixelabschnittes berechnet und deren Abstand zur Bild-mitte ausgegeben. Dieser Abstand wird auf einen Bereich zwischen -100 und 100 normiert. Über die Filterproperties lässt sich eine Mindestbreite für die Anzahl weißer Pixel festlegen um die De-tektion noch robuster zu gestalten. Sind im aktuell zu bearbeitenden Bild keine oder zu wenig weiße Pixel am Stück, so wird statt einer Zahl zwischen -100 und 100 der Wert -101 ausgegeben.
+
 Für Debugzwecke wird die detektierte Linienmitte mit einem roten Kreis markiert.
 Dieser Ansatz setzt voraus, dass das Kameraobjektiv auf der Mittelachse des Modelautos montiert ist.
 
@@ -215,7 +205,7 @@ Wir haben uns entschlossen in diesem Baustein auf Flags zu reagieren, um eine sc
 Außerdem beherscht dieser Baustein als einziger das Protokoll, welches zur Ansteuerung der Motoren mittels der Arduinocommunication verwendet wird. So kann intern ein Protokoll verwendet werden, dass sich deutlich besser lesen und im Falle von Verarbeitungsfehlern debuggen lässt. Da der Motorcontroller eine gewisse Anzahl an Nullen benötigt, um aktiviert zu werden, werden die ersten 150 Geschwindigkeitsdaten auf Null gesetzt. Nach diesen 150 Nullen können dann Geschwindigkeiten an die Motoren gesendet werden. Um eine Geschwindigkeit zu verhindern, die zu schnell für die Ultraschallsensoren ist, haben wir uns entschieden eine maximale Geschwindigkeit festzulegen(momentan 12\%). Sollte ein Wert, der größer als dieser ist, an die Motorsteuerung gesendet werden, so wird dieser ignoriert und ein Fehler in der Konsole ausgegeben.
 
 \subsubsection{Umgebung}
-Das Auto wurde in programmiert um eine blaue Linie zu verfolgen, deswegen haben wir einen Oval auf den Boden geklebt. Das verwendete Klebeband ist recht Matt, um Spiegelungen zu vermeiden. Außerdem haben wir direkte Sonneneinstrahlung minimiert, indem wir das Fenster zugestellt haben.
+Das Auto wurde programmiert, um eine blaue Linie zu verfolgen. Es wurde ein großes blaues Oval auf den Boden geklebt. Das verwendete Klebeband ist recht Matt, um Spiegelungen zu vermeiden, jedoch wurde in der Testung die Sonneneinstrahlung minimiert.
 
 
 \subsection{Fusionsschnittstelle}
@@ -233,10 +223,12 @@ Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine e
 %%% Neues Kapitel %%%
 \chapter{Literaturverzeichnis}
 
-[1] 	I2C Geschichte,  https://www.i2c-bus.org/twi-bus/
-[2]	Das Im$^2$C-Bus-System\\
-http://www.g-heinrichs.de/pdv/i2c.pdf\\
-http://www.robot-electronics.co.uk/i2c-tutorial\\
-http://www.atmel.com/Images/8183S.pdf\\
+\begin{enumerate}
+	\item Im$^2$C Geschichte,  https://www.i2c-bus.org/twi-bus/
+	\item Das Im$^2$C-Bus-System
+	\item http://www.g-heinrichs.de/pdv/i2c.pdf
+	\item http://www.robot-electronics.co.uk/i2c-tutorial
+	\item http://www.atmel.com/Images/8183S.pdf
+\end{enumerate}
 
 \end{document}

@@ -5,3 +5,5 @@ doc/Doku/*.log
 doc/Doku/*.out
 doc/Doku/*.synctex.gz
 doc/Doku/*.toc
+doc/Doku/*.bbl
+doc/Doku/*.blg
