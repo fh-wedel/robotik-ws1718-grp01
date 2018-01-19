@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt, a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[ngerman]{babel}
@@ -7,6 +7,23 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{enumitem}
+
+%\usepackage{titlesec}
+%\titleformat{name=\section,numberless}{}
+%Entfernt Zahlen vor Kapitelüberschriften
+%\titleformat{\chapter}[display]{\normalfont\bfseries}{}{0pt}{\Huge}
+
+\usepackage{tocloft}
+%Punktlinie auch nach Kapiteln im Inhaltsverzeichnis
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+
+%Zeilenabstände
+\renewcommand{\baselinestretch}{1.5} 
+
+\usepackage{geometry}
+%Rand-Abstände
+\geometry{verbose, left=20mm, right=20mm, top=30mm, bottom=30mm}
+
 \usepackage[
 	colorlinks,
 	pdfpagelabels,
@@ -91,8 +108,8 @@ Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
 \begin{enumerate}
 	\item{Kollisionsvermeidung
 	\begin{enumerate}
-		\item Messwertglättung durch Filterung (Kalman)
 		\item Messwertverarbeitung der Ultraschallsensoren
+		\item Messwertglättung durch Filterung (Kalman)
 	\end{enumerate}}
 	\item {Motorsteuerung
 		\begin{enumerate}
