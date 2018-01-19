@@ -1,4 +1,4 @@
-\documentclass[12pt, a4paper]{report}
+\documentclass[12pt, a4paper]{scrartcl}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[ngerman]{babel}
@@ -7,6 +7,8 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{enumitem}
+\usepackage{float}
+\usepackage{verbatim} %für Kommentare
 
 %\usepackage{titlesec}
 %\titleformat{name=\section,numberless}{}
@@ -15,7 +17,7 @@
 
 \usepackage{tocloft}
 %Punktlinie auch nach Kapiteln im Inhaltsverzeichnis
-\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 
 %Zeilenabstände
 \renewcommand{\baselinestretch}{1.5} 
@@ -23,6 +25,16 @@
 \usepackage{geometry}
 %Rand-Abstände
 \geometry{verbose, left=20mm, right=20mm, top=30mm, bottom=30mm}
+
+%\usepackage{titlesec}
+%\titleformat
+%{\chapter} % command
+%[hang] % shape
+%{\bfseries\Huge} % format
+%{\thechapter} % label
+%{0.5ex} % sep
+%{} % before-code
+%[] % after-code
 
 \usepackage[
 	colorlinks,
@@ -73,6 +85,47 @@
 
 %%%%%%%%%%%%%%%%%%% STARTSEITE %%%%%%%%%%%%%%%%%%%
 
+\begin{center}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=10cm]{Bilder/fh-wedel-logo.png}
+	\end{figure}
+	
+	\vspace*{1cm}
+	
+	%\Large{\textbf{F A C H H O C H S C H U L E\quad W E D E L\\}}
+	
+		\vspace*{0.5cm}
+	
+	\Large{\textbf{ R O B O T I C S\quad P R A K T I K U M \\ Wintersemester 2017/ 2018\\}}
+	
+	\vspace*{1.5cm}
+	
+	\huge{\textbf{Dokumentation - Gruppe 1\\}}
+	
+	\vspace*{1.5cm}
+	
+	\vfill
+	\begin{table}[h]\centering
+		\begin{tabular}{l l}
+			 &  tinf101030 - Julian Finck \\
+			 & \\
+			 & tinf101364 - René P. Keller  \\
+			 & \\
+			 & inf101301 - Lea Morschel \\
+			 & \\
+			 & tinf101313 - Adrian Sorge \\
+			 & \\
+			 & tinf101087 - Julian Weihe \\
+		\end{tabular}
+	\end{table}
+\end{center}
+
+
+
+\begin{comment}
+%Ursprüngliche simple Titelseite
 \title{- Robotik Praktikum -\endgraf Gruppe 1}
 \author{
   Julian Finck, tinf101030 \and
@@ -82,6 +135,7 @@
   Julian Weihe, tinf101087}
 \date{Wintersemester 2017/ 2018}
 \maketitle
+\end{comment}
 
 \newpage
 \tableofcontents % generiertes Inhaltsverzeichnis
@@ -90,15 +144,15 @@
 
 %%%%%%%%%%%%%%%%%%% INHALTE %%%%%%%%%%%%%%%%%%%
 
-
 %%% Neues Kapitel %%%
-\chapter{Einführung}
+\section{Einführung}
 
-Das Robotik-Praktikum, welches im Ergebnis diese Dokumentation festhält, fand parallel zur und in Kombination mit der Bachelor-Vorlesung 'Einführung in die Robotik' statt, welche von Herrn Professor Dr. Ulrich Hoffmann im Wintersemester 2017 gehalten wurde.
+Das Robotik-Praktikum, wessen Ergebnis diese Dokumentation festhält, fand parallel zur und in Kombination mit der Bachelor-Vorlesung 'Einführung in die Robotik' statt, welche von Herrn Prof. Dr. Ulrich Hoffmann im Wintersemester 2017 gehalten wurde.
+
 Ziel war die Vertiefung und Anwendung der in der Vorlesung vermittelten Inhalte, wobei der diessemestrige Schwerpunkt  auf autonomen Robotern lag. Im Praktikum wurde mit einem AADC\footnote{Audi Autonomous Driving Cup: \url{https://www.audi-autonomous-driving-cup.com/wettbewerb/ueberblick/}} 2017 Audi-Modell im Maßstab 1:8 gearbeitet. Es sollte zu Beginn eine nicht näher eingeschränkte Zielsetzung ausgearbeitet werden, welche auf der grundlegenden Anforderung der kollisionsfreien Fahrt aufbauen sollte.
 
 %%% Neues Kapitel %%%
-\section{Zielsetzung}
+\subsection{Zielsetzung}
 
 Im Kontext der gegebenen Grundanforderung der Kollisionsvermeidung wurden eigene Ziele definiert. Das Auto sollte später in der Lage sein, einer zentralen blauen Fahrbahnmarkierung zu folgen, dies unter verschiedenen Lichtverhältnissen. Bei Näherkommen eines von Ultraschallsensoren detektierbaren Hindernisses soll das Modell langsamer werden und vor ihm zum Stehen kommen sowie die Fahrt erst wieder aufnehmen, wenn die Sensoren signalisieren, dass die Fahrbahn wieder frei ist.
 
@@ -136,11 +190,11 @@ Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
 \end{figure}
 
 %%% Neues Kapitel %%%
-\chapter{Grundlagen}
+\section{Grundlagen}
 
 Im Folgenden werden die Grundlagen, bestehend aus Aufbau des genutzten Modellautos, der darauf laufenden Software, sowie das genutzte Framework erläutert, welche für das Verständnis des Projektes essenziell sind.
 
-\section{Hardwareplattform}
+\subsection{Hardwareplattform}
 
 Das Audimodell bietet verschiedene Hardwarekomponenten, um das autonome Fahren zu verwirklichen.
 
@@ -162,7 +216,7 @@ Die Lenkung funktioniert über \emph{Absima 'ACS1615SG' Combat Series} Servos.
 Die Stromversorgung während der Fahrt wird durch zwei Akkus sichergestellt.
 
 
-\section{Softwareplattform}
+\subsection{Softwareplattform}
 Das Modellauto verwendet die Ubuntu Version 16.04 und zur Bildschirmübertragung ist der x11vcn Serverdienst eingerichtet. Die Software EB Assist ADTF 2.14 von Elektrobit ist installiert, um die damit bereitgestellte Programmoberfläche und das Automotive Data and Time-Triggered Framework zu verwenden. Das Framework stellt Funktionen zur Kommunikation mit den im Abschnitt 'Hardwareplattform' erläuterten Sensoren und Kameras bereit. Außerdem ermöglicht es eine Programmaufteilung in Funktionsblöcken, welche parallel auf mehreren Prozessorkernen ausgeführt werden. Die Kommunikation zwischen diesen Blöcken wird über Nachrichtenqueues und Priorisierung vom Framework sichergestellt. Die Ausführung der Funktionsblöcke wird einstellbar periodisch eventgesteuert ausgelöst und beginnt meist mit dem Anstoß zum Auslesen der Sensoren, welche dann das Event über die Queues an andere Funktionsblöcke weitergeben.
 
 Von der Benutzeroberfläche aus lassen sich die Funktionsblöcke grafisch miteinander verbinden, welches die Kommunikation zwischen den Blöcken repräsentiert, und die Ausführung der Funktionen starten. Des Weiteren stellt die Oberfläche weitere fertige Funktionsblöcke zur Verfügung, etwa zum Anzeigen und Abspeichern von Kamerabildern und Sensordaten oder zum  Abspielen selbiger.
@@ -170,24 +224,24 @@ Durch Referenzen aus dem Programm heraus, können über die Benutzeroberfläche 
 
 
 %%% Neues Kapitel %%%
-\chapter{Implementierung}
+\section{Implementierung}
 
-\section{Umgebung}
+\subsection{Umgebung}
 
 Die Zielsetzung sieht vor, das Auto auf eine blaue Linie verfolgen zu lassen. Deswegen ist mit Klebeband ein Oval auf den Boden geklebt. Das verwendete Klebeband ist recht Matt, um Spiegelungen zu vermeiden. Außerdem ist das Fenster zugestellt, um die Sonneneinstrahlung zu minimieren.
 
 TODO: Bild(er) der Umgebung
 
-\section{Struktur}
+\subsection{Struktur}
 
 Das Projekt ist in verschiedene Aufgabenbereiche aufgeteilt, die separat bearbeitet werden.
 
 TODO: Bild der angepassten Roadmap
 
-\subsection{Linienerkennung und -verfolgung}
+\subsubsection{Linienerkennung und -verfolgung}
 Damit das Auto der blauen Fahrbahnlinie folgen kann, wird die Linie im Kamerabild detektiert. Anschließend wird die Position der Linie ausgewertet um daraus Steuersignale für die Lenkung zu gewinnen. Diese Aufgaben werden von zwei Filtern gelöst:
 
-\subsubsection{blueImgFilter}
+\paragraph{blueImgFilter}
 Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCv Bibliothek zurück. Weil die Kamera hauptsächlich den (hellgrauen) Boden unmittelbar vor dem Auto sieht, kann man da-von ausgehen, dass die Fahrbahnlinie im relevanten Suchbereich der einzig blaue Bildinhalt ist.
 
 Zunächst wird das Eingangsbild mit OpenCv vom RGB- in den HSV-Farbraum transformiert, um die Festlegung von Ober- und Untergrenzen für Blauwerte zu vereinfachen. Mittels der OpenCv-Funktion inRange werden anschließend alle nicht blauen Bildinhalte herausgefiltert und ein Binär-bild zurückgegeben, welches alle blauen Flächen markiert. Die endgültigen Farbwertgrenzen erge-ben sich durch Testläufe unter Realbedingungen.    
@@ -195,7 +249,7 @@ Zunächst wird das Eingangsbild mit OpenCv vom RGB- in den HSV-Farbraum transfor
 TODO: Abbildung 1 und 2 (Übernehme ich aus deiner Doku Julian)
 
 
-\subsubsection{OneLineDetect}
+\paragraph{OneLineDetect}
 Dieser Filter erhält das Binärbild und ermittelt die Position der blauen Linie relativ zur Position des Autos. Dafür wird in einer festgelegten Bildzeile nahe des Unteren Bildrandes nach der größ-ten Anzahl weißer, zusammenhängender Pixel gesucht. Durch die Aufbereitung des Bildes durch den blueImgFilter kann davon ausgegangen werden, dass diese Pixel zur blauen Linie gehören. 
 
 Anschließend wird die Mitte des weißen Pixelabschnittes berechnet und deren Abstand zur Bild-mitte ausgegeben. Dieser Abstand wird auf einen Bereich zwischen -100 und 100 normiert. Über die Filterproperties lässt sich eine Mindestbreite für die Anzahl weißer Pixel festlegen um die De-tektion noch robuster zu gestalten. Sind im aktuell zu bearbeitenden Bild keine oder zu wenig weiße Pixel am Stück, so wird statt einer Zahl zwischen -100 und 100 der Wert -101 ausgegeben.
@@ -206,7 +260,7 @@ Dieser Ansatz setzt voraus, dass das Kameraobjektiv auf der Mittelachse des Mode
 TODO: Abbildung 3 (übernehme ich genauso)
  
 
-\subsection{Abstandserkennung und -verwertung}
+\subsubsection{Abstandserkennung und -verwertung}
 Die Abstandserskennung ist eine der wichtigsten grundlegenden Anforderungen an einen autonomen Roboter zur Ermöglichung von gefahrloser Navigation. In diesem Projekt wird sie auf Basis von Messwerten der zehn im Auto verbauten Ultraschallsensoren [Referenz auf USC-Modell-Bild aus Hardware-Doku-Part] implementiert.
 
 Die Übersetzung der Mess- in Geschwindigkeitswerte wurde anhand einer linearen Funktion realisiert, die allerdings einen minimalen Input-Grenzwert zum Anstoßen der Bewegung und gleichsam einen Maximal-Geschwindigkeits-Wert fest eingebaut hat, der unter der vollen Kapazität des Motors liegt.
@@ -214,31 +268,31 @@ Die Übersetzung der Mess- in Geschwindigkeitswerte wurde anhand einer linearen 
 Die statisch festgelegten Mindestabstandswerte für die einzelnen Sensoren führen allerdings zu der unerwünschten Eigenschaft, dass situationsunabhängig die Gewichtung der Sensorwerte konstant bleibt, die vor allem für ein Geradeaus-Fahren mit gewisser Geschwindigkeit optimal ist. Das ist beispielsweise in Kurven problematisch, wo das Hauptaugenmerk nicht mehr geradeaus liegen sollte, da die Geschwindigkeit durch verbeifahrend frontal erkannte Hindernisse unnötig gedrosselt werden würde. Daher wurde eine dynamische Anpassung des relevanten Blickkegels realisiert. Dazu wird über den Parameter des aktuell eingeschlagenen Lenkwinkels jeder Messwert zunächst gemäß einer Gaußkurve gewichtet, bevor der geringste Abstandswert in eine Geschwindigkeit übersetzt wird. Konkret sieht man in Abbildung [x] die fixen Ablesungspunkte der einzelnen Sensoren auf der x-Achse, welche den Sensor-Winkeln in Blickrichtung des Autos angelehnt wurden. Der entsprechende Punkt auf der Gauss-Kurve gibt den jeweiligen Gewichtungs-Faktor an, wobei ein größerer Wert eine größere Unempfindlichkeit bedeutet. Gemäß Lenkwinkel wird nun die Kurve auf der x-Achse verschoben, wodurch die Gewichtung sich auf die entsprechend seitlich liegenden Sensoren verschiebt.
 
 
-\subsection{Motoransteuerung}
+\subsubsection{Motoransteuerung}
 Die Hauptaufgaben der Motorsteuerung sind das Reagieren auf Flags, wie beispielsweise das Emergencybreak-Flag, sowie die Motorsteuerungsdaten, welche sie von dem Controller bekommt und an die Arduinokommunication weitersendet.
 
 Wir haben uns entschlossen in diesem Baustein auf Flags zu reagieren, um eine schnellere Reaktion auf kritische Ereignisse, wie zum Beispiel das plötzliche Auftauchen eines Hindernisses zu ermöglichen. Dies erreichen wir, indem wir die Flags direkt aus den Blöcken bekommen, welche die Sensordaten verarbeiten und das Signal nicht erst durch verschiedene Verarbeitungsschritte durchgehen muss. Die Emergencybreak wird erst wieder aufgehoben, sobald ein entsprechendes Signal von den Sensoren kommt.
 
 Außerdem beherscht dieser Baustein als einziger das Protokoll, welches zur Ansteuerung der Motoren mittels der Arduinocommunication verwendet wird. So kann intern ein Protokoll verwendet werden, dass sich deutlich besser lesen und im Falle von Verarbeitungsfehlern debuggen lässt. Da der Motorcontroller eine gewisse Anzahl an Nullen benötigt, um aktiviert zu werden, werden die ersten 150 Geschwindigkeitsdaten auf Null gesetzt. Nach diesen 150 Nullen können dann Geschwindigkeiten an die Motoren gesendet werden. Um eine Geschwindigkeit zu verhindern, die zu schnell für die Ultraschallsensoren ist, haben wir uns entschieden eine maximale Geschwindigkeit festzulegen(momentan 12\%). Sollte ein Wert, der größer als dieser ist, an die Motorsteuerung gesendet werden, so wird dieser ignoriert und ein Fehler in der Konsole ausgegeben.
 
-\subsubsection{Umgebung}
+\paragraph{Umgebung}
 Das Auto wurde programmiert, um eine blaue Linie zu verfolgen. Es wurde ein großes blaues Oval auf den Boden geklebt. Das verwendete Klebeband ist recht Matt, um Spiegelungen zu vermeiden, jedoch wurde in der Testung die Sonneneinstrahlung minimiert.
 
 
-\subsection{Fusionsschnittstelle}
+\subsubsection{Fusionsschnittstelle}
 Interprozesskommunikation
 
 Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine einheitliche Kommunikation sichergestellt werden. Hierzu wurde eine separate Funktionssammlung erstellt, die von allen Funktionsblöcken inkludiert wurde. Sie beinhaltet Definitionen über den Nachrichtentyp und die Zusammensetzung strukturierter Datentypen. Da der vom ADTF gestellte Ablauf zum Senden oder Empfangen eines bestimmten Nachrichtentyps zur Codeverdopplung in den Funktionsblöcken führen würde, wurden die Funktionen zusammengefasst und ausgelagert. Damit ließ sich auch einheitlich sicherstellen, dass Funktionsblöcke beim Empfangen die Nachricht erst Kopierten, bevor deren Inhalt verändert wurde.
 
-\section{Fallstricke: Komplikationen und Fehler}
+\subsection{Fallstricke: Komplikationen und Fehler}
 
 
 %%% Neues Kapitel %%%
-\chapter{Auswertung}
+\section{Auswertung}
 
 
 %%% Neues Kapitel %%%
-\chapter{Literaturverzeichnis}
+\section{Literaturverzeichnis}
 
 \begin{enumerate}
 	\item Im$^2$C Geschichte,  https://www.i2c-bus.org/twi-bus/
