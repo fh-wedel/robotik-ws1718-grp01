@@ -9,6 +9,10 @@
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{verbatim} %für Kommentare
+\usepackage{listings} %Zur Code-Einfügung
+
+%\usepackage{biblatex}
+%\addbibresource{Dateien/bibliography.bib}
 
 %\usepackage{titlesec}
 %\titleformat{name=\section,numberless}{}
@@ -149,7 +153,7 @@
 
 Das Robotik-Praktikum, wessen Ergebnis diese Dokumentation festhält, fand parallel zur und in Kombination mit der Bachelor-Vorlesung 'Einführung in die Robotik' statt, welche von Herrn Prof. Dr. Ulrich Hoffmann im Wintersemester 2017 gehalten wurde.
 
-Ziel war die Vertiefung und Anwendung der in der Vorlesung vermittelten Inhalte, wobei der diessemestrige Schwerpunkt  auf autonomen Robotern lag. Im Praktikum wurde mit einem AADC\footnote{Audi Autonomous Driving Cup: \url{https://www.audi-autonomous-driving-cup.com/wettbewerb/ueberblick/}} 2017 Audi-Modell im Maßstab 1:8 gearbeitet. Es sollte zu Beginn eine nicht näher eingeschränkte Zielsetzung ausgearbeitet werden, welche auf der grundlegenden Anforderung der kollisionsfreien Fahrt aufbauen sollte.
+Ziel war die Vertiefung und Anwendung der in der Vorlesung vermittelten Inhalte, wobei der diessemestrige Schwerpunkt  auf autonomen Robotern lag. Im Praktikum wurde mit einem AADC\footnote{Audi Autonomous Driving Cup: \url{https://www.audi-autonomous-driving-cup.com/wettbewerb/ueberblick/}} \cite{aadc-website} 2017 Audi-Modell im Maßstab 1:8 gearbeitet. Es sollte zu Beginn eine nicht näher eingeschränkte Zielsetzung ausgearbeitet werden, welche auf der grundlegenden Anforderung der kollisionsfreien Fahrt aufbauen sollte.
 
 %%% Neues Kapitel %%%
 \subsection{Zielsetzung}
@@ -178,7 +182,7 @@ Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
 		\item{Zusammenbringung
 		\begin{enumerate}
 			\item Definition und Ausarbeitung des Controllers (Verhaltens-Logik)
-			\item Problembehandlung, Feinabstimmung und Testung
+			\item Problembehandlung, Feinabstimmung, Testung
 		\end{enumerate}}
 \end{enumerate}
 
@@ -294,6 +298,7 @@ Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine e
 \section{Auswertung}
 
 
+\begin{comment}
 \newpage
 %%% Neues Kapitel %%%
 \section{Literaturverzeichnis}
@@ -305,5 +310,30 @@ Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine e
 	\item http://www.robot-electronics.co.uk/i2c-tutorial
 	\item http://www.atmel.com/Images/8183S.pdf
 \end{enumerate}
+\end{comment}
+
+\newpage
+%\nocite{*}
+\cite{aadc-website}
+\cite{im2c-bussystem}
+\cite{im2c-geschichte}
+\addcontentsline{toc}{section}{Literaturverzeichnis}
+\bibliography{Dateien/bibliography}
+\bibliographystyle{ieeetr}
+%\printbibliography
+
+\newpage
+\addcontentsline{toc}{section}{Abbildungsverzeichnis}
+\listoffigures
+
+\newpage
+\addcontentsline{toc}{section}{Tabellenverzeichnis}
+\listoftables
+
+\newpage
+\addcontentsline{toc}{section}{Listings-Verzeichnis}
+\renewcommand\lstlistlistingname{Listings-Verzeichnis (Quellcode)}
+\lstlistoflistings
+
 
 \end{document}

@@ -7,3 +7,6 @@ doc/Doku/*.synctex.gz
 doc/Doku/*.toc
 doc/Doku/*.bbl
 doc/Doku/*.blg
+doc/Doku/*.lof
+doc/Doku/*.lol
+doc/Doku/*.lot
