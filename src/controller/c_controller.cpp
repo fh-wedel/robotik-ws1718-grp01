@@ -101,7 +101,7 @@ float getGaussianSensorWeight(float sensor_angle, float steering_angle, bool fro
 // minDistCutoff: [0 - 100] cotoff für die mindestGeschwindigkeit
 // return: Geschwindigkeit zwischen [0 - 100]
 // Berechnet die Geschwindigkeit aus dem gegebenen Distanzwert und dem Distanz-Schwellwert
-float minDistToSpeed(float dist, float minDistCutoff) {
+float distToSpeed(float dist, float minDistCutoff) {
     float speed = 0;
 
     if (dist < minDistCutoff){ // Distanz unter Cutoff: Geschwindigkeit 0
@@ -160,7 +160,7 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
             cout << "\nminDistanceNorm= " << minDistanceNorm << " | ";
 
             // Berechnet die Geschwindigkeit anhand der minimalsten Distanz und des mindest-Schwellwertes
-			float speed = minDistToSpeed(minDistanceNorm, 20);
+			float speed = distToSpeed(minDistanceNorm, 20);
 
             //cout << "speed= " << speed << " | ";
 

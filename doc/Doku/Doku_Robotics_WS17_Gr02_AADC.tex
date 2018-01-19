@@ -11,6 +11,17 @@
 \usepackage{verbatim} %für Kommentare
 \usepackage{listings} %Zur Code-Einfügung
 
+\usepackage[
+colorlinks,
+pdfpagelabels,
+bookmarksopen = true,
+bookmarksnumbered = true,
+linkcolor = black,
+plainpages = false,
+hypertexnames = false,
+citecolor = black
+]{hyperref}
+
 %\usepackage{biblatex}
 %\addbibresource{Dateien/bibliography.bib}
 
@@ -40,18 +51,8 @@
 %{} % before-code
 %[] % after-code
 
-\usepackage[
-	colorlinks,
-	pdfpagelabels,
-	bookmarksopen = true,
-	bookmarksnumbered = true,
-	linkcolor = black,
-	plainpages = false,
-	hypertexnames = false,
-	citecolor = black
-]{hyperref}
 
-%%% FOR FANCY GRAPHS %%% -- von der Gruppe 2oit
+% Für Grafiken
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usetikzlibrary{datavisualization}
@@ -95,19 +96,11 @@
 		\centering
 		\includegraphics[width=10cm]{Bilder/fh-wedel-logo.png}
 	\end{figure}
-	
-	\vspace*{1cm}
-	
-	%\Large{\textbf{F A C H H O C H S C H U L E\quad W E D E L\\}}
-	
-		\vspace*{0.5cm}
-	
-	\Large{\textbf{ R O B O T I K\quad P R A K T I K U M \\ Wintersemester 2017/ 2018\\}}
-	
+
 	\vspace*{1.5cm}
-	
+	\Large{\textbf{ R O B O T I K\quad P R A K T I K U M \\ Wintersemester 2017/ 2018\\}}
+	\vspace*{1.5cm}
 	\huge{\textbf{Dokumentation - Gruppe 1\\}}
-	
 	\vspace*{1.5cm}
 	
 	\vfill
@@ -124,22 +117,9 @@
 			 & tinf101087 - Julian Weihe \\
 		\end{tabular}
 	\end{table}
+
 \end{center}
 
-
-
-\begin{comment}
-%Ursprüngliche simple Titelseite
-\title{- Robotik Praktikum -\endgraf Gruppe 1}
-\author{
-  Julian Finck, tinf101030 \and
-  René P. Keller, tinf101364 \and
-  Lea Morschel, inf101301 \and
-  Adrian Sorge, tinf101313 \and
-  Julian Weihe, tinf101087}
-\date{Wintersemester 2017/ 2018}
-\maketitle
-\end{comment}
 
 \newpage
 \tableofcontents % generiertes Inhaltsverzeichnis
@@ -153,10 +133,10 @@
 
 Das Robotik-Praktikum, wessen Ergebnis diese Dokumentation festhält, fand parallel zur und in Kombination mit der Bachelor-Vorlesung 'Einführung in die Robotik' statt, welche von Herrn Prof. Dr. Ulrich Hoffmann im Wintersemester 2017 gehalten wurde.
 
-Ziel war die Vertiefung und Anwendung der in der Vorlesung vermittelten Inhalte, wobei der diessemestrige Schwerpunkt  auf autonomen Robotern lag. Im Praktikum wurde mit einem AADC\footnote{Audi Autonomous Driving Cup: \url{https://www.audi-autonomous-driving-cup.com/wettbewerb/ueberblick/}} \cite{aadc-website} 2017 Audi-Modell im Maßstab 1:8 gearbeitet. Es sollte zu Beginn eine nicht näher eingeschränkte Zielsetzung ausgearbeitet werden, welche auf der grundlegenden Anforderung der kollisionsfreien Fahrt aufbauen sollte.
+Ziel war die Vertiefung und Anwendung der in der Vorlesung vermittelten Inhalte, wobei der diessemestrige Schwerpunkt  auf autonomen Robotern lag. Im Praktikum wurde mit einem AADC\footnote{Audi Autonomous Driving Cup\cite{aadc-website}} 2017 Audi-Modell im Maßstab 1:8 gearbeitet. Es sollte zu Beginn eine nicht näher eingeschränkte Zielsetzung ausgearbeitet werden, welche auf der grundlegenden Anforderung der kollisionsfreien Fahrt aufbauen sollte.
 
 %%% Neues Kapitel %%%
-\subsection{Zielsetzung}
+\subsection{Zielsetzung} \label{zielsetzung}
 
 Im Kontext der gegebenen Grundanforderung der Kollisionsvermeidung wurden eigene Ziele definiert. Das Auto sollte später in der Lage sein, einer zentralen blauen Fahrbahnmarkierung zu folgen, dies unter verschiedenen Lichtverhältnissen. Bei Näherkommen eines von Ultraschallsensoren detektierbaren Hindernisses soll das Modell langsamer werden und vor ihm zum Stehen kommen sowie die Fahrt erst wieder aufnehmen, wenn die Sensoren signalisieren, dass die Fahrbahn wieder frei ist.
 
@@ -164,7 +144,12 @@ Die zu Beginn des Praktikums ausgearbeitete Roadmap findet sich in Abbildung \re
 \newpage
 Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
 \begin{enumerate}
-	\item{Kollisionsvermeidung
+		\item{Linienerkennung und -verwertung
+		\begin{enumerate}
+			\item Mittelpunktbestimmung
+			\item Testen unter verschiedenen Lichtintensitäten
+	\end{enumerate}}
+	\item{Abstandserkennung und Kollisionsvermeidung
 	\begin{enumerate}
 		\item Messwertverarbeitung der Ultraschallsensoren
 		\item Messwertglättung durch Filterung (Kalman)
@@ -174,12 +159,7 @@ Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
 		\item Schnittstellendefinition zur Ansteuerung
 		\item Steuerung von Geschwindigkeit und Lenkung
 		\end{enumerate}}
-	\item{Linienerkennung
-	\begin{enumerate}
-		\item Mittelpunktbestimmung
-		\item Testen unter verschiedenen Lichtintensitäten
-		\end{enumerate}}
-		\item{Zusammenbringung
+		\item{Zusammenbringung/ Fusionsschnittstelle
 		\begin{enumerate}
 			\item Definition und Ausarbeitung des Controllers (Verhaltens-Logik)
 			\item Problembehandlung, Feinabstimmung, Testung
@@ -190,7 +170,7 @@ Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
 \centering
 \includegraphics[width=\textwidth, height=8cm, keepaspectratio]{Bilder/Roadmap_Gr1.pdf}
 \caption{Zu Projektbeginn erstellte Roadmap}
-\label{img_Roadmap_Gr1}
+\label{img:Roadmap_Gr1}
 \end{figure}
 
 
@@ -206,27 +186,35 @@ Das Audimodell bietet verschiedene Hardwarekomponenten, um das autonome Fahren z
 
 TODO: Bild vom Audi gesamt
 
+\subsubsection{Grundkomponenten}
+Die Stromversorgung während der Fahrt wird durch zwei Akkus sichergestellt.
+
+\subsubsection{Rechner}
 Herzstück des Audi ist das \emph{GIGABYTE GA-Z170N-WIFI miniITX} Mainboard. Unterstützt wird es von einer \emph{NVIDIA GeForce GTX 1050Ti}. 
+TODO: Bild vom Audi, vor allem mit der Intel
 
-TODO: Bild vom Audi, vor allem mit der Intel 
+\subsubsection{Aktoren}
+Angetrieben wird das Modell von vier \emph{Hacker SKALAR 10 21.5 Brushless Motor 1/10}.
+Die Lenkung funktioniert über \emph{Absima 'ACS1615SG' Combat Series} Servos. 
 
+\subsubsection{Sensoren}
 Die Linienerkennung arbeitet mit der Intelkamera, die mit einer anderen Position und einem anderen Winkel benutzt wird, als im Basismodell. Zum Vergleich siehe Abbild 1 und 2. Grund ist der verbesserte Blick auf den Nahbereich und das mittig ausgerichtete Bild.
 
 TODO: Bild von den Sensoren und Arduinos
 
 Zur Kollisionsvermeidung werden die verbauten Ultrasonic Sensoren verwendet. Ansteuern lassen sich diese über Arduinos, die mit dem Mainboard verbunden sind. Der Audi besitzt insgesamt zehn Stück, von denen fünf, in unterschiedlichen Winkeln, nach vorne, jeweils einer zu jeder Seite und drei, wieder in unterschiedlichen Winkeln, nach hinten ausgerichtet sind. Die drei hinteren Sensoren bekommen nicht so viel Gewichtung, da das Auto in unserem Projekt nicht rückwärts fahren soll.
 
-Angetrieben wird das Modell von vier \emph{Hacker SKALAR 10 21.5 Brushless Motor 1/10}.
-Die Lenkung funktioniert über \emph{Absima 'ACS1615SG' Combat Series} Servos. 
-
-Die Stromversorgung während der Fahrt wird durch zwei Akkus sichergestellt.
 
 
 \subsection{Softwareplattform}
-Das Modellauto verwendet die Ubuntu Version 16.04 und zur Bildschirmübertragung ist der x11vcn Serverdienst eingerichtet. Die Software EB Assist ADTF 2.14 von Elektrobit ist installiert, um die damit bereitgestellte Programmoberfläche und das Automotive Data and Time-Triggered Framework zu verwenden. Das Framework stellt Funktionen zur Kommunikation mit den im Abschnitt 'Hardwareplattform' erläuterten Sensoren und Kameras bereit. Außerdem ermöglicht es eine Programmaufteilung in Funktionsblöcken, welche parallel auf mehreren Prozessorkernen ausgeführt werden. Die Kommunikation zwischen diesen Blöcken wird über Nachrichtenqueues und Priorisierung vom Framework sichergestellt. Die Ausführung der Funktionsblöcke wird einstellbar periodisch eventgesteuert ausgelöst und beginnt meist mit dem Anstoß zum Auslesen der Sensoren, welche dann das Event über die Queues an andere Funktionsblöcke weitergeben.
+Das Modellauto verwendet die Ubuntu Version 16.04 und zur Bildschirmübertragung ist der x11vcn Serverdienst eingerichtet. Die Software EB Assist ADTF 2.14 von Elektrobit ist installiert, um die damit bereitgestellte Programmoberfläche und das ADTF-Framework \footnote{Automotive Data and Time-Triggered Framework\cite{adtf-website}} zu verwenden.
 
-Von der Benutzeroberfläche aus lassen sich die Funktionsblöcke grafisch miteinander verbinden, welches die Kommunikation zwischen den Blöcken repräsentiert, und die Ausführung der Funktionen starten. Des Weiteren stellt die Oberfläche weitere fertige Funktionsblöcke zur Verfügung, etwa zum Anzeigen und Abspeichern von Kamerabildern und Sensordaten oder zum  Abspielen selbiger.
-Durch Referenzen aus dem Programm heraus, können über die Benutzeroberfläche be-stimmte Parameter im Code zur Initialisierung und zur Laufzeit gesetzt werden.
+\subsubsection{ADTF-Framework: Grundlegende Strukturen}
+ Das Framework stellt Funktionen zur Kommunikation mit den im Abschnitt 'Hardwareplattform' erläuterten Sensoren und Kameras bereit. Außerdem ermöglicht es eine Programmaufteilung in Funktionsblöcke, \emph{Filter} genannt, welche parallel auf mehreren Prozessorkernen ausgeführt werden können. Die Kommunikation zwischen diesen Blöcken wird über Nachrichtenqueues und Priorisierung vom Framework sichergestellt. Die Ausführung der Funktionsblöcke wird einstellbar periodisch eventgesteuert ausgelöst und beginnt meist mit dem Anstoß zum Auslesen der Sensoren, welche dann das Event über die Queues an andere Funktionsblöcke weitergeben.
+
+Von der Benutzeroberfläche aus lassen sich die Funktionsblöcke grafisch miteinander verbinden, welches die Kommunikation zwischen den Blöcken repräsentiert, und die Ausführung der Funktionen starten. Des Weiteren gewährt die Oberfläche Zugriff auf fertige Funktionsblöcke, etwa zum Anzeigen und Abspeichern von Kamerabildern und Sensordaten oder zum  Abspielen selbiger.
+Durch Referenzen aus dem Programm heraus können über die Benutzeroberfläche bestimmte Parameter zur Initialisierung und zur Laufzeit gesetzt werden.
+
 
 \newpage
 %%% Neues Kapitel %%%
@@ -234,20 +222,26 @@ Durch Referenzen aus dem Programm heraus, können über die Benutzeroberfläche 
 
 \subsection{Umgebung}
 
-Die Zielsetzung sieht vor, das Auto auf eine blaue Linie verfolgen zu lassen. Deswegen ist mit Klebeband ein Oval auf den Boden geklebt. Das verwendete Klebeband ist recht Matt, um Spiegelungen zu vermeiden. Außerdem ist das Fenster zugestellt, um die Sonneneinstrahlung zu minimieren.
+Die Zielsetzung sieht vor, das Auto eine blaue Linie verfolgen zu lassen. Zu Testzwecken wurde daher auf dem Boden eine große, ovalförmige Linienstruktur mit mattblauem Klebeband befestigt, deren Maße etwa 1,5m x 3m beträgt. Zur Vermeidung von störender Spiegelung wurde zudem das Fenster zugestellt, um die Sonneneinstrahlung zu minimieren.
 
 TODO: Bild(er) der Umgebung
 
-\subsection{Struktur}
+\subsection{Projektstruktur}
 
-Das Projekt ist in verschiedene Aufgabenbereiche aufgeteilt, die separat bearbeitet werden.
+Das Projektwurde zu Beginn in verschiedene Aufgabenbereiche aufgeteilt, die separat bearbeitet wurden (siehe \autoref{zielsetzung}). Die vier großen Bereiche sind im Folgenden näher beschrieben.
 
-TODO: Bild der angepassten Roadmap
+\begin{enumerate}
+	\item Linienerkennung und -verfolgung
+	\item Abstandserkennung und -verwertung
+	\item Motorsteuerung
+	\item Fusionsschnittstelle
+\end{enumerate}
+
 
 \subsubsection{Linienerkennung und -verfolgung}
 Damit das Auto der blauen Fahrbahnlinie folgen kann, wird die Linie im Kamerabild detektiert. Anschließend wird die Position der Linie ausgewertet um daraus Steuersignale für die Lenkung zu gewinnen. Diese Aufgaben werden von zwei Filtern gelöst:
 
-\paragraph{blueImgFilter}
+\paragraph{BlueImgFilter}
 Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCv Bibliothek zurück. Weil die Kamera hauptsächlich den (hellgrauen) Boden unmittelbar vor dem Auto sieht, kann man da-von ausgehen, dass die Fahrbahnlinie im relevanten Suchbereich der einzig blaue Bildinhalt ist.
 
 Zunächst wird das Eingangsbild mit OpenCv vom RGB- in den HSV-Farbraum transformiert, um die Festlegung von Ober- und Untergrenzen für Blauwerte zu vereinfachen. Mittels der OpenCv-Funktion inRange werden anschließend alle nicht blauen Bildinhalte herausgefiltert und ein Binär-bild zurückgegeben, welches alle blauen Flächen markiert. Die endgültigen Farbwertgrenzen erge-ben sich durch Testläufe unter Realbedingungen.    
@@ -267,11 +261,49 @@ TODO: Abbildung 3 (übernehme ich genauso)
  
 
 \subsubsection{Abstandserkennung und -verwertung}
-Die Abstandserskennung ist eine der wichtigsten grundlegenden Anforderungen an einen autonomen Roboter zur Ermöglichung von gefahrloser Navigation. In diesem Projekt wird sie auf Basis von Messwerten der zehn im Auto verbauten Ultraschallsensoren [Referenz auf USC-Modell-Bild aus Hardware-Doku-Part] implementiert.
+Die Abstandserskennung ist eine der wichtigsten grundlegenden Anforderungen an einen autonomen Roboter zur Ermöglichung von gefahrloser Navigation. In diesem Projekt wird sie auf Basis von Messwerten der zehn im Auto verbauten Ultraschallsensoren [TODO: Referenz auf USC-Modell-Bild aus Hardware-Doku-Part] implementiert.
 
-Die Übersetzung der Mess- in Geschwindigkeitswerte wurde anhand einer linearen Funktion realisiert, die allerdings einen minimalen Input-Grenzwert zum Anstoßen der Bewegung und gleichsam einen Maximal-Geschwindigkeits-Wert fest eingebaut hat, der unter der vollen Kapazität des Motors liegt.
+Die eingehenden Abstandswerte liegen im Bereich von 0 bis 400 cm. Diese werden unterschiedlich gewichtet, dann der geringste Anstandswert in eine Geschwindigkeit umgerechnet. Die Übersetzung eines Abstands- in einen Geschwindigkeitswert wurde anhand einer linearen Funktion realisiert, die einen minimalen  Input-Grenzwert zum Anstoßen der Bewegung beinhaltet und gleichsam einen maximalen Input-Wert, ab dem die volle Geschwindigkeit zurück gegeben wird (siehe \autoref{graph_disttospeed}). Dies dient dazu, einen gewissen Mindestabstand beim Fahren nicht zu unterschreiten, sowie zum Ignorieren von Hindernissen, die weiter als ein gewisser Maximalwert von den Sensoren entfernt aufgefasst werden. Letzterer wurde statisch auf 100 cm gesetzt. Im Abstands-Wertebereich von 40 bis 100 gilt somit die lineare Funktion \emph{y = x}.
 
-Die statisch festgelegten Mindestabstandswerte für die einzelnen Sensoren führen allerdings zu der unerwünschten Eigenschaft, dass situationsunabhängig die Gewichtung der Sensorwerte konstant bleibt, die vor allem für ein Geradeaus-Fahren mit gewisser Geschwindigkeit optimal ist. Das ist beispielsweise in Kurven problematisch, wo das Hauptaugenmerk nicht mehr geradeaus liegen sollte, da die Geschwindigkeit durch verbeifahrend frontal erkannte Hindernisse unnötig gedrosselt werden würde. Daher wurde eine dynamische Anpassung des relevanten Blickkegels realisiert. Dazu wird über den Parameter des aktuell eingeschlagenen Lenkwinkels jeder Messwert zunächst gemäß einer Gaußkurve gewichtet, bevor der geringste Abstandswert in eine Geschwindigkeit übersetzt wird. Konkret sieht man in Abbildung [x] die fixen Ablesungspunkte der einzelnen Sensoren auf der x-Achse, welche den Sensor-Winkeln in Blickrichtung des Autos angelehnt wurden. Der entsprechende Punkt auf der Gauss-Kurve gibt den jeweiligen Gewichtungs-Faktor an, wobei ein größerer Wert eine größere Unempfindlichkeit bedeutet. Gemäß Lenkwinkel wird nun die Kurve auf der x-Achse verschoben, wodurch die Gewichtung sich auf die entsprechend seitlich liegenden Sensoren verschiebt.
+\begin{figure}[ht]
+	\centering
+	\begin{tikzpicture}[xscale=0.05,yscale=0.05,domain=0.125:220,samples=400]
+		\draw[->] (-10,-10) -- (180,-10) node[below] {$Abstand (\centi\meter)$}; %x-Achse
+		\draw[->] (0,-20) -- (0,115) node[left] {$Geschwindigkeit$}; %y-Achse
+		\foreach \i in {20,40,...,150} { %x-Achsen-Schritte
+			\draw (\i,-9) -- (\i,-11) node[below] {$\i$};
+		}
+		\foreach \i in {0,10,...,100} { %y-Achsen-Schritte
+			\draw (1,\i) -- (-1,\i) node[left] {$\i$};
+		}
+		\draw[blue] (0,0) -- (40,0) ;
+		\draw[blue, dotted] (40,0) -- (40,40);
+		\draw[blue] (40,40) -- (100,100) -- (140, 100);
+		\end{tikzpicture}
+	\caption{Übersetzung von gemessenem Abstand in Geschwindigkeit}
+	\label{graph_disttospeed}
+\end{figure}
+
+Die statisch festgelegten Mindestabstandswerte für die einzelnen Sensoren führen allerdings zu der unerwünschten Eigenschaft, dass situationsunabhängig die Gewichtung der Sensorwerte konstant bleibt, die vor allem für ein Geradeaus-Fahren mit gewisser Geschwindigkeit optimal ist. Das ist beispielsweise in Kurven problematisch, wo das Hauptaugenmerk nicht mehr geradeaus liegen sollte, da die Geschwindigkeit durch verbeifahrend frontal erkannte Hindernisse unnötig gedrosselt werden würde. Daher wurde eine dynamische Anpassung des relevanten Blickkegels realisiert. Dazu wird über den Parameter des aktuell eingeschlagenen Lenkwinkels jeder Messwert zunächst gemäß einer Gaußkurve gewichtet, bevor der geringste Abstandswert in eine Geschwindigkeit übersetzt wird.
+\begin{equation}\label{eq:gaussian-weighted-dist}
+weightedSensorVal = 5 - 4 * \exp\Bigl({-3 * 2^{sensorAngle - steeringAngle}}\Bigr)
+\end{equation}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth, height=8cm, keepaspectratio]{Bilder/Robotik_Gauss_gerade.png}
+	\caption{Gewichtung der Abstands-Messwerte beim Geradeaus-Fahren}
+	\label{img:gaussian-weighted-dist-straight}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth, height=8cm, keepaspectratio]{Bilder/Robotik_Gauss_kurve.png}
+	\caption{Gewichtung der Abstands-Messwerte beim Kurve-Fahren}
+	\label{img:gaussian-weighted-dist-curve}
+\end{figure}
+
+Konkret sieht man in Abbildung [x] die fixen Ablesungspunkte der einzelnen Sensoren auf der x-Achse, welche den Sensor-Winkeln in Blickrichtung des Autos angelehnt wurden. Der entsprechende Punkt auf der Gauss-Kurve gibt den jeweiligen Gewichtungs-Faktor an, wobei ein größerer Wert eine größere Unempfindlichkeit bedeutet. Gemäß Lenkwinkel wird nun die Kurve auf der x-Achse verschoben, wodurch die Gewichtung sich auf die entsprechend seitlich liegenden Sensoren verschiebt.
 
 
 \subsubsection{Motoransteuerung}
@@ -312,6 +344,41 @@ Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine e
 \end{enumerate}
 \end{comment}
 
+
+\newpage
+\addcontentsline{toc}{section}{Abbildungsverzeichnis}
+\listoffigures
+
+\newpage
+\begin{thebibliography}{9}
+	\bibitem{aadc-website}
+	\textit{AADC-Website},
+	Audi AG:
+	\url{https://www.audi-autonomous-driving-cup.com/wettbewerb/ueberblick/}
+	
+	\bibitem{adtf-website}
+	\textit{ADTF-Website},
+	Elektrobit:
+	\url{https://www.elektrobit.com/products/eb-assist/adtf/}
+	
+	\bibitem{im2c-geschichte}
+	\textit{Im$^2$C-Geschichte}
+	\url{https://www.i2c-bus.org/twi-bus/}
+	
+	\bibitem{im2c-bussystem-ehi}
+	E. Eube, G. Heinrichs, U. Ihlefeldt,
+	\textit{Im$^2$C-Bussytem},
+	Fortbildungsveranstaltung in Mönchengladbach, 23.08.2008:
+	\url{http://www.g-heinrichs.de/pdv/i2c.pdf}
+	
+	\bibitem{im2c-bussystem-robotelectronics}
+	\textit{Im$^2$C-Bussytem},
+	Robot Electronics:
+	\url{http://www.robot-electronics.co.uk/i2c-tutorial}
+
+\end{thebibliography}
+
+\begin{comment}
 \newpage
 %\nocite{*}
 \cite{aadc-website}
@@ -321,11 +388,10 @@ Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine e
 \bibliography{Dateien/bibliography}
 \bibliographystyle{ieeetr}
 %\printbibliography
+\end{comment}
 
-\newpage
-\addcontentsline{toc}{section}{Abbildungsverzeichnis}
-\listoffigures
 
+\begin{comment}
 \newpage
 \addcontentsline{toc}{section}{Tabellenverzeichnis}
 \listoftables
@@ -334,6 +400,7 @@ Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine e
 \addcontentsline{toc}{section}{Listings-Verzeichnis}
 \renewcommand\lstlistlistingname{Listings-Verzeichnis (Quellcode)}
 \lstlistoflistings
+\end{comment}
 
 
 \end{document}
