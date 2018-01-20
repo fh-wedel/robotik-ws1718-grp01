@@ -24,7 +24,7 @@ typedef struct SensorAngle {
     float REAR_RIGHT_ANGLE;
 
     SensorAngle() {
-        REAR_CENTER_ANGLE = 1;
+        REAR_CENTER_ANGLE = -1;
         REAR_LEFT_ANGLE = -1;
         SIDE_LEFT_ANGLE = -0.7f;
         FRONT_LEFT_ANGLE = -0.4f;

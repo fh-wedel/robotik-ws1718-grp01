@@ -168,7 +168,7 @@ Die Umsetzung des Projektes wurde zu Anfang in vier Bereiche unterteilt:
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth, height=8cm, keepaspectratio]{Bilder/Roadmap_Gr1.pdf}
+\includegraphics[width=\textwidth, height=9cm, keepaspectratio]{Bilder/Roadmap_Gr1.pdf}
 \caption{Zu Projektbeginn erstellte Roadmap}
 \label{img:Roadmap_Gr1}
 \end{figure}
@@ -191,6 +191,7 @@ Die Stromversorgung während der Fahrt wird durch zwei Akkus sichergestellt.
 
 \subsubsection{Rechner}
 Herzstück des Audi ist das \emph{GIGABYTE GA-Z170N-WIFI miniITX} Mainboard. Unterstützt wird es von einer \emph{NVIDIA GeForce GTX 1050Ti}. 
+
 TODO: Bild vom Audi, vor allem mit der Intel
 
 \subsubsection{Aktoren}
@@ -201,6 +202,35 @@ Die Lenkung funktioniert über \emph{Absima 'ACS1615SG' Combat Series} Servos.
 Die Linienerkennung arbeitet mit der Intelkamera, die mit einer anderen Position und einem anderen Winkel benutzt wird, als im Basismodell. Zum Vergleich siehe Abbild 1 und 2. Grund ist der verbesserte Blick auf den Nahbereich und das mittig ausgerichtete Bild.
 
 TODO: Bild von den Sensoren und Arduinos
+
+\begin{figure}[ht]
+	\centering
+	\begin{tikzpicture}[xscale=0.05,yscale=0.05]
+	
+	%Auto-Umriss
+	\draw[line width=0.2mm] (-20,20) -- (-10,0) -- (10,-10) -- (40,-10) -- (60,0) -- (70,20); %Hinterseite
+	\draw[line width=0.2mm] (-20,120) -- (-20,20);	%linke Seite
+	\draw[line width=0.2mm] (70,20) -- (70,120);	%rechte Seite
+	\draw[line width=0.2mm] (-20,120) -- (-10,140) -- (10,150) -- (40,150) -- (60,140) -- (70,120); %Vorderseite
+	
+	\draw[line width=0.2mm, ->] (25,50) -- (25,100); %Mittelpfeil
+	
+	%Pfeile und Beschriftungen der Sensor-Lagen
+	\draw[->] (50,0) -- (60,-15) node[below right]{$Rear Right(9)$};
+	\draw[->] (65,70)-- (80,70) node[right]{$Side Right(8)$};
+	\draw[->] (60,130) -- (80,140)  node[above right] {$Front Right(7)$};
+	\draw[->] (45,140) -- (65,160)  node[above right] {$Front Center Right(6)$};
+	\draw[->] (25,145) -- (25,170) node[above] {$Front Center(5)$};
+	\draw[->] (5,140) -- (-15,160)  node[above left] {$Front Center Left(4)$};
+	\draw[->] (-10,130) -- (-30,140)  node[above left] {$Front Left(3)$};
+	\draw[->] (-15,70) -- (-30,70) node[left]{$Side Left(2)$};
+	\draw[->] (0,0) -- (-10,-15) node[below left]{$Rear Left(1)$};
+	\draw[->] (25,-5) -- (25,-20) node[below]{$Rear Center(0)$};
+	
+	\end{tikzpicture}
+	\caption{Platzierungen der Ultraschallsensoren im Modell}
+	\label{graph_us-car}
+\end{figure}
 
 Zur Kollisionsvermeidung werden die verbauten Ultrasonic Sensoren verwendet. Ansteuern lassen sich diese über Arduinos, die mit dem Mainboard verbunden sind. Der Audi besitzt insgesamt zehn Stück, von denen fünf, in unterschiedlichen Winkeln, nach vorne, jeweils einer zu jeder Seite und drei, wieder in unterschiedlichen Winkeln, nach hinten ausgerichtet sind. Die drei hinteren Sensoren bekommen nicht so viel Gewichtung, da das Auto in unserem Projekt nicht rückwärts fahren soll.
 
@@ -222,13 +252,13 @@ Durch Referenzen aus dem Programm heraus können über die Benutzeroberfläche b
 
 \subsection{Umgebung}
 
-Die Zielsetzung sieht vor, das Auto eine blaue Linie verfolgen zu lassen. Zu Testzwecken wurde daher auf dem Boden eine große, ovalförmige Linienstruktur mit mattblauem Klebeband befestigt, deren Maße etwa 1,5m x 3m beträgt. Zur Vermeidung von störender Spiegelung wurde zudem das Fenster zugestellt, um die Sonneneinstrahlung zu minimieren.
+Die Zielsetzung sieht vor, das Auto eine blaue Linie verfolgen zu lassen. Zu Testzwecken wurde daher auf dem Boden eine große, ovalförmige Linienstruktur mit mattblauem Klebeband befestigt, deren Maße etwa 1,5 m x 3 m beträgt. Zur Vermeidung von störender Spiegelung wurde zudem das Fenster zugestellt, um die Sonneneinstrahlung zu minimieren.
 
 TODO: Bild(er) der Umgebung
 
 \subsection{Projektstruktur}
 
-Das Projektwurde zu Beginn in verschiedene Aufgabenbereiche aufgeteilt, die separat bearbeitet wurden (siehe \autoref{zielsetzung}). Die vier großen Bereiche sind im Folgenden näher beschrieben.
+Das Projekt wurde zu Beginn in verschiedene Aufgabenbereiche aufgeteilt, die separat bearbeitet wurden (siehe \autoref{zielsetzung}). Die vier großen Bereiche sind im Folgenden näher beschrieben.
 
 \begin{enumerate}
 	\item Linienerkennung und -verfolgung
@@ -261,51 +291,92 @@ TODO: Abbildung 3 (übernehme ich genauso)
  
 
 \subsubsection{Abstandserkennung und -verwertung}
-Die Abstandserskennung ist eine der wichtigsten grundlegenden Anforderungen an einen autonomen Roboter zur Ermöglichung von gefahrloser Navigation. In diesem Projekt wird sie auf Basis von Messwerten der zehn im Auto verbauten Ultraschallsensoren [TODO: Referenz auf USC-Modell-Bild aus Hardware-Doku-Part] implementiert.
+Die Abstandserskennung ist eine der grundlegenden Anforderungen an einen autonomen Roboter zur Ermöglichung von gefahrloser Navigation. In diesem Projekt wird sie auf Basis von Messwerten der zehn im Auto verbauten Ultraschallsensoren (siehe \autoref{graph_us-car})  implementiert.
 
-Die eingehenden Abstandswerte liegen im Bereich von 0 bis 400 cm. Diese werden unterschiedlich gewichtet, dann der geringste Anstandswert in eine Geschwindigkeit umgerechnet. Die Übersetzung eines Abstands- in einen Geschwindigkeitswert wurde anhand einer linearen Funktion realisiert, die einen minimalen  Input-Grenzwert zum Anstoßen der Bewegung beinhaltet und gleichsam einen maximalen Input-Wert, ab dem die volle Geschwindigkeit zurück gegeben wird (siehe \autoref{graph_disttospeed}). Dies dient dazu, einen gewissen Mindestabstand beim Fahren nicht zu unterschreiten, sowie zum Ignorieren von Hindernissen, die weiter als ein gewisser Maximalwert von den Sensoren entfernt aufgefasst werden. Letzterer wurde statisch auf 100 cm gesetzt. Im Abstands-Wertebereich von 40 bis 100 gilt somit die lineare Funktion \emph{y = x}.
+Die eingehenden Abstandswerte liegen im Bereich von 0 bis 400 cm. Diese werden unterschiedlich gewichtet, dann der geringste Wert in eine Geschwindigkeit umgerechnet. Die Übersetzung eines Abstands- in einen Geschwindigkeitswert wird anhand einer linearen Funktion realisiert, die einen minimalen  Input-Grenzwert zum Anstoßen der Bewegung und gleichsam einen maximalen Input-Wert beinhaltet, ab dem die volle Geschwindigkeit zurück gegeben wird (siehe \autoref{graph_disttospeed}). Dies dient dazu, einen gewissen Mindestabstand beim Fahren nicht zu unterschreiten, sowie zum Ignorieren von Hindernissen, die weiter als ein gewisser Maximalwert von den Sensoren entfernt aufgefasst werden. Ersterer wurde durch Testergebnisse statisch auf 20 cm gesetzt, letzterer auf 100 cm. Im Abstands-Wertebereich von 20 cm bis 100 cm gilt die lineare Funktion \emph{y = x}.
 
 \begin{figure}[ht]
 	\centering
 	\begin{tikzpicture}[xscale=0.05,yscale=0.05,domain=0.125:220,samples=400]
-		\draw[->] (-10,-10) -- (180,-10) node[below] {$Abstand (\centi\meter)$}; %x-Achse
-		\draw[->] (0,-20) -- (0,115) node[left] {$Geschwindigkeit$}; %y-Achse
-		\foreach \i in {20,40,...,150} { %x-Achsen-Schritte
-			\draw (\i,-9) -- (\i,-11) node[below] {$\i$};
-		}
-		\foreach \i in {0,10,...,100} { %y-Achsen-Schritte
-			\draw (1,\i) -- (-1,\i) node[left] {$\i$};
-		}
-		\draw[blue] (0,0) -- (40,0) ;
-		\draw[blue, dotted] (40,0) -- (40,40);
-		\draw[blue] (40,40) -- (100,100) -- (140, 100);
-		\end{tikzpicture}
-	\caption{Übersetzung von gemessenem Abstand in Geschwindigkeit}
+	\draw[->] (-10,-10) -- (180,-10) node[below] {$Abstand (\centi\meter)$}; %x-Achse
+	\draw[->] (0,-20) -- (0,115) node[left] {$Geschwindigkeit (Prozent)$}; %y-Achse
+	\foreach \i in {20,40,...,150} { %x-Achsen-Schritte
+		\draw (\i,-9) -- (\i,-11) node[below] {$\i$};
+	}
+	\foreach \i in {0,20,...,100} { %y-Achsen-Schritte
+		\draw (1,\i) -- (-1,\i) node[left] {$\i$};
+	}
+	\draw[blue] (0,0) -- (20,0) ;
+	\draw[blue, dotted] (20,0) -- (20,20);
+	\draw[blue] (20,20) -- (100,100) -- (140, 100);
+	\end{tikzpicture}
+	\caption{Übersetzung von Abstandswert in prozentuale Geschwindigkeit}
 	\label{graph_disttospeed}
 \end{figure}
 
-Die statisch festgelegten Mindestabstandswerte für die einzelnen Sensoren führen allerdings zu der unerwünschten Eigenschaft, dass situationsunabhängig die Gewichtung der Sensorwerte konstant bleibt, die vor allem für ein Geradeaus-Fahren mit gewisser Geschwindigkeit optimal ist. Das ist beispielsweise in Kurven problematisch, wo das Hauptaugenmerk nicht mehr geradeaus liegen sollte, da die Geschwindigkeit durch verbeifahrend frontal erkannte Hindernisse unnötig gedrosselt werden würde. Daher wurde eine dynamische Anpassung des relevanten Blickkegels realisiert. Dazu wird über den Parameter des aktuell eingeschlagenen Lenkwinkels jeder Messwert zunächst gemäß einer Gaußkurve gewichtet, bevor der geringste Abstandswert in eine Geschwindigkeit übersetzt wird.
-\begin{equation}\label{eq:gaussian-weighted-dist}
-weightedSensorVal = 5 - 4 * \exp\Bigl({-3 * 2^{sensorAngle - steeringAngle}}\Bigr)
-\end{equation}
+Die Geschwindigkeit wird mithilfe des kleinsten von allen Ultraschallsensoren gemessenen Abstandswertes berechnet. Da den zur Seite oder gar nach hinten gerichteten Sensoren bei geradliniger Fahrt nicht die selbe Priorität beigemessen werden sollte, wie den nach vorne ausgerichteten, wo der Abstand eher kollisionsrelevant ist, wird zunächst jeder Wert nach Relevanz gewichtet und entsprechend zu einem neuen Wert verrechnet. Mit jedem Sensor wird ein Winkel assoziiert, welcher auf den Bereich zwischen -1 und 1 abgebildet wird, wobei 0 die frontale Ausrichtung beschreibt. Der Bereich von 0 bis -1 beschreibt im Modell den gegen den Uhrzeigersinn gerichteten Halbkreis bis zum nach hinten gerichteten Sensor (\autoref{graph_us-car}; der Reihe nach die Sensoren (5), (4), (3), (2), (1), (0)) und äquivalent der von 0 bis 1 gehende Bereich den Halbkreis im Uhrzeigersinn zum nach hinten gerichteten Sensor  (\autoref{graph_us-car}; der Reihe nach die Sensoren (5), (6), (7), (8), (9), (0)). Alle rückgerichteten Sensoren wurden der Einfachheit halber auf 1 respektive -1 abgebildet, da sie bei der normalen Fahrt nicht weiter von Interesse sind. Die Zuordnung der Winkel ist veranschaulicht in \autoref{graph_us-angles}. 
 
-\begin{figure}
+\begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth, height=8cm, keepaspectratio]{Bilder/Robotik_Gauss_gerade.png}
+	\begin{tikzpicture}[xscale=3,yscale=3]
+	\draw[->] (0,-1.1) -- (0,1.1);	%Pfeil
+	
+	%Zahlen auf dem Strahl
+	\draw  (0.05,-1) -- (-0.05,-1) node[left] {$(-180\degree) -1$};
+	\draw  (0.05,-0.7) -- (-0.05,-0.7) node[left] {$(-126\degree) -0.7$};
+	\draw  (0.05,-0.4) -- (-0.05,-0.4) node[left] {$(-72\degree) -0.4$};
+	\draw  (0.05,-0.2) -- (-0.05,-0.2) node[left] {$ (-36\degree) -0.2$};
+	\draw  (0.05,-0) -- (-0.05,-0) node[left] {$(0\degree), +-0$};
+	\draw  (0.05,0.2) -- (-0.05,0.2) node[left] {$(36\degree), +0.2$};
+	\draw  (0.05,0.4) -- (-0.05,0.4) node[left] {$(72\degree), +0.4$};
+	\draw  (0.05,0.7) -- (-0.05,0.7) node[left] {$(126\degree), +0.7$};	
+	\draw  (0.05,1) -- (-0.05,1) node[left] {$(180\degree),+1$};
+
+	%Sensoren
+	\draw[-] (-0.05,1) -- (0.05,1) node[right]{$Rear Right(9)$};
+	\draw[-] (-0.05,0.7)-- (0.05,0.7) node[right]{$SideRight(8)$};
+	\draw[-] (-0.05,0.4) -- (0.05,0.4)  node[right] {$Front Right(7)$};
+	\draw[-] (-0.05,0.2) -- (0.05,0.2)  node[right] {$Front Center Right(6)$};
+	\draw[-] (-0.05,0) -- (0.05,0) node[right] {$Front Center(5)$};
+	\draw[-] (-0.05,-0.2) -- (0.05,-0.2)  node[right] {$Front Center Left(4)$};
+	\draw[-] (-0.05,-0.4) -- (0.05,-0.4)  node[right] {$Front Left(3)$};
+	\draw[-] (-0.05,-0.7) -- (0.05,-0.7) node[right]{$SideLeft(2)$};
+	\draw[-] (-0.05,-1) -- (0.05,-1) node[right]{$Rear Center(0);RearLeft(1)$};
+	
+	\end{tikzpicture}
+	\caption{Ultraschallsensoren und ihr assoziierter Winkel, projiziert auf den Bereich zwischen -1 und 1}
+	\label{graph_us-angles}
+\end{figure}
+
+Basierend auf diesen Winkeln wird gemäß einer Gauss-Kurve der Gewichtungsfaktor für den jeweiligen Sensor bestimmt, mit dem dessen Messwert multipliziert wird (dargestellt in \autoref{img:gaussian-weighted-dist-straight}). Dieser Faktor ist stets größer oder gleich 1, was bedeutet, dass ein gemessener Abstand nur zunehmen und damit an Relevanz verlieren kann, wenn es darum geht, im Anschluss den kleinsten zur Geschwindigkeits-Berechnung zu wählen.
+
+Solche statisch festgelegten Gewichtungsfaktoren sind aber vor allem für ein Geradeaus-Fahren mit gewisser Geschwindigkeit optimiert. Das ist beispielsweise in Kurven problematisch, wo das Hauptaugenmerk nicht mehr geradeaus liegen sollte, da die Geschwindigkeit durch links oder rechts verbeifahrend frontal erkannte Hindernisse unnötig gedrosselt werden würde. Daher wurde eine dynamische Anpassung des relevanten Sensor-Blickkegels realisiert. Dazu wird gemäß des eingeschlagenen Lenkwinkels, der dazu auf den Bereich von -1 bis 1 normiert einfließt, die Gauss-Kurve auf der x-Achse verschoben, wie dargestellt in \autoref{img:gaussian-weighted-dist-curve}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth, height=11cm, keepaspectratio]{Bilder/Gauss_Sensorgewichtung_gerade.png}
 	\caption{Gewichtung der Abstands-Messwerte beim Geradeaus-Fahren}
 	\label{img:gaussian-weighted-dist-straight}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[ht]
 	\centering
-	\includegraphics[width=\textwidth, height=8cm, keepaspectratio]{Bilder/Robotik_Gauss_kurve.png}
-	\caption{Gewichtung der Abstands-Messwerte beim Kurve-Fahren}
+	\includegraphics[width=\textwidth, height=12cm, keepaspectratio]{Bilder/Gauss_Sensorgewichtung_geneigt.png}
+	\caption{Gewichtung der Abstands-Messwerte bei Lenkung nach links (maximale Verschiebung)}
 	\label{img:gaussian-weighted-dist-curve}
 \end{figure}
 
-Konkret sieht man in Abbildung [x] die fixen Ablesungspunkte der einzelnen Sensoren auf der x-Achse, welche den Sensor-Winkeln in Blickrichtung des Autos angelehnt wurden. Der entsprechende Punkt auf der Gauss-Kurve gibt den jeweiligen Gewichtungs-Faktor an, wobei ein größerer Wert eine größere Unempfindlichkeit bedeutet. Gemäß Lenkwinkel wird nun die Kurve auf der x-Achse verschoben, wodurch die Gewichtung sich auf die entsprechend seitlich liegenden Sensoren verschiebt.
+Konkret sieht man in \autoref{img:gaussian-weighted-dist-straight} und \ref{img:gaussian-weighted-dist-curve} die fixen Ablesungspunkte der einzelnen Sensoren auf der x-Achse, welche den Sensor-Winkeln in Blickrichtung des Autos angelehnt wurden. Der entsprechende Punkt auf der Gauss-Kurve gibt den jeweiligen Gewichtungs-Faktor an, wobei ein größerer Wert eine größere Unempfindlichkeit bedeutet. Gemäß Lenkwinkel wird nun die Kurve auf der x-Achse verschoben, wodurch die Gewichtung sich auf die entsprechend seitlich liegenden Sensoren verschiebt.
+
+Die Gauss-Kurve entspricht folgender Formel,
+
+\begin{equation}\label{eq:gaussian-weighted-dist}
+sensorWeight= 5 - 4 * \exp\Bigl({-3 * (sensorAngle - steeringAngle)^2}\Bigr)
+\end{equation}
+wobei $sensorAngle$ der auf den Bereich zwischen -1 und 1 normierte Sensorwinkel ist, für den man eine Gewichtung berechnen möchte, und $steeringAngle$ der eingeschlagene Lenkwinkel, ebenfalls im Bereich zwischen -1 und 1 liegend. Die Höhe der Kurve, bestimmt durch die addierte 5 sowie die multiplizierte -4, wurden durch Versuche als angemessen herausgestellt und festgelegt.
 
 
+\newpage
 \subsubsection{Motoransteuerung}
 Die Hauptaufgaben der Motorsteuerung sind das Reagieren auf Flags, wie beispielsweise das Emergencybreak-Flag, sowie die Motorsteuerungsdaten, welche sie von dem Controller bekommt und an die Arduinokommunication weitersendet.
 

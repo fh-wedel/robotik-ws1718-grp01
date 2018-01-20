@@ -90,8 +90,8 @@ float getGaussianSensorWeight(float sensor_angle, float steering_angle) {
     return 5-4*exp(-3 * pow((sensor_angle - steering_angle),2) );
 }
 
-// sensor_angle: [0 - 1]
-// steering_angle: [0 - 1]
+// sensor_angle: [-1 - 1]
+// steering_angle: [-1 - 1]
 // Berechnet die durch eine Gauss-Kurve gewichtete Sensor-Wertigkeit
 float getGaussianSensorWeight(float sensor_angle, float steering_angle, bool front) {
     return 5-4*exp(-3 * pow((sensor_angle - steering_angle),2) );
