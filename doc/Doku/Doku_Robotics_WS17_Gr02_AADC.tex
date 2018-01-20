@@ -227,7 +227,7 @@ TODO: Bild von den Sensoren und Arduinos
 	\draw[->] (25,-5) -- (25,-20) node[below]{$Rear Center(0)$};
 	
 	\end{tikzpicture}
-	\caption{Platzierungen der Ultraschallsensoren im Modell}
+	\caption{Platzierung der Ultraschallsensoren im Modell}
 	\label{graph:us-car}
 \end{figure}
 
@@ -392,14 +392,11 @@ wobei $sensorAngle$ der auf den Bereich zwischen -1 und 1 normierte Sensorwinkel
 
 
 \subsubsection{Motoransteuerung}
-Die Hauptaufgaben der Motorsteuerung sind das Reagieren auf Flags, wie beispielsweise das Emergencybreak-Flag, sowie die Motorsteuerungsdaten, welche sie von dem Controller bekommt und an die Arduino-Kommunikation weitersendet.
+Die Hauptaufgabe der Motorsteuerung ist das Reagieren auf Flags, wie beispielsweise das Emergencybreak-Flag, sowie das Weitersenden der Motorsteuerungsdaten  an die Arduinokommunikation, welche sie von dem Controller bekommt.
 
 Wir haben uns entschlossen in diesem Baustein auf Flags zu reagieren, um eine schnellere Reaktion auf kritische Ereignisse, wie zum Beispiel das plötzliche Auftauchen eines Hindernisses zu ermöglichen. Dies erreichen wir, indem wir die Flags direkt aus den Blöcken bekommen, welche die Sensordaten verarbeiten und das Signal nicht erst verschiedene Verarbeitungsschritte durchgehen muss. Die Emergencybreak wird erst wieder aufgehoben, sobald ein entsprechendes Signal von den Sensoren kommt.
 
-Außerdem beherrscht dieser Baustein als einziger das Protokoll, welches zur Ansteuerung der Motoren mittels der Arduinocommunication verwendet wird. So kann intern ein Protokoll verwendet werden, das sich deutlich besser lesen und im Falle von Verarbeitungsfehlern debuggen lässt. In diesem Protokoll sehen wir vor, dass die Geschwindigkeit als Prozentwert der Maximalgeschwindigkeit gesendet wird. Diese wurde nach Tests auf 12 Prozent (der maximalen Motorgeschwindigkeit) festgelegt. Da der Motorcontroller eine gewisse Anzahl an Nullen benötigt, um aktiviert zu werden, werden die ersten 150 Geschwindigkeitsdaten auf Null gesetzt. Nach diesen 150 Nullen können dann Geschwindigkeiten an die Motoren gesendet werden. 
-
-\paragraph{Umgebung}
-Das Auto wurde programmiert, um eine blaue Linie zu verfolgen. Es wurde ein großes blaues Oval auf den Boden geklebt. Das verwendete Klebeband ist recht Matt, um Spiegelungen zu vermeiden, jedoch wurde in der Testung die Sonneneinstrahlung minimiert.
+Außerdem beherrscht dieser Baustein als einziger das Protokoll, welches zur Ansteuerung der Motoren mittels der Arduinokommunication verwendet wird. So kann intern ein Protokoll verwendet werden, das sich deutlich besser lesen und im Falle von Verarbeitungsfehlern debuggen lässt. In diesem Protokoll sehen wir vor, dass die Geschwindigkeit als Prozentwert der Maximalgeschwindigkeit gesendet wird. Dieser wird dann, bestimmt durch Tests, auf den Bereich bis \[\frac{10}{12}\] der maximalen Motorgeschwindigkeit umgerechnet, wobei intern die maximal mögliche Geschwindigkeit mit -12 gegeben ist. Da der Motorcontroller eine gewisse Anzahl an Nullen benötigt, um aktiviert zu werden, werden die ersten 150 Geschwindigkeitsdaten auf Null gesetzt. Nach diesen 150 Nullen können dann Geschwindigkeiten an die Motoren gesendet werden.
 
 
 \subsubsection{Fusionsschnittstelle}
