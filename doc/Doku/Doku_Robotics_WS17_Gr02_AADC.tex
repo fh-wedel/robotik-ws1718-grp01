@@ -290,17 +290,17 @@ Anschließend wird die Mitte des weißen Pixelabschnittes berechnet und deren Ab
 Für Debugzwecke wird die detektierte Linienmitte mit einem roten Kreis markiert. Dieser Ansatz setzt voraus, dass das Kameraobjektiv auf der Mittelachse des Modelautos montiert ist.
 
 \begin{figure}
-	\subfigure[Viel Licht]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_vielLicht.png}}
-	\subfigure[Wenig Licht]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_wenigLicht.png}}
-	\caption{Gefilterte Linienerkennung - verschiedene Lichtverhältnisse}
-	\label{img:line_filt_viel_u_wenig_licht}
+	\subfigure[Wenig gekrümmte Fahrstrecke]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_normal.png}}
+	\subfigure[Enge Kurve]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_engeKurve.png}}
+	\caption{Gefilterte Linienerkennung unter normalen Lichtverhältnissen - unterschiedliche Behandlung gemäß Fahrbahnkrümmung}
+	\label{img:line_filt_normal_u_kurve}
 \end{figure}
 
 \begin{figure}
 	\subfigure[Viel Licht und Reflektion]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_vielLicht_reflektion.png}}
-	\subfigure[Enge Kurve]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_engeKurve.png}}
-	\caption{Gefilterte Linienerkennung - besondere Störeinflüsse und Umstände}
-	\label{img:line_filt_reflektion_u_engeKurve}
+	\subfigure[Wenig Licht]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_wenigLicht.png}}
+	\caption{Gefilterte Linienerkennung unter extremen Lichtverhältnissen}
+	\label{img:line_filt_viel_u_wenig_licht}
 \end{figure}
  
 
