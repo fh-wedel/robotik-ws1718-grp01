@@ -10,6 +10,7 @@
 \usepackage{float}
 \usepackage{verbatim} %für Kommentare
 \usepackage{listings} %Zur Code-Einfügung
+ \usepackage{subfigure}  %Bilder nebeneinander darstellbar
 
 \usepackage[
 colorlinks,
@@ -30,7 +31,7 @@ citecolor = black
 %Entfernt Zahlen vor Kapitelüberschriften
 %\titleformat{\chapter}[display]{\normalfont\bfseries}{}{0pt}{\Huge}
 
-\usepackage{tocloft}
+\usepackage[subfigure]{tocloft}
 %Punktlinie auch nach Kapiteln im Inhaltsverzeichnis
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 
@@ -227,10 +228,10 @@ TODO: Bild von den Sensoren und Arduinos
 	
 	\end{tikzpicture}
 	\caption{Platzierungen der Ultraschallsensoren im Modell}
-	\label{graph_us-car}
+	\label{graph:us-car}
 \end{figure}
 
-Zur Kollisionsvermeidung werden die verbauten Ultrasonic Sensoren verwendet (siehe \autoref{graph_us-car}). Ansteuern lassen sich diese über Arduinos, die mit dem Mainboard verbunden sind. Der Audi besitzt insgesamt zehn Stück, von denen fünf, in unterschiedlichen Winkeln, nach vorne, jeweils einer zu jeder Seite und drei, wieder in unterschiedlichen Winkeln, nach hinten ausgerichtet sind. Die drei hinteren Sensoren bekommen nicht so viel Gewichtung, da das Auto in unserem Projekt nicht rückwärts fahren soll.
+Zur Kollisionsvermeidung werden die verbauten Ultrasonic Sensoren verwendet (siehe \autoref{graph:us-car}). Ansteuern lassen sich diese über Arduinos, die mit dem Mainboard verbunden sind. Der Audi besitzt insgesamt zehn Stück, von denen fünf, in unterschiedlichen Winkeln, nach vorne, jeweils einer zu jeder Seite und drei, wieder in unterschiedlichen Winkeln, nach hinten ausgerichtet sind. Die drei hinteren Sensoren bekommen nicht so viel Gewichtung, da das Auto in unserem Projekt nicht rückwärts fahren soll.
 
 
 \subsection{Softwareplattform}
@@ -269,28 +270,44 @@ Das Projekt wurde zu Beginn in verschiedene Aufgabenbereiche aufgeteilt, die sep
 Damit das Auto der blauen Fahrbahnlinie folgen kann, wird die Linie im Kamerabild detektiert. Anschließend wird die Position der Linie ausgewertet um daraus Steuersignale für die Lenkung zu gewinnen. Diese Aufgaben werden von zwei Filtern gelöst:
 
 \paragraph{BlueImgFilter}
-Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCv Bibliothek zurück. Weil die Kamera hauptsächlich den (hellgrauen) Boden unmittelbar vor dem Auto sieht, kann man da-von ausgehen, dass die Fahrbahnlinie im relevanten Suchbereich der einzig blaue Bildinhalt ist.
+Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCv Bibliothek zurück. Weil die Kamera hauptsächlich den (hellgrauen) Boden unmittelbar vor dem Auto sieht, kann man davon ausgehen, dass die Fahrbahnlinie im relevanten Suchbereich der einzig blaue Bildinhalt ist (siehr \autoref{img:line_unfilt_wenigLicht}).
 
-Zunächst wird das Eingangsbild mit OpenCv vom RGB- in den HSV-Farbraum transformiert, um die Festlegung von Ober- und Untergrenzen für Blauwerte zu vereinfachen. Mittels der OpenCv-Funktion inRange werden anschließend alle nicht blauen Bildinhalte herausgefiltert und ein Binär-bild zurückgegeben, welches alle blauen Flächen markiert. Die endgültigen Farbwertgrenzen erge-ben sich durch Testläufe unter Realbedingungen.    
+Zunächst wird das Eingangsbild mit OpenCv vom RGB- in den HSV-Farbraum transformiert, um die Festlegung von Ober- und Untergrenzen für Blauwerte zu vereinfachen. Mittels der OpenCv-Funktion \emph{inRange} werden anschließend alle nicht blauen Bildinhalte herausgefiltert und ein Binärbild zurückgegeben, welches alle blauen Flächen markiert. Die endgültigen Farbwertgrenzen ergeben sich durch Testläufe unter Realbedingungen.    
 
-TODO: Abbildung 1 und 2 (Übernehme ich aus deiner Doku Julian)
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth, height=7cm, keepaspectratio]{Bilder/line_unfilt_wenigLicht.png}
+	\caption{Ungefilterte Aufnahme der Fahrlinie bei wenig Licht}
+	\label{img:line_unfilt_wenigLicht}
+\end{figure}
 
 
 \paragraph{OneLineDetect}
-Dieser Filter erhält das Binärbild und ermittelt die Position der blauen Linie relativ zur Position des Autos. Dafür wird in einer festgelegten Bildzeile nahe des Unteren Bildrandes nach der größ-ten Anzahl weißer, zusammenhängender Pixel gesucht. Durch die Aufbereitung des Bildes durch den blueImgFilter kann davon ausgegangen werden, dass diese Pixel zur blauen Linie gehören. 
+Dieser Filter erhält das Binärbild und ermittelt die Position der blauen Linie relativ zur Position des Autos. Dafür wird in einer festgelegten Bildzeile nahe des Unteren Bildrandes nach der größten Anzahl weißer, zusammenhängender Pixel gesucht. Durch die Aufbereitung des Bildes durch den \emph{blueImgFilter} kann davon ausgegangen werden, dass diese Pixel zur blauen Linie gehören. 
 
-Anschließend wird die Mitte des weißen Pixelabschnittes berechnet und deren Abstand zur Bild-mitte ausgegeben. Dieser Abstand wird auf einen Bereich zwischen -100 und 100 normiert. Über die Filterproperties lässt sich eine Mindestbreite für die Anzahl weißer Pixel festlegen um die De-tektion noch robuster zu gestalten. Sind im aktuell zu bearbeitenden Bild keine oder zu wenig weiße Pixel am Stück, so wird statt einer Zahl zwischen -100 und 100 der Wert -101 ausgegeben.
+Anschließend wird die Mitte des weißen Pixelabschnittes berechnet und deren Abstand zur Bildmitte ausgegeben. Dieser Abstand wird auf einen Bereich zwischen -100 und 100 normiert, mit 0 als dem Mittelpunkt. Über die Filter-Properties lässt sich eine Mindestbreite für die Anzahl weißer Pixel festlegen, um die Detektion noch robuster zu gestalten. Sind im aktuell zu bearbeitenden Bild keine oder zu wenig verbundene weiße Pixel, so wird statt einer Zahl zwischen -100 und 100 der Wert -101 ausgegeben.
 
-Für Debugzwecke wird die detektierte Linienmitte mit einem roten Kreis markiert.
-Dieser Ansatz setzt voraus, dass das Kameraobjektiv auf der Mittelachse des Modelautos montiert ist.
+Für Debugzwecke wird die detektierte Linienmitte mit einem roten Kreis markiert. Dieser Ansatz setzt voraus, dass das Kameraobjektiv auf der Mittelachse des Modelautos montiert ist.
 
-TODO: Abbildung 3 (übernehme ich genauso)
+\begin{figure}
+	\subfigure[Viel Licht]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_vielLicht.png}}
+	\subfigure[Wenig Licht]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_wenigLicht.png}}
+	\caption{Gefilterte Linienerkennung - verschiedene Lichtverhältnisse}
+	\label{img:line_filt_viel_u_wenig_licht}
+\end{figure}
+
+\begin{figure}
+	\subfigure[Viel Licht und Reflektion]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_vielLicht_reflektion.png}}
+	\subfigure[Enge Kurve]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_engeKurve.png}}
+	\caption{Gefilterte Linienerkennung - besondere Störeinflüsse und Umstände}
+	\label{img:line_filt_reflektion_u_engeKurve}
+\end{figure}
  
 
 \subsubsection{Abstandserkennung und -verwertung}
-Die Abstandserskennung ist eine der grundlegenden Anforderungen an einen autonomen Roboter zur Ermöglichung von gefahrloser Navigation. In diesem Projekt wird sie auf Basis von Messwerten der zehn im Auto verbauten Ultraschallsensoren (siehe \autoref{graph_us-car})  implementiert.
+Die Abstandserskennung ist eine der grundlegenden Anforderungen an einen autonomen Roboter zur Ermöglichung von gefahrloser Navigation. In diesem Projekt wird sie auf Basis von Messwerten der zehn im Auto verbauten Ultraschallsensoren (siehe \autoref{graph:us-car})  implementiert.
 
-Die eingehenden Abstandswerte liegen im Bereich von 0 bis 400 cm. Diese werden unterschiedlich gewichtet, dann der geringste Wert in eine Geschwindigkeit umgerechnet. Die Übersetzung eines Abstands- in einen Geschwindigkeitswert wird anhand einer linearen Funktion realisiert, die einen minimalen  Input-Grenzwert zum Anstoßen der Bewegung und gleichsam einen maximalen Input-Wert beinhaltet, ab dem die volle Geschwindigkeit zurück gegeben wird (siehe \autoref{graph_disttospeed}). Dies dient dazu, einen gewissen Mindestabstand beim Fahren nicht zu unterschreiten, sowie zum Ignorieren von Hindernissen, die weiter als ein gewisser Maximalwert von den Sensoren entfernt aufgefasst werden. Ersterer wurde durch Testergebnisse statisch auf 20 cm gesetzt, letzterer auf 100 cm. Im Abstands-Wertebereich von 20 cm bis 100 cm gilt die lineare Funktion \emph{y = x}.
+Die eingehenden Abstandswerte liegen im Bereich von 0 bis 400 cm. Diese werden unterschiedlich gewichtet, dann der geringste Wert in eine Geschwindigkeit umgerechnet. Die Übersetzung eines Abstands- in einen Geschwindigkeitswert wird anhand einer linearen Funktion realisiert, die einen minimalen  Input-Grenzwert zum Anstoßen der Bewegung und gleichsam einen maximalen Input-Wert beinhaltet, ab dem die volle Geschwindigkeit zurück gegeben wird (siehe \autoref{graph:disttospeed}). Dies dient dazu, einen gewissen Mindestabstand beim Fahren nicht zu unterschreiten, sowie zum Ignorieren von Hindernissen, die weiter als ein gewisser Maximalwert von den Sensoren entfernt aufgefasst werden. Ersterer wurde durch Testergebnisse statisch auf 20 cm gesetzt, letzterer auf 100 cm. Im Abstands-Wertebereich von 20 cm bis 100 cm gilt die lineare Funktion \emph{y = x}.
 
 \begin{figure}[ht]
 	\centering
@@ -308,10 +325,10 @@ Die eingehenden Abstandswerte liegen im Bereich von 0 bis 400 cm. Diese werden u
 	\draw[blue] (20,20) -- (100,100) -- (140, 100);
 	\end{tikzpicture}
 	\caption{Übersetzung von Abstandswert in prozentuale Geschwindigkeit}
-	\label{graph_disttospeed}
+	\label{graph:disttospeed}
 \end{figure}
 
-Die Geschwindigkeit wird mithilfe des kleinsten von allen Ultraschallsensoren gemessenen Abstandswertes berechnet. Da den zur Seite oder gar nach hinten gerichteten Sensoren bei geradliniger Fahrt nicht die selbe Priorität beigemessen werden sollte, wie den nach vorne ausgerichteten, wo der Abstand eher kollisionsrelevant ist, wird zunächst jeder Wert nach Relevanz gewichtet und entsprechend zu einem neuen Wert verrechnet. Mit jedem Sensor wird ein Winkel assoziiert, welcher auf den Bereich zwischen -1 und 1 abgebildet wird, wobei 0 die frontale Ausrichtung beschreibt. Der Bereich von 0 bis -1 beschreibt im Modell den gegen den Uhrzeigersinn gerichteten Halbkreis bis zum nach hinten gerichteten Sensor (\autoref{graph_us-car}; der Reihe nach die Sensoren (5), (4), (3), (2), (1), (0)) und äquivalent der von 0 bis 1 gehende Bereich den Halbkreis im Uhrzeigersinn zum nach hinten gerichteten Sensor  (\autoref{graph_us-car}; der Reihe nach die Sensoren (5), (6), (7), (8), (9), (0)). Alle rückgerichteten Sensoren wurden der Einfachheit halber auf 1 respektive -1 abgebildet, da sie bei der normalen Fahrt nicht weiter von Interesse sind. Die Zuordnung der Winkel ist veranschaulicht in \autoref{graph_us-angles}. 
+Die Geschwindigkeit wird mithilfe des kleinsten von allen Ultraschallsensoren gemessenen Abstandswertes berechnet. Da den zur Seite oder gar nach hinten gerichteten Sensoren bei geradliniger Fahrt nicht die selbe Priorität beigemessen werden sollte, wie den nach vorne ausgerichteten, wo der Abstand eher kollisionsrelevant ist, wird zunächst jeder Wert nach Relevanz gewichtet und entsprechend zu einem neuen Wert verrechnet. Mit jedem Sensor wird ein Winkel assoziiert, welcher auf den Bereich zwischen -1 und 1 abgebildet wird, wobei 0 die frontale Ausrichtung beschreibt. Der Bereich von 0 bis -1 beschreibt im Modell den gegen den Uhrzeigersinn gerichteten Halbkreis bis zum nach hinten gerichteten Sensor (\autoref{graph:us-car}; der Reihe nach die Sensoren (5), (4), (3), (2), (1), (0)) und äquivalent der von 0 bis 1 gehende Bereich den Halbkreis im Uhrzeigersinn zum nach hinten gerichteten Sensor  (\autoref{graph:us-car}; der Reihe nach die Sensoren (5), (6), (7), (8), (9), (0)). Alle rückgerichteten Sensoren wurden der Einfachheit halber auf 1 respektive -1 abgebildet, da sie bei der normalen Fahrt nicht weiter von Interesse sind. Die Zuordnung der Winkel ist veranschaulicht in \autoref{graph:us-angles}. 
 
 \begin{figure}[ht]
 	\centering
@@ -342,7 +359,8 @@ Die Geschwindigkeit wird mithilfe des kleinsten von allen Ultraschallsensoren ge
 	
 	\end{tikzpicture}
 	\caption{Ultraschallsensoren und ihr assoziierter Winkel, projiziert auf den Bereich zwischen -1 und 1}
-	\label{graph_us-angles}
+	\label{graph:us-angles}
+	
 \end{figure}
 
 Basierend auf diesen Winkeln wird gemäß einer Gauss-Kurve der Gewichtungsfaktor für den jeweiligen Sensor bestimmt, mit dem dessen Messwert multipliziert wird (dargestellt in \autoref{img:gaussian-weighted-dist-straight}). Dieser Faktor ist stets größer oder gleich 1, was bedeutet, dass ein gemessener Abstand nur zunehmen und damit an Relevanz verlieren kann, wenn es darum geht, im Anschluss den kleinsten zur Geschwindigkeits-Berechnung zu wählen.
@@ -374,11 +392,11 @@ wobei $sensorAngle$ der auf den Bereich zwischen -1 und 1 normierte Sensorwinkel
 
 
 \subsubsection{Motoransteuerung}
-Die Hauptaufgaben der Motorsteuerung sind das Reagieren auf Flags, wie beispielsweise das Emergencybreak-Flag, sowie die Motorsteuerungsdaten, welche sie von dem Controller bekommt und an die Arduinokommunication weitersendet.
+Die Hauptaufgaben der Motorsteuerung sind das Reagieren auf Flags, wie beispielsweise das Emergencybreak-Flag, sowie die Motorsteuerungsdaten, welche sie von dem Controller bekommt und an die Arduino-Kommunikation weitersendet.
 
-Wir haben uns entschlossen in diesem Baustein auf Flags zu reagieren, um eine schnellere Reaktion auf kritische Ereignisse, wie zum Beispiel das plötzliche Auftauchen eines Hindernisses zu ermöglichen. Dies erreichen wir, indem wir die Flags direkt aus den Blöcken bekommen, welche die Sensordaten verarbeiten und das Signal nicht erst durch verschiedene Verarbeitungsschritte durchgehen muss. Die Emergencybreak wird erst wieder aufgehoben, sobald ein entsprechendes Signal von den Sensoren kommt.
+Wir haben uns entschlossen in diesem Baustein auf Flags zu reagieren, um eine schnellere Reaktion auf kritische Ereignisse, wie zum Beispiel das plötzliche Auftauchen eines Hindernisses zu ermöglichen. Dies erreichen wir, indem wir die Flags direkt aus den Blöcken bekommen, welche die Sensordaten verarbeiten und das Signal nicht erst verschiedene Verarbeitungsschritte durchgehen muss. Die Emergencybreak wird erst wieder aufgehoben, sobald ein entsprechendes Signal von den Sensoren kommt.
 
-Außerdem beherscht dieser Baustein als einziger das Protokoll, welches zur Ansteuerung der Motoren mittels der Arduinocommunication verwendet wird. So kann intern ein Protokoll verwendet werden, dass sich deutlich besser lesen und im Falle von Verarbeitungsfehlern debuggen lässt. In diesem Protokoll sehen wir vor, dass die Geschwindigkeit als Prozent der Maximalgeschwindigkeit gesendet wird. Diese wurde nach Tests auf 12 Prozent (der maximalen Motorgeschwindigkeit) festgelegt. Da der Motorcontroller eine gewisse Anzahl an Nullen benötigt, um aktiviert zu werden, werden die ersten 150 Geschwindigkeitsdaten auf Null gesetzt. Nach diesen 150 Nullen können dann Geschwindigkeiten an die Motoren gesendet werden. 
+Außerdem beherrscht dieser Baustein als einziger das Protokoll, welches zur Ansteuerung der Motoren mittels der Arduinocommunication verwendet wird. So kann intern ein Protokoll verwendet werden, das sich deutlich besser lesen und im Falle von Verarbeitungsfehlern debuggen lässt. In diesem Protokoll sehen wir vor, dass die Geschwindigkeit als Prozentwert der Maximalgeschwindigkeit gesendet wird. Diese wurde nach Tests auf 12 Prozent (der maximalen Motorgeschwindigkeit) festgelegt. Da der Motorcontroller eine gewisse Anzahl an Nullen benötigt, um aktiviert zu werden, werden die ersten 150 Geschwindigkeitsdaten auf Null gesetzt. Nach diesen 150 Nullen können dann Geschwindigkeiten an die Motoren gesendet werden. 
 
 \paragraph{Umgebung}
 Das Auto wurde programmiert, um eine blaue Linie zu verfolgen. Es wurde ein großes blaues Oval auf den Boden geklebt. Das verwendete Klebeband ist recht Matt, um Spiegelungen zu vermeiden, jedoch wurde in der Testung die Sonneneinstrahlung minimiert.
@@ -388,6 +406,14 @@ Das Auto wurde programmiert, um eine blaue Linie zu verfolgen. Es wurde ein gro�
 Interprozesskommunikation
 
 Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine einheitliche Kommunikation sichergestellt werden. Hierzu wurde eine separate Funktionssammlung erstellt, die von allen Funktionsblöcken inkludiert wurde. Sie beinhaltet Definitionen über den Nachrichtentyp und die Zusammensetzung strukturierter Datentypen. Da der vom ADTF gestellte Ablauf zum Senden oder Empfangen eines bestimmten Nachrichtentyps zur Codeverdopplung in den Funktionsblöcken führen würde, wurden die Funktionen zusammengefasst und ausgelagert. Damit ließ sich auch einheitlich sicherstellen, dass Funktionsblöcke beim Empfangen die Nachricht erst Kopierten, bevor deren Inhalt verändert wurde.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth, height=\textheight, keepaspectratio]{Bilder/Funktionsblockplan.png}
+	\caption{Funktionsblockplan der Test-Umgebung}
+	\label{img:funktionsblockplan}
+\end{figure}
+
 
 \subsection{Fallstricke: Komplikationen und Fehler}
 
