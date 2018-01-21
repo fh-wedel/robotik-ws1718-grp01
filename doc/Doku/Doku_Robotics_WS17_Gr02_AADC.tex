@@ -277,7 +277,7 @@ Damit das Auto der blauen Fahrbahnlinie folgen kann, wird die Linie im Kamerabil
 	\label{img:carCameraFrontAngle60}
 \end{figure}
 
-Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCV Bibliothek zurück. Die Kamera ist in einem 60 Grad Winkel montiert (Siehe Abbildung 1). Es ist davon auszugehen, dass die Fahrbahnlinie der einzig blaue Bildinhalt im relevanten Bildausschnitt ist. Zunächst wird das Eingangsbild mit OpenCV vom RGB- in den HSV-Farbraum transformiert, um die Festlegung von Ober- und Untergrenzen für Blauwerte zu vereinfachen. Mittels der OpenCV-Funktion inRange werden anschließend alle nicht blauen Bildinhalte herausgefiltert und es wird ein Binärbild zurückgegeben, welches alle blauen Flächen markiert. Die endgültigen Farbwertgrenzen sind das Ergebnis von Versuchen mit variierenden Lichtverhältnissen:
+Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCV Bibliothek zurück. Die Kamera ist in einem 60 Grad Winkel montiert (Siehe Abbildung 1). Es ist davon auszugehen, dass die Fahrbahnlinie der einzig blaue Bildinhalt im relevanten Bildausschnitt ist. Zunächst wird das Eingangsbild mit OpenCV vom RGB- in den HSV-Farbraum transformiert, um die Festlegung von Ober- und Untergrenzen für Blauwerte zu vereinfachen. Mittels der OpenCV-Funktion \emph{inRange()} werden anschließend alle nicht blauen Bildinhalte herausgefiltert und ein Binärbild zurückgegeben, welches alle blauen Flächen markiert. Die endgültigen Farbwertgrenzen sind das Ergebnis von folgenden Versuchen mit variierenden Lichtverhältnissen:
 
 \begin{description}
 	\item[Versuch 1 - Szenario mit geringster Lichtintensität]
@@ -288,9 +288,9 @@ Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCV Biblio
 
 Auswertung:
 
-Das Ergebnis dieser Versuche sind die in \autoref{tbl:linedet_lighttest} folgenden Unter- bzw. Obergrenzen der Funktion \emph{inRange()}, welche in beiden Extremfällen eine Positionsberechnung der Linie ermöglichen.
+Als Ergebnis dieser Versuche sind die in \autoref{tbl:linedet_lighttest} folgenden Unter- bzw. Obergrenzen der Funktion \emph{inRange()} eruiert worden, welche in beiden Extremfällen eine Positionsberechnung der Linie ermöglichen.
 
-\begin{table}{h}
+\begin{table}[h]
 	\caption{Ergebnisse der Tests bei verschiedener Lichtintensität}
 	\centering
 	\begin{tabular}{ c | c | c |}
@@ -302,9 +302,9 @@ Das Ergebnis dieser Versuche sind die in \autoref{tbl:linedet_lighttest} folgend
 	\label{tbl:linedet_lighttest}
 \end{table}
 
-Im dunklen Szenario beeinträchtigt der geringe Rauschabstand die Erkennung der Linie leicht wie auf \autoref{img:line_filt_viel_u_wenig_licht} (a) zu erkennen ist. Die Ergebnisse lassen dennoch eine ausreichend robuste Positionsberechnung zu.
+Im dunklen Szenario beeinträchtigt der geringe Rauschabstand die Erkennung der Linie leicht, wie in \autoref{img:line_filt_viel_u_wenig_licht} (a) zu erkennen ist. Die Ergebnisse lassen dennoch eine ausreichend robuste Positionsberechnung zu.
 
-Im hellen Szenario ist der Rauschabstand so groß, dass \emph{inRange()} die Fahrbahnmarkierung nahezu optimal ausschneidet. Reflektionen der Sonne können zu Clipping führen und verhindern eine durchgehende Erkennung der Markierung (siehe \autoref{img:line_filt_viel_u_wenig_licht} (b)).
+Im normal-hellen Szenario ist der Rauschabstand so groß, dass \emph{inRange()} die Fahrbahnmarkierung nahezu optimal ausschneidet (\autoref{img:line_filt_normal_u_kurve} (a)). Reflexionen der Sonne können zu Clipping führen und verhindern eine durchgehende Erkennung der Markierung (siehe \autoref{img:line_filt_viel_u_wenig_licht} (b)).
 
 \begin{figure}[h]
 	\subfigure[Viel Licht und Reflektion]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_vielLicht_reflektion.png}}
