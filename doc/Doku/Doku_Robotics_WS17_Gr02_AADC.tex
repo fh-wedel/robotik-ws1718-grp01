@@ -263,7 +263,7 @@ Die Zielsetzung sieht vor, das Auto eine blaue Linie verfolgen zu lassen. Zu Tes
 
 TODO: Bild(er) der Umgebung
 
-\subsection{Projektstruktur}
+\subsection{Projektumsetzung}
 
 Das Projekt wurde zu Beginn in verschiedene Aufgabenbereiche aufgeteilt, die separat bearbeitet wurden (siehe \autoref{zielsetzung}). Die vier großen Bereiche sind im Folgenden näher beschrieben.
 
@@ -462,8 +462,7 @@ Wir haben uns entschlossen in diesem Baustein auf Flags zu reagieren, um eine sc
 Außerdem beherrscht dieser Baustein als einziger das Protokoll, welches zur Ansteuerung der Motoren mittels der Arduinokommunication verwendet wird. So kann intern ein Protokoll verwendet werden, das sich deutlich besser lesen und im Falle von Verarbeitungsfehlern debuggen lässt. In diesem Protokoll sehen wir vor, dass die Geschwindigkeit als Prozentwert der Maximalgeschwindigkeit gesendet wird. Dieser wird dann, bestimmt durch Tests, auf den Bereich bis \[\frac{10}{12}\] der maximalen Motorgeschwindigkeit umgerechnet, wobei intern die maximal mögliche Geschwindigkeit mit -12 gegeben ist. Da der Motorcontroller eine gewisse Anzahl an Nullen benötigt, um aktiviert zu werden, werden die ersten 150 Geschwindigkeitsdaten auf Null gesetzt. Nach diesen 150 Nullen können dann Geschwindigkeiten an die Motoren gesendet werden.
 
 
-\subsubsection{Fusionsschnittstelle}
-Interprozesskommunikation
+\subsubsection{Interprozesskommunikation}
 
 Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine einheitliche Kommunikation sichergestellt werden. Hierzu wurde eine separate Funktionssammlung erstellt, die von allen Funktionsblöcken inkludiert wurde. Sie beinhaltet Definitionen über den Nachrichtentyp und die Zusammensetzung strukturierter Datentypen. Da der vom ADTF gestellte Ablauf zum Senden oder Empfangen eines bestimmten Nachrichtentyps zur Codeverdopplung in den Funktionsblöcken führen würde, wurden die Funktionen zusammengefasst und ausgelagert. Damit ließ sich auch einheitlich sicherstellen, dass Funktionsblöcke beim Empfangen die Nachricht erst Kopierten, bevor deren Inhalt verändert wurde.
 
@@ -515,21 +514,6 @@ Da die Programmierung in verschiedenen Funktionsblöcken erfolgte, musste eine e
 	Elektrobit:
 	\url{https://www.elektrobit.com/products/eb-assist/adtf/}
 	
-	\bibitem{im2c-geschichte}
-	\textit{Im$^2$C-Geschichte}
-	\url{https://www.i2c-bus.org/twi-bus/}
-	
-	\bibitem{im2c-bussystem-ehi}
-	E. Eube, G. Heinrichs, U. Ihlefeldt,
-	\textit{Im$^2$C-Bussytem},
-	Fortbildungsveranstaltung in Mönchengladbach, 23.08.2008:
-	\url{http://www.g-heinrichs.de/pdv/i2c.pdf}
-	
-	\bibitem{im2c-bussystem-robotelectronics}
-	\textit{Im$^2$C-Bussytem},
-	Robot Electronics:
-	\url{http://www.robot-electronics.co.uk/i2c-tutorial}
-
 \end{thebibliography}
 
 \begin{comment}
