@@ -267,27 +267,88 @@ Das Projekt wurde zu Beginn in verschiedene Aufgabenbereiche aufgeteilt, die sep
 
 
 \subsubsection{Linienerkennung und -verfolgung}
-Damit das Auto der blauen Fahrbahnlinie folgen kann, wird die Linie im Kamerabild detektiert. Anschließend wird die Position der Linie ausgewertet um daraus Steuersignale für die Lenkung zu gewinnen. Diese Aufgaben werden von zwei Filtern gelöst:
+Damit das Auto der blauen Fahrbahnlinie folgen kann, wird die Linie im Kamerabild detektiert. Anschließend wird die Position der Linie ausgewertet, um daraus Steuersignale für die Lenkung zu gewinnen. Diese Aufgaben werden von zwei Filtern gelöst:
 
 \paragraph{BlueImgFilter}
-Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCv Bibliothek zurück. Weil die Kamera hauptsächlich den (hellgrauen) Boden unmittelbar vor dem Auto sieht, kann man davon ausgehen, dass die Fahrbahnlinie im relevanten Suchbereich der einzig blaue Bildinhalt ist (siehr \autoref{img:line_unfilt_wenigLicht}).
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth, height=7cm, keepaspectratio]{Bilder/carCameraFrontAngle60.jpg}
+	\caption{Winkel der Frontkamera am Modell}
+	\label{img:carCameraFrontAngle60}
+\end{figure}
 
-Zunächst wird das Eingangsbild mit OpenCv vom RGB- in den HSV-Farbraum transformiert, um die Festlegung von Ober- und Untergrenzen für Blauwerte zu vereinfachen. Mittels der OpenCv-Funktion \emph{inRange} werden anschließend alle nicht blauen Bildinhalte herausgefiltert und ein Binärbild zurückgegeben, welches alle blauen Flächen markiert. Die endgültigen Farbwertgrenzen ergeben sich durch Testläufe unter Realbedingungen.    
+Dieser Filter markiert die Fahrbahnlinie und greift dafür auf die OpenCV Bibliothek zurück. Die Kamera ist in einem 60 Grad Winkel montiert (Siehe Abbildung 1). Es ist davon auszugehen, dass die Fahrbahnlinie der einzig blaue Bildinhalt im relevanten Bildausschnitt ist. Zunächst wird das Eingangsbild mit OpenCV vom RGB- in den HSV-Farbraum transformiert, um die Festlegung von Ober- und Untergrenzen für Blauwerte zu vereinfachen. Mittels der OpenCV-Funktion inRange werden anschließend alle nicht blauen Bildinhalte herausgefiltert und es wird ein Binärbild zurückgegeben, welches alle blauen Flächen markiert. Die endgültigen Farbwertgrenzen sind das Ergebnis von Versuchen mit variierenden Lichtverhältnissen:
+
+\begin{description}
+	\item[Versuch 1 - Szenario mit geringster Lichtintensität]
+	Lichtverhältnisse:	Jalousie runtergelassen, Beleuchtung aus, Tageslicht von den Oberlichtern, bewölkt (mittags)
+	\item[Versuch 2 - Szenario mit höchster Lichtintensität]
+	Lichtverhältnisse:	Jalousie oben, alle Lichter an, keine Wolken (mittags) 
+\end{description}
+
+Auswertung:
+
+Das Ergebnis dieser Versuche sind die in \autoref{tbl:linedet_lighttest} folgenden Unter- bzw. Obergrenzen der Funktion \emph{inRange()}, welche in beiden Extremfällen eine Positionsberechnung der Linie ermöglichen.
+
+\begin{table}{h}
+	\caption{Ergebnisse der Tests bei verschiedener Lichtintensität}
+	\centering
+	\begin{tabular}{ c | c | c |}
+		& Untergrenze & Obergrenze \\ \hline
+		Hue & 95 & 130 \\ \hline
+		Saturation & 100 & 255 \\ \hline
+		Value & 70 & 255 \\
+	\end{tabular}
+	\label{tbl:linedet_lighttest}
+\end{table}
+
+Im dunklen Szenario beeinträchtigt der geringe Rauschabstand die Erkennung der Linie leicht wie auf \autoref{img:line_filt_viel_u_wenig_licht} (a) zu erkennen ist. Die Ergebnisse lassen dennoch eine ausreichend robuste Positionsberechnung zu.
+
+Im hellen Szenario ist der Rauschabstand so groß, dass \emph{inRange()} die Fahrbahnmarkierung nahezu optimal ausschneidet. Reflektionen der Sonne können zu Clipping führen und verhindern eine durchgehende Erkennung der Markierung (siehe \autoref{img:line_filt_viel_u_wenig_licht} (b)).
 
 \begin{figure}[h]
+	\subfigure[Viel Licht und Reflektion]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_vielLicht_reflektion.png}}
+	\subfigure[Wenig Licht]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_wenigLicht.png}}
+	\caption{Gefilterte Linienerkennung unter extremen Lichtverhältnissen}
+	\label{img:line_filt_viel_u_wenig_licht}
+\end{figure}
+
+Daher ist es wichtig, direkte Sonneneinstrahlung auf der Fahrbahn zu vermeiden.  
+
+\begin{comment}
+	\begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth, height=7cm, keepaspectratio]{Bilder/line_unfilt_wenigLicht.png}
 	\caption{Ungefilterte Aufnahme der Fahrlinie bei wenig Licht}
 	\label{img:line_unfilt_wenigLicht}
-\end{figure}
+	\end{figure}
+\end{comment}
 
 
 \paragraph{OneLineDetect}
-Dieser Filter erhält das Binärbild und ermittelt die Position der blauen Linie relativ zur Position des Autos. Dafür wird in einer festgelegten Bildzeile nahe des Unteren Bildrandes nach der größten Anzahl weißer, zusammenhängender Pixel gesucht. Durch die Aufbereitung des Bildes durch den \emph{blueImgFilter} kann davon ausgegangen werden, dass diese Pixel zur blauen Linie gehören. 
+Dieser Filter erhält das Binärbild und ermittelt die Position der blauen Linie relativ zur Position des Autos. Dafür wird in einer Bildzeile kurz unterhalb der Bildmitte (korreliert mit dem Bereich 20 cm vor dem Auto) nach der größten Anzahl weißer, zusammenhängender Pixel gesucht. Der Mittelpunkt wird berechnet und als Zentrum der dort verlaufenden Linie interpretiert. Der Abstand zwischen ermittelten Linienmittelpunkt und Bildmitte wird auf einen Wert zwischen -100 und 100 normiert und ausgegeben (siehe \autoref{graph:oneLineDet_reldotpos}).
 
-Anschließend wird die Mitte des weißen Pixelabschnittes berechnet und deren Abstand zur Bildmitte ausgegeben. Dieser Abstand wird auf einen Bereich zwischen -100 und 100 normiert, mit 0 als dem Mittelpunkt. Über die Filter-Properties lässt sich eine Mindestbreite für die Anzahl weißer Pixel festlegen, um die Detektion noch robuster zu gestalten. Sind im aktuell zu bearbeitenden Bild keine oder zu wenig verbundene weiße Pixel, so wird statt einer Zahl zwischen -100 und 100 der Wert -101 ausgegeben.
+\begin{figure}[h]
+	\centering
+	\begin{tikzpicture}[xscale=0.05,yscale=0.05]
+	\draw[-] (-100,0) -- (100,0) node[right] {$Bildbreite$};
+	\foreach \i in {-100, 0, 100}{
+		\draw[-] (\i,-2) -- ( \i,2) node[above] {$\i$};
+	}
+	\draw[line width=1mm] (10,-2) -- (10,2) node[above right] {Bsp. Erkannte Linie};
+	\end{tikzpicture}
+	\caption{Beispiel eines Linienmittelpunktes (10) innerhalb eines Bildes, normiert auf den Bereich -100 bis 100}
+	\label{graph:oneLineDet_reldotpos}
+\end{figure}
 
-Für Debugzwecke wird die detektierte Linienmitte mit einem roten Kreis markiert. Dieser Ansatz setzt voraus, dass das Kameraobjektiv auf der Mittelachse des Modelautos montiert ist.
+Um die Berechnung der Linienmitte robuster zu gestalten, was besonders bei verrauschten Kamerabildern in dunklen Lichtverhältnissen nützlich ist, wird die Linienmitte auch in benachbarten Bildzeilen berechnet. Auf die errechneten Linienmittelpunkte wird der Median-Filter angewendet. Außerdem gibt es eine Mindestanzahl an zusammenhängenden weißen Pixeln, die erreicht werden muss, um als Fahrbahnmarkierung zu gelten.
+
+Wird beispielsweise in einer Kurve in dem Bereich unter der Bildmitte keine Linie detektiert, so wird in einem zweiten Suchbereich nahe des unteren Bildrandes gesucht (siehe \autoref{img:line_filt_normal_u_kurve} (b)). Dieser Bereich korreliert mit dem Abstand von 5 cm vor dem Auto.
+
+Wird auch hier keine Linie detektiert, wird der Wert -101 ausgegeben. 
+
+Auf den Abbildungen \ref{img:line_filt_viel_u_wenig_licht} und \ref{img:line_filt_normal_u_kurve} sind in Rot jeweils diejenigen Punkte markiert, die zur Linienpositionierung erkannt wurden.
+
 
 \begin{figure}
 	\subfigure[Wenig gekrümmte Fahrstrecke]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_normal.png}}
@@ -296,13 +357,6 @@ Für Debugzwecke wird die detektierte Linienmitte mit einem roten Kreis markiert
 	\label{img:line_filt_normal_u_kurve}
 \end{figure}
 
-\begin{figure}
-	\subfigure[Viel Licht und Reflektion]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_vielLicht_reflektion.png}}
-	\subfigure[Wenig Licht]{\includegraphics[width=0.49\textwidth]{Bilder/line_filt_wenigLicht.png}}
-	\caption{Gefilterte Linienerkennung unter extremen Lichtverhältnissen}
-	\label{img:line_filt_viel_u_wenig_licht}
-\end{figure}
- 
 
 \subsubsection{Abstandserkennung und -verwertung}
 Die Abstandserskennung ist eine der grundlegenden Anforderungen an einen autonomen Roboter zur Ermöglichung von gefahrloser Navigation. In diesem Projekt wird sie auf Basis von Messwerten der zehn im Auto verbauten Ultraschallsensoren (siehe \autoref{graph:us-car})  implementiert.
