@@ -173,9 +173,14 @@ Die Umsetzung des Projektes wird zu Anfang in vier Bereiche unterteilt:
 Im Folgenden werden die Grundlagen, bestehend aus Aufbau des genutzten Modellautos, der darauf laufenden Software sowie das genutzte Framework erläutert, welche für das Verständnis des Projektes essenziell sind.
 
 \subsection{Hardwareplattform}
-Das Audimodell bietet verschiedene Hardwarekomponenten, um das autonome Fahren zu verwirklichen.
+Das Audimodell bietet verschiedene Hardwarekomponenten, um das autonome Fahren zu verwirklichen. Es ist in \autoref{img:carSide_table} zu sehen.
 
-TODO: Bild vom Audi gesamt
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth, keepaspectratio]{Bilder/carSide_table.jpg}
+	\caption{Seitliche Ansicht des im Projekt verwendeten Audi-Modells}
+	\label{img:carSide_table}
+\end{figure}
 
 \subsubsection{Grundkomponenten}
 Die Stromversorgung der Steuerung und der Motoren während der Fahrt wird jeweils von einem separaten Akku gewährleistet.
@@ -329,7 +334,7 @@ Dieser Filter erhält das Binärbild und ermittelt die Position der blauen Linie
 	}
 	\draw[line width=1mm] (10,-2) -- (10,2) node[above right] {Bsp. Erkannte Linie};
 	\end{tikzpicture}
-	\caption{Beispiel eines Linienmittelpunktes (10) innerhalb eines Bildes, normiert auf den Bereich -100 bis 100}
+	\caption{Beispiel eines errechneten Fahrstreifen-Mittelpunktes (bei 10) innerhalb einer Bildzeile, normiert auf den Bereich -100 bis 100}
 	\label{graph:oneLineDet_reldotpos}
 \end{figure}
 
