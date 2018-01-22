@@ -358,6 +358,8 @@ Auf den Abbildungen \ref{img:line_filt_viel_u_wenig_licht} und \ref{img:line_fil
 \end{figure}
 
 
+\clearpage
+
 \subsubsection{Abstandserkennung und -verwertung}
 Die Abstandserskennung ist eine der grundlegenden Anforderungen an einen autonomen Roboter zur Ermöglichung von gefahrloser Navigation. In diesem Projekt wird sie auf Basis von Messwerten der zehn im Auto verbauten Ultraschallsensoren (siehe \autoref{img:car_ussensors})  implementiert.
 
@@ -419,21 +421,21 @@ Die Geschwindigkeit wird mithilfe des kleinsten von allen Ultraschallsensoren ge
 
 Basierend auf diesen Winkeln wird gemäß einer Gauss-Kurve der Gewichtungsfaktor für den jeweiligen Sensor bestimmt, mit dem dessen Messwert multipliziert wird (dargestellt in \autoref{img:gaussian-weighted-dist-straight}). Dieser Faktor ist stets größer oder gleich 1, was bedeutet, dass ein gemessener Abstand nur zunehmen und damit an Relevanz verlieren kann, wenn es darum geht, im Anschluss den kleinsten zur Geschwindigkeits-Berechnung zu wählen.
 
-Solche statisch festgelegten Gewichtungsfaktoren sind aber vor allem für ein Geradeaus-Fahren mit gewisser Geschwindigkeit optimiert. Das ist beispielsweise in Kurven problematisch, in welchen das Hauptaugenmerk nicht mehr geradeaus liegen sollte, da die Geschwindigkeit durch links oder rechts vorbeifahrend frontal erkannte Hindernisse unnötig gedrosselt werden würde. Daher wird eine dynamische Anpassung des relevanten Sensor-Blickkegels realisiert. Dazu wird gemäß des eingeschlagenen Lenkwinkels, der dazu auf den Bereich von -1 bis 1 normiert einfließt, die Gauss-Kurve auf der x-Achse verschoben, wie dargestellt in \autoref{img:gaussian-weighted-dist-curve}.
-
-\begin{figure}[ht]
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\textwidth, height=11cm, keepaspectratio]{Bilder/Gauss_Sensorgewichtung_gerade.png}
 	\caption{Gewichtung der Abstands-Messwerte beim Geradeaus-Fahren}
 	\label{img:gaussian-weighted-dist-straight}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\textwidth, height=12cm, keepaspectratio]{Bilder/Gauss_Sensorgewichtung_geneigt.png}
 	\caption{Gewichtung der Abstands-Messwerte bei Lenkung nach links (maximale Verschiebung)}
 	\label{img:gaussian-weighted-dist-curve}
 \end{figure}
+
+Solche statisch festgelegten Gewichtungsfaktoren sind aber vor allem für ein Geradeaus-Fahren mit gewisser Geschwindigkeit optimiert. Das ist beispielsweise in Kurven problematisch, in welchen das Hauptaugenmerk nicht mehr geradeaus liegen sollte, da die Geschwindigkeit durch links oder rechts vorbeifahrend frontal erkannte Hindernisse unnötig gedrosselt werden würde. Daher wird eine dynamische Anpassung des relevanten Sensor-Blickkegels realisiert. Dazu wird gemäß des eingeschlagenen Lenkwinkels, der dazu auf den Bereich von -1 bis 1 normiert einfließt, die Gauss-Kurve auf der x-Achse verschoben, wie dargestellt in \autoref{img:gaussian-weighted-dist-curve}.
 
 Konkret sind in \autoref{img:gaussian-weighted-dist-straight} und \ref{img:gaussian-weighted-dist-curve} die fixen Ablesepunkte der einzelnen Sensoren auf der x-Achse abgebildet, welche an den Sensor-Winkeln in Blickrichtung des Autos angelehnt werden. Der entsprechende Punkt auf der Gauss-Kurve gibt den jeweiligen Gewichtungs-Faktor an, wobei ein größerer Wert eine größere Unempfindlichkeit bedeutet. Gemäß Lenkwinkel wird nun die Kurve auf der x-Achse verschoben, wodurch die Gewichtung sich auf die entsprechend seitlich liegenden Sensoren verschiebt.
 
@@ -444,13 +446,14 @@ sensorWeight= 5 - 4 * \exp\Bigl({-3 * (sensorAngle - steeringAngle)^2}\Bigr)
 \end{equation}
 wobei $sensorAngle$ der auf den Bereich zwischen -1 und 1 normierte Sensorwinkel ist, für den eine Gewichtung berechnet werden soll, und $steeringAngle$ der eingeschlagene Lenkwinkel, ebenfalls im Bereich zwischen -1 und 1 liegend. Die Höhe der Kurve, bestimmt durch die addierte 5 sowie die multiplizierte -4, wurden durch Versuche als angemessen herausgestellt und festgelegt.
 
+\clearpage
 
 \subsubsection{Motoransteuerung}
 Die zentrale Aufgabe der Motoransteuerung ist die Aufbereitung und Weitersendung der Geschwindigkeit und des Lenkwinkels an die Aktoren sowie die Initialisierung des Speed Controllers.
 
 Da die interne Kommunikation der Motordaten auf Werte zwischen -100 bis 100 normiert sind, ist eine Umrechnung dieser in reale Steuerdaten notwendig. Hierbei lässt sich auch die Maximalgeschwindigkeit festlegen bzw. drosseln. Bedingt durch Reaktionszeiten der Sensoren hat sich eine Drosselung auf 12 Prozent der tatsächlichen Maximalgeschwindigkeit bewährt.
 
-Um zeitkritisch auf einen von den Ultraschallsensoren detektiertes Hindernis mit einem Nothalt reagieren zu können, empfängt die Motorensteuerung Flags direkt von der Ultraschallauswertung und umgeht damit weitere Programmlogik.
+Um zeitkritisch auf ein von den Ultraschallsensoren detektiertes Hindernis mit einem Nothalt reagieren zu können, empfängt die Motorensteuerung Flags direkt von der Ultraschallauswertung und umgeht damit weitere Programmlogik.
    
 
 \subsection{Interprozesskommunikation}
@@ -471,43 +474,43 @@ Die drei zuvor beschriebenen Aufgabenbereiche werden über ADTF in Funktionsblö
 
 
 \subsection{Komplikationen und Fehler}
-Im Folgenden findet sich eine Auflistung von Fehlern und Komplikationen, die während der Entwicklung auftreten und zu Einschränkungen, der in der Roadmap gesetzten Ziele führen.
+Im Folgenden findet sich eine Auflistung von Fehlern und Komplikationen, die während der Entwicklung auftraten und zu Einschränkungen, der in der Roadmap gesetzten Ziele führen.
 
 \subsubsection{ADTF}
 \paragraph{Dokumentation}
-Der Umgang mit dem ADTF gestaltet sich zu Anfang sperrig. Zu vielen vorgefertigten Filtern fehlt die Schnittstellenbeschreibung. Auch die im Projekt genutzte Kommunikation zwischen den Filtern, ist nicht einheitlich und lässt sich daher nur mühsam verstehen. So ist die Kommunikation mit dem Arduino-Filter mittels einer Sequenzialisierung und der Übermittlung des Signals in Klarschrift eine gänzlich andere, als die Weitergabe von Zeigern auf Speicherbereiche, wie an anderer Stelle verwendet.
+Der Umgang mit dem ADTF gestaltet sich zu Anfang sperrig. Zu vielen vorgefertigten Filtern fehlt die Schnittstellenbeschreibung. Auch die im Projekt genutzte Kommunikation zwischen den Filtern ist nicht einheitlich und lässt sich daher nur mühsam verstehen. So ist die Kommunikation mit dem Arduino-Filter mittels einer Sequenzialisierung und der Übermittlung des Signals in Klarschrift eine gänzlich andere, als die Weitergabe von Zeigern auf Speicherbereiche, wie an anderer Stelle verwendet.
 
 \paragraph{Nutzung in virtueller Maschine}
-Die parallele Filterentwicklung setzt das verwenden von virtuellen Maschinen voraus. Von ADTF bereitgestellte Funktionen zur grafischen Darstellung von Videosignalen funktionieren an der Stelle nicht. Hierfür ist ein weiterer ist ein weiterer im Nachhinein implementierter Filter erforderlich.
+Die parallele Filterentwicklung setzt das verwenden von virtuellen Maschinen voraus, doch von ADTF bereitgestellte Funktionen zur grafischen Darstellung von Videosignalen funktionieren damit nicht. Hierfür ist ein weiterer im Nachhinein selbst implementierter Filter erforderlich.
 
-\subsubsection{Kalmanfilter}
-Zur Filterung von Messwerten wird ein Medianfilter mit jeweils parametrisierter Länge verwendet, anstelle eines ursprünglich in der Roadmap geplanten Kalmanfilters. Grund dafür ist, dass die Implementierung der in der Roadmap beschriebenen Funktionen eine einheitliche Kommunikation voraussetzen. Die damit entstandene Entwicklungszeit wird durch den weniger aufwendigeren Medianfilter kompensiert.
-
+\subsubsection{Kalman-Filter}
+Zur Filterung von Messwerten wird ein Median-Filter mit jeweils parametrisierter Länge verwendet, anstelle eines ursprünglich in der Roadmap geplanten Kalman-Filters. Grund dafür ist, dass die Implementierung der in der Roadmap beschriebenen Funktionen eine einheitliche Kommunikation voraussetzt. Die dort entstandene Entwicklungszeit wird durch den weniger aufwendigeren Median-Filter kompensiert.
 
 \subsubsection{Ultraschallsensoren}
-Da die Ultraschallsensoren über das ADTF zu schnell abgefragt werden, kann ein Sensor das Echo eines anderen Sensors detektieren und damit eine falsche Abstandmessung ausgeben. Diese Fehlmessung führen dazu, dass das Auto während der Fahrt ohne augenscheinlich erkennbaren Grund seine Geschwindigkeit verringert, da vermeintliche Hindernisse erkannt werden.
+Da die Ultraschallsensoren über das ADTF zu schnell abgefragt werden, kann ein Sensor das Echo eines anderen Sensors detektieren und damit eine falsche Abstandmessung ausgeben. Solche Fehlmessungen können dazu führen, dass das Auto während der Fahrt ohne augenscheinlich erkennbaren Grund seine Geschwindigkeit verringert, da vermeintliche Hindernisse erkannt werden.
 
 \subsubsection{Beschleunigungssensor}
-Die Verwendung des Beschleunigungssensors setzt einen angepassten Kalmanfilter voraus, da bereits Vibrationen des Motors ausreißende Messwerte von bis zu 2 G erzeugen. Deshalb lässt sich die geplante Funktion, Stoppen des Motors bei anheben des Fahrzeugs, nicht ohne weiteres realisieren. 
+Die Verwendung des Beschleunigungssensors setzt einen angepassten Kalman-Filter voraus, da bereits Vibrationen des Motors ausreißende Messwerte von bis zu 2 G erzeugen. Deshalb ließ sich die geplante Funktion, Stoppen des Motors bei anheben des Fahrzeugs, nicht ohne weiteres realisieren. 
 
 \newpage
 %%% Neues Kapitel %%%
 \section{Auswertung}
-Das Auto folgt, wie in der Zielsetzung beschreiben, einer blauen Linie und passt seine Geschwindigkeit an, beziehungsweise bremst vor Hindernissen.
+Das Auto folgt, wie in der Zielsetzung beschreiben, einer blauen Linie und passt seine Geschwindigkeit erkannten Hindernissen bist zum Halt in gegebenem Mindestabstand an.
 
-
-
-Der Einsatz des Medianfilters gegenüber dem Kalmanfilters führt zu keinen Einschränkungen.
+Der Einsatz eines Median-Filters anstatt eines Kalman-Filters führt zu keinen Einschränkungen.
 
 Die Linienerkennung ist einfach implementiert und ist deshalb nur unter eng gefassten Rahmenbedingungen nutzbar. Zusätzliche blaue Farbbereiche im relevanten Sichtfeld werden eventuell als Fahrbahnmarkierung interpretiert.
 
-
-
-Durch die erstmalige Verwendung des Modells zu Lehrzwecken, ist zu wenig über die genaue Funktionsweise aller gegebener Funktionen bekannt. Deshalb fließt zu viel Arbeitszeit in die Einarbeitung und Auseinandersetzung mit ADTF, anstelle von eigentlicher Filterbearbeitung.
-
-
+Durch die erstmalige Verwendung des Modells zu Lehrzwecken, ist zu wenig über die genaue Funktionsweise aller gegebener Funktionen bekannt. Deshalb floss zu viel Arbeitszeit in die Einarbeitung und Auseinandersetzung mit ADTF, anstelle von eigentlicher Filterimplementierung.
 
 \section{Ausblick}
+Das Projekt bietet viel Potenzial für Erweiterungs-Implementierungen, bei welchen der Fokus mehr auf der eigentlichen Umsetzung liegen kann, da nunmehr die Grundlagen bereits erarbeitet wurden.
+
+Im Baustein \emph{OneLineDetect} beispielsweise wurde bereits eine zweite Funktion implementiert, die es ermöglicht, die zwei breitesten Linienquerschnitte in einer Bildzeile zu ermitteln und direkt eine entsprechende Entscheidung zu treffen, welche weiter verarbeitet werden soll. Nach Anpassung der globalen Schnittstellen könnten später bei Erkennung mehrerer Linien diese weiter gereicht und vom zentralen Logik-Baustein entsprechend im Sinne einer Abbiege-Entscheidung verwertet werden.
+
+Auch die Gewichtung der gemessenen Ultraschall-Abstandsmesswerte könnte im nächsten Schritt nicht nur, wie bislang, gemäß eingeschlagenem Lenkwinkel im Sinne einer seitlichen Relevanzverschiebung angepasst werden, sondern auch entsprechend der aktuellen Geschwindigkeit generell mehr oder weniger empfindlich gemacht werden (Abflachen der Gauss-Kurve).
+
+Es bleibt zu hoffen, dass die anfänglich investierte Zeit des Aufsetzens der und Einarbeitens in die Umgebung weitere Arbeit an ähnlichen Projekten problemorientierter und -fokussierter ermöglichen kann.
 
 
 \newpage
