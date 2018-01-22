@@ -22,6 +22,8 @@ ADTF_FILTER_PLUGIN("Controller", OID_ADTF_CARCONTROLLER, c_controller);
 #define ARRPOS_SIDE_RIGHT          8
 #define ARRPOS_REAR_RIGHT          9
 
+#define MINDIST_CUTOFF             20
+
 bool emergeny_break_enabled = 0;
 
 c_controller::c_controller(const tChar *__info) : cFilter(__info) {
@@ -47,6 +49,7 @@ c_controller::~c_controller() {
 tResult c_controller::Init(tInitStage eStage, __exception) {
     RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
 
+    // setzt initial die Standard-Winkel für die einzelnen Sensoren
     sa.REAR_CENTER_ANGLE = (float)GetPropertyFloat("REAR_CENTER_ANGLE");
     sa.REAR_LEFT_ANGLE = (float)GetPropertyFloat("REAR_LEFT_ANGLE");
     sa.SIDE_LEFT_ANGLE = (float)GetPropertyFloat("SIDE_LEFT_ANGLE");
@@ -83,35 +86,31 @@ tResult c_controller::Shutdown(tInitStage eStage, __exception) {
     return cFilter::Shutdown(eStage, __exception_ptr);
 }
 
-// sensor_angle: [0 - 1]
-// steering_angle: [0 - 1]
-// Berechnet die durch eine Gauss-Kurve gewichtete Sensor-Wertigkeit
+/**
+ * Berechnet die durch eine Gauss-Kurve gewichtete Sensor-Wertigkeit
+ * @param sensor_angle der Winkel des Sensors, für den man eine Gewichtung errechnen moechte (Input: [0..1])
+ * @param steering_angle der eingeschlagene Lenkwinkel (Input: [0..1])
+ * @return
+ */
 float getGaussianSensorWeight(float sensor_angle, float steering_angle) {
     return 5-4*exp(-3 * pow((sensor_angle - steering_angle),2) );
 }
 
-// sensor_angle: [-1 - 1]
-// steering_angle: [-1 - 1]
-// Berechnet die durch eine Gauss-Kurve gewichtete Sensor-Wertigkeit
-float getGaussianSensorWeight(float sensor_angle, float steering_angle, bool front) {
-    return 5-4*exp(-3 * pow((sensor_angle - steering_angle),2) );
-}
-
-// dist: zwischen [0 - 400]
-// minDistCutoff: [0 - 100] cotoff für die mindestGeschwindigkeit
-// return: Geschwindigkeit zwischen [0 - 100]
-// Berechnet die Geschwindigkeit aus dem gegebenen Distanzwert und dem Distanz-Schwellwert
+/**
+ * Berechnet die Geschwindigkeit aus dem gegebenen Distanzwert und dem minimalen Distanzwert
+ * @param dist die gemessene Entfernung (Input: [0..400])
+ * @param minDistCutoff minimaler Distanzwert (Input: [0..100])
+ * @return die prozentuale Geschwindigkeit im Bereich [0..100]
+ */
 float distToSpeed(float dist, float minDistCutoff) {
     float speed = 0;
 
-    if (dist < minDistCutoff){ // Distanz unter Cutoff: Geschwindigkeit 0
-        speed = 0;
-    } else if (dist > 100) { // Distanz größer als 1 Meter: Maximalgeschwindigkeit
+    if (dist > 100) { // Distanz größer als 1 Meter: Maximalgeschwindigkeit
         speed = 100;
+    } else if (dist < minDistCutoff){ // Distanz unter Cutoff: Geschwindigkeit 0
+        speed = 0;
     } else {
         speed = dist;
-        //dist = dist - minDistCutoff;
-        //speed = 50/(100-minDistCutoff) * dist + 50.0f;
     }
     return speed;
 }
@@ -124,10 +123,11 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
 
             vector<float> us_values(10);
 
-            //
+            // Lenkwinkel normiert auf Bereich [-1..1]
+            // sowie eingeschränkt auf maximal den Winkel zwischen vorderstem und erstem seitlicheren Sensor
             float steering_angle = _motorControl.angle / 100 * (sa.FRONT_RIGHT_ANGLE - sa.FRONT_CENTER_RIGHT_ANGLE);
 
-            // gewichte Sensor-Input nach Gauss-Kurve
+            // Sensor-Messwerte nach Gauss-Kurve gemäß eingeschlagenem Lenkwinkel gewichten
             us_values[ARRPOS_REAR_CENTER] = uss.tRearCenter.f32Value *
                     getGaussianSensorWeight(sa.REAR_CENTER_ANGLE, steering_angle);
             us_values[ARRPOS_REAR_LEFT] = uss.tRearLeft.f32Value *
@@ -154,13 +154,13 @@ tResult c_controller::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1, t
             for (unsigned int i = 0; i < us_values.size(); ++i) {
                 minDistance = us_values[i] < minDistance ? us_values[i] : minDistance;
             }
-            // auf 0 - 100 normierter mindest-Distanzwert
-            float minDistanceNorm = minDistance; // / 4
+            // normierter mindest-Distanzwert, da die Gauss-Kurve den Sensor-Wert mit bis zu 5 als Gewichtungsfaktor multipliziert
+            float minDistanceNorm = minDistance / 4;
 
             cout << "\nminDistanceNorm= " << minDistanceNorm << " | ";
 
             // Berechnet die Geschwindigkeit anhand der minimalsten Distanz und des mindest-Schwellwertes
-			float speed = distToSpeed(minDistanceNorm, 20);
+			float speed = distToSpeed(minDistanceNorm, MINDIST_CUTOFF);
 
             //cout << "speed= " << speed << " | ";
 

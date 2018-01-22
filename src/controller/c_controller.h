@@ -6,11 +6,7 @@
 
 #include "../../helperFunctions.h"
 
-
-
-//todo fuer morgen... KalmanFilter implementieren fuer Lenkung und Ultrasonic
-//todo fuer morgen... Dynamischer BildFilter (Kontrastanpassung - Blauanteil)
-
+// Sensorwinkel, normiert auf Bereich [-1..1] (0 liegt geradeaus)
 typedef struct SensorAngle {
     float REAR_CENTER_ANGLE;
     float REAR_LEFT_ANGLE;
@@ -46,11 +42,10 @@ private:
     MotorControl _motorControl;
     SensorAngle sa;
 
-
 protected:
     cInputPin    m_oInputPin_USS;
     cInputPin    m_oInputPin_diff;
-    cOutputPin    m_oOutputPin_carcontrol;
+    cOutputPin   m_oOutputPin_carcontrol;
 
 public:
     c_controller(const tChar* __info);
@@ -60,7 +55,6 @@ protected:
     tResult Init(tInitStage eStage, ucom::IException** __exception_ptr);
     tResult Shutdown(tInitStage eStage, ucom::IException** __exception_ptr = NULL);
     tResult OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam1, tInt nParam2, IMediaSample* pMediaSample);
-
 };
 
 #endif
