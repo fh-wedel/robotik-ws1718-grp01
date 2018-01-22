@@ -7,7 +7,9 @@
 #include "stdafx.h"
 #include "protocol.h"
 
-
+/**
+ * Medianfilter.
+ */
 class MedianFilter {
 private:
     vector<FilterValue> _filterList;
@@ -15,11 +17,28 @@ private:
 public:
     MedianFilter();
     ~MedianFilter();
+
+    /**
+     * Initialisiert den Medianfilter.
+     * @param listlength Medianfilterlaenge
+     * @param initalValue initial Wert
+     */
     void initMedianFilter(uint64_t listlength, FilterValue initalValue);
+
+    /**
+     * Fuegt einen neuen Wert hinzu und gibt einen gefilterten Wert zurueck.
+     * @param value neuer Wert
+     * @return gefilterter Wert
+     */
     FilterValue putNewValue(FilterValue value);
     FilterValue medianFromArray(vector<FilterValue> filterVals);
 };
 
+/**
+ * Initialisiert den Medianfilter.
+ * @param listlength Medianfilterlaenge
+ * @param initalValue initial Wert
+ */
 void MedianFilter::initMedianFilter(uint64_t listlength, FilterValue initalValue) {
     _filterList.resize(listlength);
     for (unsigned int i = 0; i < _filterList.size(); ++i) {
@@ -31,6 +50,11 @@ MedianFilter::~MedianFilter() {
 
 }
 
+/**
+ * Fuegt einen neuen Wert hinzu und gibt einen gefilterten Wert zurueck.
+ * @param value neuer Wert
+ * @return gefilterter Wert
+ */
 FilterValue MedianFilter::putNewValue(FilterValue value) {
     if (_filterList.size() == 0) {
         cout << "MedianFilter not initialized" << endl;

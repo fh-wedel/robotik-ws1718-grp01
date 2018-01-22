@@ -101,7 +101,6 @@ tResult c_motorcontrol::OnPinEvent(IPin *pSource, tInt nEventCode, tInt nParam1,
                 if (fabs(tmp_maxSpeed) <= fabs(MAX_SPEED)) {
                     if (!emergeny_break_enabled) {
                         ArduinoTransmitFloatValue(&m_oOutputPin_speed, tmp_maxSpeed, 0);
-                        cout << " sendData " ;
                     }
                 } else {
                     cout << "Motorcontrol: Limit ueberschritten (" << tmp_maxSpeed << ")" << endl;

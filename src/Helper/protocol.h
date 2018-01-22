@@ -49,10 +49,21 @@ typedef struct {
 } MotorControl;
 
 typedef tFloat32 FilterValue;
+
 typedef uint64_t Flag;
+
+//Wert zwischen -100 und 100
 typedef int64_t LineDetectionDiff;
+
 typedef tUltrasonicStruct UltrasonicStruct;
 
+/**
+ * Senden einer Nachricht vom Typ T ueber einen bestimmten Pin.
+ * @tparam T Typ der Nachricht
+ * @param outPin Output Pin
+ * @param data Daten
+ * @return erfolgreiches Senden
+ */
 template <typename T> bool sendData(adtf::cPin *outPin, T* data) {
     cObjectPtr<adtf::IMediaSample> pNewSample;
     if (IS_OK(adtf::cMediaAllocHelper::AllocMediaSample(&pNewSample)))
@@ -65,6 +76,12 @@ template <typename T> bool sendData(adtf::cPin *outPin, T* data) {
     return false;
 }
 
+/**
+ * Senden eines Bildes ueber einen bestimmten Pin.
+ * @param outPin Output Pin
+ * @param data Mat Bild
+ * @return erfolgreiches Senden
+ */
 bool sendData(adtf::cVideoPin *outPin, cv::Mat *data) {
     cObjectPtr<adtf::IMediaSample> pNewSample;
     static tBitmapFormat sOutputFormat;
@@ -84,6 +101,12 @@ bool sendData(adtf::cVideoPin *outPin, cv::Mat *data) {
     return false;
 }
 
+/**
+ * Empfangen einer Nachricht vom Typ T.
+ * @tparam T Typ der Nachricht
+ * @param pSample Sample
+ * @return Kopie der Daten
+ */
 template <typename T> T receiveData(adtf::IMediaSample* pSample) {
     T* rData = NULL;
     T rDataCopy = T();
@@ -94,6 +117,12 @@ template <typename T> T receiveData(adtf::IMediaSample* pSample) {
     return rDataCopy;
 }
 
+/**
+ * Empfangen eines Bildes an einem bestimmten Pin.
+ * @param inputPin Input Pin
+ * @param pSample Sample
+ * @return Kopie des Bildes
+ */
 cv::Mat receiveData(adtf::cVideoPin *inputPin, adtf::IMediaSample* pSample) {
 
     cv::Mat newMat;

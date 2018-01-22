@@ -12,9 +12,11 @@ ADTF_FILTER_PLUGIN("UltrasonicLogic", OID_ADTF_TEMPLATE_FILTER, cUltrasonicLogic
 
 
 cUltrasonicLogic::cUltrasonicLogic(const tChar *__info) {
+    //setzen der Medianfilterstaerke
     SetPropertyInt("MedianFilterListLength", 5);
     SetPropertyInt("MedianFilterListInit", 400);
 
+    //setzen des Schwellwerten fuer die FLAG_EMERGENCY_BREAK
     SetPropertyInt("STOP_distance_Front", 100);
     SetPropertyInt("STOP_distance_Side", 50);
     SetPropertyInt("STOP_distance_Rear", 100);
@@ -27,6 +29,7 @@ cUltrasonicLogic::~cUltrasonicLogic() {
 tResult cUltrasonicLogic::Init(tInitStage eStage, __exception) {
     RETURN_IF_FAILED(cFilter::Init(eStage, __exception_ptr))
 
+    //setzen der initialisieren der Medianfilter
     frontCenterFilter.initMedianFilter((uint64_t) GetPropertyInt("MedianFilterListLength"), GetPropertyInt("MedianFilterListInit"));
     frontCenterLeftFilter.initMedianFilter((uint64_t) GetPropertyInt("MedianFilterListLength"), GetPropertyInt("MedianFilterListInit"));
     frontLeftFilter.initMedianFilter((uint64_t) GetPropertyInt("MedianFilterListLength"), GetPropertyInt("MedianFilterListInit"));
@@ -67,7 +70,10 @@ tResult cUltrasonicLogic::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam
         if (pSource == &m_oInputPin) {
 
             UltrasonicStruct receivedUltrasonicStruct = receiveData<UltrasonicStruct>(pMediaSample);
+
+            //FEHLERHAFTER SENSOR WIRD AUSGELASSEN
 			receivedUltrasonicStruct.tFrontCenterLeft.f32Value = 400;
+
             if (receivedUltrasonicStruct.tFrontCenter.f32Value >= (0 - SIG_ATOMIC_MAX)) {
                 _ultrasonicStruct.tFrontCenter.f32Value = frontCenterFilter.putNewValue(fabs(receivedUltrasonicStruct.tFrontCenter.f32Value));
             }
@@ -108,6 +114,7 @@ tResult cUltrasonicLogic::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam
                 _ultrasonicStruct.tFrontCenterRight.f32Value = frontCenterRightFilter.putNewValue(fabs(receivedUltrasonicStruct.tFrontCenterRight.f32Value));
             }
 
+            //Testen auf Schwellwert
             if (       (_ultrasonicStruct.tFrontCenter.f32Value < GetPropertyInt("STOP_distance_Front"))
                     || (_ultrasonicStruct.tFrontCenterLeft.f32Value < GetPropertyInt("STOP_distance_Front"))
                     || (_ultrasonicStruct.tFrontLeft.f32Value < GetPropertyInt("STOP_distance_Front"))
@@ -122,7 +129,7 @@ tResult cUltrasonicLogic::OnPinEvent(IPin* pSource, tInt nEventCode, tInt nParam
                 cout << "UltrasonicLogik:: FLAG_EMERGENCY_BREAK" << endl;
                 sendData<Flag>(&m_oOutputEmergencyFlagPin, &flag);
             } else {
-			Flag flag = FLAG_EMERGENCY_BREAK_USS_OK;
+			    Flag flag = FLAG_EMERGENCY_BREAK_USS_OK;
                 sendData<Flag>(&m_oOutputEmergencyFlagPin, &flag);
 			}
             sendData<UltrasonicStruct>(&m_oOutputPin, &_ultrasonicStruct);
